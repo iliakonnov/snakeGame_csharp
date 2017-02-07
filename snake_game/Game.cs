@@ -19,23 +19,26 @@ namespace snake_game
 		// Config
 		int length = 3;
 		int score = 0;
-		float speed = 0.0f;
+		float speed = 300.0f;
 
 		// Other
+		SpriteFont font;
 #if DEBUG
 		//FPS
 		int total_frames = 0;
 		float elapsed_time = 0.0f;
 		int fps = 0;
 		int showTail = 0;
-		SpriteFont font;
+		Texture2D collisionTexture;
 #endif
-
-		Random rnd = new Random();
 
 		bool speedChanged = false;
 
-		Rectangle appleRect;
+		// Apple
+		bool appleCollected = false;
+		Random rnd = new Random();
+		Texture2D apple;
+		Rectangle appleRect;  // For apple too
 		#endregion
 
 		public Game1()
@@ -68,8 +71,11 @@ namespace snake_game
 		{
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
-#if DEBUG
 			font = Content.Load<SpriteFont>("DejaVu Sans Mono");
+			apple = Content.Load<Texture2D>("images/apple");
+#if DEBUG
+			collisionTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+			collisionTexture.SetData(new Color[] { Color.White });
 #endif
 
 			snake.LoadContent(Content);
@@ -98,15 +104,24 @@ namespace snake_game
 			if (state.IsKeyDown(Keys.Escape))
 			{
 				Exit();
+				return;
 			}
 
 			snake.Update(gameTime, state, Window.ClientBounds, speed);
 
 			if (snake.headRect.Intersects(appleRect))
 			{
-				score++;
-				length++;
-				CreateApple();
+				if (!appleCollected)
+				{
+					appleCollected = true;
+					score++;
+					snake.length++;
+					CreateApple();
+				}
+			}
+			else if (appleCollected)
+			{
+				appleCollected = false;
 			}
 
 			#region speed
@@ -165,7 +180,20 @@ namespace snake_game
 
 		void CreateApple()
 		{
-			// TODO: Create apple
+			bool generate = true;
+			while (generate)
+			{
+				appleRect.X = rnd.Next(0, Window.ClientBounds.Width - 64);
+				appleRect.Y = rnd.Next(0, Window.ClientBounds.Height - 64);
+				appleRect.Width = 64;
+				appleRect.Height = 64;
+
+				generate = false;
+				foreach (var item in snake.snakeParts)
+				{
+					generate |= appleRect.Intersects(item.collisionBox);
+				}
+			}
 		}
 
 		/// <summary>
@@ -176,23 +204,26 @@ namespace snake_game
 		{
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-
+			var debugInfo = string.Format("Score: {0}", score);
 #if DEBUG
 			//FPS
 			total_frames++;
 			// Debug
-			var debugInfo = string.Format(
-				"FPS:{0}\n" +
+			debugInfo += string.Format(
+				"\nFPS:{0}\n" +
 				"Speed: {1}\n" +
-				"Score: {2}\n" +
-				"Size: {3}x{4}\n",
-				new object[] { fps, speed, score, Window.ClientBounds.Width, Window.ClientBounds.Height }
+				"Size: {2}x{3}\n" +
+				"Apple: ({4:D5} {5:D5})",
+				new object[] {
+					fps, speed, Window.ClientBounds.Width, Window.ClientBounds.Height,
+					appleRect.X, appleRect.Y
+				}
 			);
 			if (showTail < snake.snakeParts.Count && showTail >= 0)  // Info about part of tail
 			{
 				var part = snake.snakeParts[showTail];
 				char arrow = '+';
-				int degrees = (int)MathHelper.ToDegrees((float)snake.snakeParts[showTail].rotateRadians);
+				var degrees = (int)MathHelper.ToDegrees((float)snake.snakeParts[showTail].rotateRadians);
 				switch (degrees)
 				{
 					case 0: arrow = '←'; break;
@@ -202,12 +233,12 @@ namespace snake_game
 					default: arrow = '+'; break;
 				}
 				debugInfo += string.Format(
-					"\n#{0}:{1}\n" +
-					"position: ({2:D5} {3:D5})\n" +
-					"collision box: ({4:D5} {5:D5}); w:{6:D2} h:{7:D2})\n" +
-					"rotate: {8:D3}° ({9})\n",
+					"\n#{0}/{1}:{2}\n" +
+					"position: ({3:D5} {4:D5})\n" +
+					"collision box: ({5:D5} {6:D5}); w:{7:D2} h:{8:D2})\n" +
+					"rotate: {9:D3}° ({10})\n",
 					new object[] {
-					showTail, part.type == TailType.head? "head": "tail",
+					showTail+1, snake.snakeParts.Count, part.type == TailType.head? "head": "tail",
 
 					(int)part.position.X, (int)part.position.Y,
 
@@ -216,10 +247,13 @@ namespace snake_game
 					(int)MathHelper.ToDegrees((float)part.rotateRadians), arrow
 					}
 				);
+				spriteBatch.Draw(collisionTexture, part.collisionBox, Color.White);
 			}
+#endif
 			spriteBatch.DrawString(font, debugInfo, new Vector2(0), Color.Black,
 								   0.0f, new Vector2(), 1.0f, SpriteEffects.None, 1.0f);
-#endif
+			//Draw apple
+			spriteBatch.Draw(apple, appleRect, Color.White);
 			// Draw snake
 			snake.Draw(gameTime, spriteBatch);
 

@@ -9,25 +9,34 @@ namespace snake_game
 {
 	public class SnakeClass
 	{
-		int length;
+		int _length;
+		public int length {
+			get { return _length; }
+			set {
+				_length = value;
+				snakeParts.Add(new TailPart());
+			}
+		}
 
 		// Textures
 		Texture2D head;
 		Texture2D snake;
 		Texture2D brick;
-		Texture2D apple;
 
 		public List<TailPart> snakeParts = new List<TailPart>();
 		public Rectangle headRect { get { return snakeParts[0].collisionBox; } }
+#if DEBUG
+		Texture2D collisionTexture;
+#endif
 
 		public SnakeClass(int length)
 		{
-			this.length = length;
+			this._length = length;
 		}
 
 		public void Initialize()
 		{
-			var startPos = (length + 1) * 64;
+			var startPos = (length + 1)*64;
 			// Add head
 			snakeParts.Add(new TailPart
 			{
@@ -44,8 +53,8 @@ namespace snake_game
 				{
 					rotateRadians = MathHelper.ToRadians(270),
 					type = TailType.tail,
-					collisionBox = new Rectangle(startPos - 64 * i, 0, 64, 64),
-					position = new Vector2(startPos - 64 * i, 0),
+					collisionBox = new Rectangle((startPos - i*64)-32, -32, 64, 64),
+					position = new Vector2(startPos - i*64, 0),
 					direction = new Vector2(0, 1)  // Down
 				});
 			}
@@ -56,34 +65,39 @@ namespace snake_game
 			head = Content.Load<Texture2D>("images/head");
 			snake = Content.Load<Texture2D>("images/snake");
 			brick = Content.Load<Texture2D>("images/brick");
-			apple = Content.Load<Texture2D>("images/apple");
 		}
 
-		#region update
 		public void Update(GameTime gameTime, KeyboardState state, Rectangle bounds, float speed)
 		{
 			Control(state);
 
-			// Move the sprite by speed, scaled by elapsed time.
 			var newParts = new List<TailPart>();
 			for (int i = 0; i < snakeParts.Count; i++)
 			{
 				var item = snakeParts[i];
 				if (item.type == TailType.head)  // If head
 				{
-					newParts.Add(item);
-					newParts[newParts.Count - 1]
-						.position += item.direction * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-					newParts[newParts.Count - 1].collisionBox = new Rectangle(
-						(int)newParts[newParts.Count - 1].position.X, (int)newParts[newParts.Count - 1].position.Y, 64, 64
-					);
+					var newPos = item.position + item.direction * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+					newParts.Add(new TailPart {
+						rotateRadians = item.rotateRadians,
+						type = TailType.head,
+						collisionBox = new Rectangle((int)newPos.X-32, (int)newPos.Y-32, 64, 64),
+						position = newPos,
+						direction = item.direction
+					});
 				}
 				else
 				{
-					newParts.Add(item);
-					newParts[newParts.Count - 1].position = snakeParts[i - 1].position;
-					newParts[newParts.Count - 1].rotateRadians = snakeParts[i - 1].rotateRadians;
-					newParts[newParts.Count - 1].collisionBox = snakeParts[i - 1].collisionBox;
+					var prev = snakeParts[i - 1];
+					newParts.Add(new TailPart
+					{
+						rotateRadians = prev.rotateRadians,
+						type = TailType.tail,
+						collisionBox = prev.collisionBox,
+						position = prev.position,
+						direction = prev.direction
+					}
+					);
 				}
 			}
 			snakeParts = newParts;
@@ -133,7 +147,6 @@ namespace snake_game
 				if (item.position.Y < 0) item.position.Y = height - item.position.Y;
 			}
 		}
-		#endregion
 
 		public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
 		{

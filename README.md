@@ -1,7 +1,7 @@
 # snakeGame_csharp
 Snake game
 
-![demo](https://cloud.githubusercontent.com/assets/9402179/22688149/01a1fd66-ed3c-11e6-8fe4-440724393a0f.gif)
+![demo](https://cloud.githubusercontent.com/assets/9402179/22696293/8501de2a-ed5e-11e6-8746-2322197add91.gif)
 
 ## Управление:
 * Движение
@@ -36,4 +36,4 @@ Snake game
 
 	<kbd>1-9</kbd> – Информация о части хвоста
 	
-	<kbd>0</kbd> – Скрыть информацию о чати хвоста
+	<kbd>0</kbd> – Скрыть информацию о чаcти хвоста
