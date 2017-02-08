@@ -1,7 +1,7 @@
 # snakeGame_csharp
 Snake game
 
-![demo](https://cloud.githubusercontent.com/assets/9402179/22696293/8501de2a-ed5e-11e6-8746-2322197add91.gif)
+![demo](https://cloud.githubusercontent.com/assets/9402179/22743876/94c02faa-ee2c-11e6-94d7-812b611a2168.gif)
 
 ## Управление:
 * Движение
