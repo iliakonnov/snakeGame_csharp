@@ -158,7 +158,7 @@ namespace snake_game
 				texture = item.type == TailType.head ? head : snake;
 				spriteBatch.Draw(
 					texture, item.position, null, Color.White, (float)item.rotateRadians,
-					new Vector2(32, 32), 1.0f, SpriteEffects.None, i / 10
+					new Vector2(32, 32), 1.0f, SpriteEffects.None, i / 10000
 				);
 			}
 		}

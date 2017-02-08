@@ -163,16 +163,16 @@ namespace snake_game
 
 			#region tail
 #if DEBUG
-			if (state.IsKeyDown(Keys.D1)) showTail = 0;
-			else if (state.IsKeyDown(Keys.D2)) showTail = 1;
-			else if (state.IsKeyDown(Keys.D3)) showTail = 2;
-			else if (state.IsKeyDown(Keys.D4)) showTail = 3;
-			else if (state.IsKeyDown(Keys.D5)) showTail = 4;
-			else if (state.IsKeyDown(Keys.D6)) showTail = 5;
-			else if (state.IsKeyDown(Keys.D7)) showTail = 6;
-			else if (state.IsKeyDown(Keys.D8)) showTail = 7;
-			else if (state.IsKeyDown(Keys.D9)) showTail = 8;
-			else if (state.IsKeyDown(Keys.D0)) showTail = -1;
+			if (state.IsKeyDown(Keys.D0)) showTail = 0;
+			else if (state.IsKeyDown(Keys.D1)) showTail = 1;
+			else if (state.IsKeyDown(Keys.D2)) showTail = 2;
+			else if (state.IsKeyDown(Keys.D3)) showTail = 3;
+			else if (state.IsKeyDown(Keys.D4)) showTail = 4;
+			else if (state.IsKeyDown(Keys.D5)) showTail = 5;
+			else if (state.IsKeyDown(Keys.D6)) showTail = -4;
+			else if (state.IsKeyDown(Keys.D7)) showTail = -3;
+			else if (state.IsKeyDown(Keys.D8)) showTail = -2;
+			else if (state.IsKeyDown(Keys.D9)) showTail = -1;
 #endif
 			#endregion
 			base.Update(gameTime);
@@ -219,11 +219,14 @@ namespace snake_game
 					appleRect.X, appleRect.Y
 				}
 			);
-			if (showTail < snake.snakeParts.Count && showTail >= 0)  // Info about part of tail
+			if (Math.Abs(showTail) < snake.snakeParts.Count && showTail != 0)  // Info about part of tail
 			{
-				var part = snake.snakeParts[showTail];
+				TailPart part = showTail < 0 ?
+					snake.snakeParts[snake.snakeParts.Count + showTail] :
+				         part = snake.snakeParts[showTail - 1];
+
 				char arrow = '+';
-				var degrees = (int)MathHelper.ToDegrees((float)snake.snakeParts[showTail].rotateRadians);
+				var degrees = (int)MathHelper.ToDegrees((float)part.rotateRadians);
 				switch (degrees)
 				{
 					case 0: arrow = '←'; break;
@@ -238,7 +241,7 @@ namespace snake_game
 					"collision box: ({5:D5} {6:D5}); w:{7:D2} h:{8:D2})\n" +
 					"rotate: {9:D3}° ({10})\n",
 					new object[] {
-					showTail+1, snake.snakeParts.Count, part.type == TailType.head? "head": "tail",
+					showTail, snake.snakeParts.Count, part.type == TailType.head? "head": "tail",
 
 					(int)part.position.X, (int)part.position.Y,
 
