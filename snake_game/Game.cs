@@ -17,7 +17,7 @@ namespace snake_game
 		SnakeClass snake;
 
 		// Config
-		int length = 3;
+		int length = 0;
 		int score = 0;
 		float speed = 300.0f;
 
@@ -29,6 +29,8 @@ namespace snake_game
 		float elapsed_time = 0.0f;
 		int fps = 0;
 		int showTail = 0;
+		bool showApple;
+		int showTurns;
 		Texture2D collisionTexture;
 #endif
 
@@ -100,6 +102,7 @@ namespace snake_game
 #endif
 
 			KeyboardState state = Keyboard.GetState();
+			snake.Update(gameTime, state, Window.ClientBounds, speed);
 
 			if (state.IsKeyDown(Keys.Escape))
 			{
@@ -107,7 +110,13 @@ namespace snake_game
 				return;
 			}
 
-			snake.Update(gameTime, state, Window.ClientBounds, speed);
+			foreach (var item in snake.snakeParts)
+			{
+				if (item.type == TailType.tail && snake.headRect.Intersects(item.collisionBox))
+				{
+					//Exit();
+				}
+			}
 
 			if (snake.headRect.Intersects(appleRect))
 			{
@@ -161,20 +170,29 @@ namespace snake_game
 			if (state.IsKeyDown(Keys.OemTilde)) speed = 300;
 			#endregion
 
-			#region tail
 #if DEBUG
-			if (state.IsKeyDown(Keys.D0)) showTail = 0;
-			else if (state.IsKeyDown(Keys.D1)) showTail = 1;
-			else if (state.IsKeyDown(Keys.D2)) showTail = 2;
-			else if (state.IsKeyDown(Keys.D3)) showTail = 3;
-			else if (state.IsKeyDown(Keys.D4)) showTail = 4;
-			else if (state.IsKeyDown(Keys.D5)) showTail = 5;
-			else if (state.IsKeyDown(Keys.D6)) showTail = -4;
-			else if (state.IsKeyDown(Keys.D7)) showTail = -3;
-			else if (state.IsKeyDown(Keys.D8)) showTail = -2;
-			else if (state.IsKeyDown(Keys.D9)) showTail = -1;
-#endif
+			#region tail
+			if (state.IsKeyDown(Keys.D0)) { showTail = 0; showApple = false; }
+			else if (state.IsKeyDown(Keys.D1)) { showTail = 0; showApple = true; }
+			else if (state.IsKeyDown(Keys.D2)) { showTail = 1; showApple = false; }
+			else if (state.IsKeyDown(Keys.D3)) { showTail = 2; showApple = false; }
+			else if (state.IsKeyDown(Keys.D4)) { showTail = 3; showApple = false; }
+			else if (state.IsKeyDown(Keys.D5)) { showTail = 4; showApple = false; }
+			else if (state.IsKeyDown(Keys.D6)) { showTail = -4; showApple = false; }
+			else if (state.IsKeyDown(Keys.D7)) { showTail = -3; showApple = false; }
+			else if (state.IsKeyDown(Keys.D8)) { showTail = -2; showApple = false; }
+			else if (state.IsKeyDown(Keys.D9)) { showTail = -1; showApple = false; }
 			#endregion
+			#region turns
+			if (state.IsKeyDown(Keys.Tab))
+			{
+				if (showTurns == 0) showTurns = 2;
+				else if (showTurns == 1) showTurns = -1;
+			}
+			else if (showTurns == 2) showTurns = 1;
+			else if (showTurns == -1) showTurns = 0;
+			#endregion
+#endif
 			base.Update(gameTime);
 		}
 
@@ -195,6 +213,38 @@ namespace snake_game
 				}
 			}
 		}
+#if DEBUG
+		/// <summary>
+		/// Draws the line.
+		/// http://gamedev.stackexchange.com/a/44016
+		/// </summary>
+		/// <param name="sb">Sprite batch.</param>
+		/// <param name="start">Start.</param>
+		/// <param name="end">End.</param>
+		void DrawLine(SpriteBatch sb, Vector2 start, Vector2 end)
+		{
+			Vector2 edge = end - start;
+			// calculate angle to rotate line
+			var angle = (float)Math.Atan2(edge.Y, edge.X);
+
+
+			sb.Draw(collisionTexture,
+				new Rectangle(// rectangle defines shape of line and position of start of line
+					(int)start.X,
+					(int)start.Y,
+					(int)edge.Length(), //sb will strech the texture to fill this rectangle
+					1  //width of line, change this to make thicker line
+                ),
+				null,
+		        Color.White, //colour of line
+			   	angle,     //angle of line (calulated above)
+				new Vector2(0, 0), // point in line about which to rotate
+				SpriteEffects.None,
+				0
+	       );
+
+		}
+#endif
 
 		/// <summary>
 		/// This is called when the game should draw itself.
@@ -251,6 +301,36 @@ namespace snake_game
 					}
 				);
 				spriteBatch.Draw(collisionTexture, part.collisionBox, Color.White);
+			}
+			else if (showApple)
+			{
+				debugInfo += string.Format(
+					"\nApple\n" +
+					"collision box: ({0:D5} {1:D5}); w:{2:D2} h:{3:D2})",
+					new object[] {
+					appleRect.X, appleRect.Y, appleRect.Width, appleRect.Height
+					}
+				);
+				spriteBatch.Draw(collisionTexture, appleRect, Color.White);
+			}
+			if (showTurns > 0)
+			{
+				var prev = new Turn();
+				for (int i = 0; i < snake.turns.Count; i++)
+				{
+					var item = snake.turns[i];
+					spriteBatch.Draw(
+						collisionTexture,
+						new Rectangle((int)item.position.X - 2, (int)item.position.Y - 2, 4, 4),
+						Color.White
+					);
+					if (i == 0) prev = item;
+					else
+					{
+						DrawLine(spriteBatch, prev.position, item.position);
+						prev = item;
+					}
+				}
 			}
 #endif
 			spriteBatch.DrawString(font, debugInfo, new Vector2(0), Color.Black,
