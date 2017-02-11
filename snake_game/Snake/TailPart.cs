@@ -5,6 +5,7 @@ namespace snake_game
 	{
 		tail, head
 	}
+
 	public class TailPart
 	{
 		public double rotateRadians;
@@ -12,5 +13,11 @@ namespace snake_game
 		public Rectangle collisionBox;
 		public Vector2 position;
 		public Vector2 direction;
+	}
+	public class Turn
+	{
+		public Vector2 position;
+		public double oldRadians;
+		public double newRadians;
 	}
 }

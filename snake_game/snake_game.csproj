@@ -58,6 +58,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Snake\SnakeClass.cs" />
     <Compile Include="Snake\TailPart.cs" />
+    <Compile Include="Snake\SnakeModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />

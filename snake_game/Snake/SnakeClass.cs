@@ -13,25 +13,65 @@ namespace snake_game
 		public int length {
 			get { return _length; }
 			set {
+				for (int i = 0; i < value-_length; i++)
+				{
+					snakeParts.Add(AddPart(snakeParts[0]));
+				}
 				_length = value;
-				snakeParts.Add(new TailPart());
 			}
 		}
 
 		// Textures
 		Texture2D head;
 		Texture2D snake;
-		Texture2D brick;
-
 		public List<TailPart> snakeParts = new List<TailPart>();
-		public Rectangle headRect { get { return snakeParts[0].collisionBox; } }
 #if DEBUG
-		Texture2D collisionTexture;
+		public List<Turn> turns = new List<Turn>();
+#else
+		List<Turn> turns = new List<Turn>();
 #endif
+		public Rectangle headRect { get { return snakeParts[0].collisionBox; } }
 
 		public SnakeClass(int length)
 		{
-			this._length = length;
+			_length = length;
+		}
+
+		TailPart AddPart(TailPart prevPart)
+		{
+			var size = 32;
+			var newPart = new TailPart
+			{
+				type = TailType.tail,
+				rotateRadians = prevPart.rotateRadians,
+				direction = prevPart.direction
+			};
+
+			var degrees = (int)MathHelper.ToDegrees((float)prevPart.rotateRadians);
+			switch (degrees)
+			{
+				case 0:  // Left
+					newPart.position.X = prevPart.position.X + size;
+					newPart.position.Y = prevPart.position.Y;
+					break;
+				case 90: // Up
+					newPart.position.X = prevPart.position.X;
+					newPart.position.Y = prevPart.position.Y + size;
+					break;
+				case 180: // Right
+					newPart.position.X = prevPart.position.X - size;
+					newPart.position.Y = prevPart.position.Y;
+					break;
+				case 270: // Down
+					newPart.position.X = prevPart.position.X;
+					newPart.position.Y = prevPart.position.Y - size;
+					break;
+			}
+			newPart.collisionBox = new Rectangle(
+				(int)newPart.position.X - 32, (int)newPart.position.Y - 32, 64, 64
+			);
+
+			return newPart;
 		}
 
 		public void Initialize()
@@ -64,7 +104,6 @@ namespace snake_game
 		{
 			head = Content.Load<Texture2D>("images/head");
 			snake = Content.Load<Texture2D>("images/snake");
-			brick = Content.Load<Texture2D>("images/brick");
 		}
 
 		public void Update(GameTime gameTime, KeyboardState state, Rectangle bounds, float speed)
@@ -74,31 +113,35 @@ namespace snake_game
 			var newParts = new List<TailPart>();
 			for (int i = 0; i < snakeParts.Count; i++)
 			{
+				TailPart newPart;
 				var item = snakeParts[i];
 				if (item.type == TailType.head)  // If head
 				{
 					var newPos = item.position + item.direction * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-					newParts.Add(new TailPart {
+					newPart = new TailPart
+					{
 						rotateRadians = item.rotateRadians,
 						type = TailType.head,
-						collisionBox = new Rectangle((int)newPos.X-32, (int)newPos.Y-32, 64, 64),
 						position = newPos,
 						direction = item.direction
-					});
+					};
 				}
 				else
 				{
-					var prev = snakeParts[i - 1];
-					newParts.Add(new TailPart
+					var newPos = item.position + item.direction * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+					newPart = new TailPart
 					{
-						rotateRadians = prev.rotateRadians,
+						rotateRadians = item.rotateRadians,
 						type = TailType.tail,
-						collisionBox = prev.collisionBox,
-						position = prev.position,
-						direction = prev.direction
-					}
-					);
+						position = newPos,
+						direction = item.direction
+					};
 				}
+
+				newPart.collisionBox = new Rectangle(
+					(int)newPart.position.X - 32, (int)newPart.position.Y - 32, 64, 64
+				);
+				newParts.Add(newPart);
 			}
 			snakeParts = newParts;
 
@@ -132,8 +175,16 @@ namespace snake_game
 			{
 				return;
 			}
-			snakeParts[0].rotateRadians = MathHelper.ToRadians(RotationAngle);
-			snakeParts[0].direction = snakeSpeed;
+			if (RotationAngle != (int)MathHelper.ToDegrees((float)snakeParts[0].rotateRadians))
+			{
+				turns.Add(new Turn { 
+					position = snakeParts[0].position,
+					newRadians = MathHelper.ToRadians(RotationAngle),
+					oldRadians = snakeParts[0].rotateRadians
+				});
+				snakeParts[0].rotateRadians = MathHelper.ToRadians(RotationAngle);
+				snakeParts[0].direction = snakeSpeed;
+			}
 		}
 		void Toroidate(Rectangle bounds)
 		{
