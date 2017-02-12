@@ -50,8 +50,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game.cs">
-    </Compile>
+    <Compile Include="MainGame\Control.cs" />
+    <Compile Include="MainGame\DrawLine.cs" />
+    <Compile Include="MainGame\Game.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Snake\BagelWorld.cs" />
     <Compile Include="Snake\MathUtils.cs" />

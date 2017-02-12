@@ -8,22 +8,22 @@ namespace snake_game.Snake
 	/// </summary>
 	public class Point
 	{
-		const double EPSILON = 1e-16;
-		public Point(double x, double y)
+		const float EPSILON = 1e-16f;
+		public Point(float x, float y)
 		{
 			_x = x;
 			_y = y;
 		}
 
-		public static Point FromPolar(double alpha, double r)
+		public static Point FromPolar(float alpha, float r)
 		{
-			return new Point(r * Math.Cos(alpha), r * Math.Sin(alpha));
+			return new Point(r * (float)Math.Cos(alpha), r * (float)Math.Sin(alpha));
 		}
 
-		readonly double _x;
-		public double X { get { return _x; } }
-		readonly double _y;
-		public double Y { get { return _y; } }
+		readonly float _x;
+		public float X { get { return _x; } }
+		readonly float _y;
+		public float Y { get { return _y; } }
 
 		public Point Add(Point pt)
 		{
@@ -61,14 +61,14 @@ namespace snake_game.Snake
 	public class Line
 	{
 		// на таком отличии 1.GetHashCode() не замечает разницы 
-		const double EPSILON = 1e-16;
+		const float EPSILON = 1e-16f;
 		/// <summary>
 		/// Прямая ax + by + c = 0
 		/// </summary>
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <param name="c"></param>
-		public Line(double a, double b, double c)
+		public Line(float a, float b, float c)
 		{
 			// Гарантирую, что 
 			// |a| + |b| = 1
@@ -96,11 +96,11 @@ namespace snake_game.Snake
 			else if (A + C < EPSILON) _hash = (-1 + A + C).GetHashCode();
 			else _hash = 0;
 		}
-		public double A { get; private set; }
-		public double B { get; private set; }
-		public double C { get; private set; }
+		public float A { get; private set; }
+		public float B { get; private set; }
+		public float C { get; private set; }
 
-		public double Apply(Point a)
+		public float Apply(Point a)
 		{
 			return A * a.X + B * a.Y + C;
 		}
@@ -158,17 +158,17 @@ namespace snake_game.Snake
 		public Point A { get; private set; }
 		public Point B { get; private set; }
 
-		public double Length
+		public float Length
 		{
 			get
 			{
 				var x = A.X - B.X;
 				var y = A.Y - B.Y;
-				return Math.Sqrt(x * x + y * y);
+				return (float)Math.Sqrt(x * x + y * y);
 			}
 		}
 
-		public Point MoveFromAToB(double s)
+		public Point MoveFromAToB(float s)
 		{
 			var p = s / Length;
 			return new Point(
@@ -203,7 +203,7 @@ namespace snake_game.Snake
 	}
 	public static class MathUtils
 	{
-		const double EPSILON = 1e-16;
+		const float EPSILON = 1e-16f;
 		/// <summary>
 		/// Получить стандартную форму прямой, проходящей через заданные точки
 		/// X1 * x + X2 * y + X3 = 0

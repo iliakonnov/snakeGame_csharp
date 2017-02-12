@@ -6,7 +6,7 @@ namespace snake_game.MainGame
     {
         public class Result
         {
-            public bool IsExit = false;
+            public bool IsExit;
             public Turn Turn = new Turn();
         }
         public class Turn
@@ -28,10 +28,11 @@ namespace snake_game.MainGame
                 result.IsExit = true;
             }
 
-            if (state.IsKeyDown(Keys.Down))
+            /*if (state.IsKeyDown(Keys.Down))
             {
-                result.Turn = new ControlResult.Turn
-                {
+				result.Turn = new ControlResult.Turn
+				{
+					ToTurn = true,
                     ReplaceTurn = true,
                     TurnDegrees = 270
                 };
@@ -40,6 +41,7 @@ namespace snake_game.MainGame
             {
                 result.Turn = new ControlResult.Turn
                 {
+					ToTurn = true,
                     ReplaceTurn = true,
                     TurnDegrees = 180
                 };
@@ -48,6 +50,7 @@ namespace snake_game.MainGame
             {
                 result.Turn = new ControlResult.Turn
                 {
+					ToTurn = true,
                     ReplaceTurn = true,
                     TurnDegrees = 90
                 };
@@ -56,10 +59,29 @@ namespace snake_game.MainGame
             {
                 result.Turn = new ControlResult.Turn
                 {
+					ToTurn = true,
                     ReplaceTurn = true,
                     TurnDegrees = 0
                 };
-            }
+            }*/
+
+			if (state.IsKeyDown(Keys.Right))
+			{
+				result.Turn = new ControlResult.Turn
+				{
+					ToTurn = true,
+					ReplaceTurn = true,
+					TurnDegrees = 10
+				};
+			}
+			else if (state.IsKeyDown(Keys.Left))
+			{
+				result.Turn = new ControlResult.Turn
+				{
+					ToTurn = true,
+					TurnDegrees = -10
+				};
+			}
 
             return result;
         }

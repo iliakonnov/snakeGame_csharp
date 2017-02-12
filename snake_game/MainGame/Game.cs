@@ -13,6 +13,7 @@ namespace snake_game.MainGame
         SnakeModel _snake;
         SnakeModel _newSnake;
         BagelWorld _world;
+        LineDrawer _lineD;
 
         public MainGame()
         {
@@ -22,20 +23,22 @@ namespace snake_game.MainGame
 
         protected override void Initialize()
         {
-            _snake = new SnakeModel(new Snake.Point(0.0, 0.0), 0);
-            _world = new BagelWorld(Window.ClientBounds.Height, Window.ClientBounds.Width);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            _lineD = new LineDrawer(5, Color.Blue, GraphicsDevice);
+			_snake = new SnakeModel(new Snake.Point(0, 0), 0).Increase(300);
+
             base.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
             var control = Controller.Control(Keyboard.GetState());
+
             if (control.IsExit)
             {
                 Exit();
@@ -44,27 +47,36 @@ namespace snake_game.MainGame
             {
                 if (control.Turn.ReplaceTurn)
                 {
-                    _snake.Direction = control.Turn.TurnDegrees * (Math.PI / 180);
+                    _snake = _snake.Turn(control.Turn.TurnDegrees);
                 }
                 else
                 {
-                    _snake.Direction += control.Turn.TurnDegrees * (Math.PI / 180);
+					_snake.Direction = control.Turn.TurnDegrees;
                 }
             }
 
-            _newSnake = _snake.ContinueMove(300*gameTime.ElapsedGameTime.Seconds);
+            _newSnake = _snake.ContinueMove(150 * gameTime.ElapsedGameTime.Milliseconds/1000);
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            _graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+			_world = new BagelWorld(Window.ClientBounds.Height, Window.ClientBounds.Width);
+			_graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-            var snakeSegments = _world.
-            foreach (var pnt in _newSnake.Points)
+            var snakeSegments = _world.Normalize(_newSnake);
+
+            /*snakeSegments = new[] {
+                new Segment(new Snake.Point(00, 480), new Snake.Point(00, 10) ),
+				new Segment(new Snake.Point(200, 480), new Snake.Point(200, 10) ),
+			};*/
+            foreach (var seg in snakeSegments)
             {
+                _lineD.DrawLine(_spriteBatch, seg);
             }
+            _snake = _newSnake;
+
             _spriteBatch.End();
             base.Draw(gameTime);
         }

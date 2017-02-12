@@ -4,21 +4,21 @@ namespace snake_game.Snake
 {
 	public enum TailType
 	{
-		tail, head
+		Tail, Head
 	}
 
 	public class TailPart
 	{
-		public double rotateRadians;
-		public TailType type;
-		public Rectangle collisionBox;
-		public Vector2 position;
-		public Vector2 direction;
+		public double RotateRadians;
+		public TailType Type;
+		public Rectangle CollisionBox;
+		public Vector2 Position;
+		public Vector2 Direction;
 	}
 	public class Turn
 	{
-		public Vector2 position;
-		public double oldRadians;
-		public double newRadians;
+		public Vector2 Position;
+		public double OldRadians;
+		public double NewRadians;
 	}
 }

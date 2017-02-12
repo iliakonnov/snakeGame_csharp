@@ -5,9 +5,7 @@ namespace snake_game.Snake
 {
 	public class BagelWorld
 	{
-		const double EPSILON = 1e-6;
-
-		public BagelWorld(int height, int width)
+	    public BagelWorld(int height, int width)
 		{
 			Width = width;
 			Height = height;
@@ -18,17 +16,17 @@ namespace snake_game.Snake
 
 		public Segment LeftSide => new Segment(
 			new Point(0, 0), new Point(0, Height)
-			);
+        );
 		public Segment TopSide => new Segment(
 			new Point(0, Height), new Point(Width, Height)
-			);
+        );
 		public Segment RightSide => new Segment(
 			new Point(Width, Height), new Point(Width, 0)
 
-			);
+        );
 		public Segment BottomSide => new Segment(
 			new Point(0, 0), new Point(Width, 0)
-			);
+        );
 
 		public Point Normalize(Point pt)
 		{
@@ -75,7 +73,7 @@ namespace snake_game.Snake
 				segs[i] = new Segment(pts[i], pts[i + 1]);
 			}
 
-			segs = segs.SelectMany(x => Normalize(x)).ToArray();
+			segs = segs.SelectMany(Normalize).ToArray();
 			return segs;
 		}
 
@@ -229,20 +227,15 @@ namespace snake_game.Snake
 		}
 		class BagelPoint
 		{
-			public static BagelPoint Vertex
+			public static BagelPoint Vertex => new BagelPoint
 			{
-				get
-				{
-					return new BagelPoint
-					{
-						X = 0,
-						Y = 0,
-						XP = 0,
-						YP = 0
-					};
-				}
-			}
-			public int X { get; set; }
+			    X = 0,
+			    Y = 0,
+			    XP = 0,
+			    YP = 0
+			};
+
+		    public int X { get; set; }
 			public int Y { get; set; }
 			public int XP { get; set; }
 			public int YP { get; set; }

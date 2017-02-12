@@ -10,14 +10,14 @@ namespace snake_game.Snake
 	/// </summary>
 	public class SnakeModel
 	{
-		const double EPS = 1e-6;
+		const float EPS = 1e-6f;
 
 		// Длина змеи
-		double _length;
+		float _length;
 		// точки, задающие повороты змеи. Первый - голова
 		Point[] _nodes;
 		// направление движения головы в градусах
-	    double _headDirection;
+	    float _headDirection;
 
 	    SnakeModel() { }
 		public SnakeModel(Point head, int direction)
@@ -29,7 +29,7 @@ namespace snake_game.Snake
 
 		public IReadOnlyCollection<Point> Points => new ReadOnlyCollection<Point>(_nodes);
 
-	    public double Direction
+	    public float Direction
 	    {
 	        get { return _headDirection; }
 	        set
@@ -62,7 +62,7 @@ namespace snake_game.Snake
 			return SetLength(_length, nodes, _headDirection);
 		}
 
-		public SnakeModel Turn(double alpha)
+		public SnakeModel Turn(float alpha)
 		{
 			var nodes = _nodes;
 			if (_nodes.Length > 1)
@@ -80,7 +80,12 @@ namespace snake_game.Snake
 
 		}
 
-		public SnakeModel Increase(int s)
+	    public SnakeModel TurnAt(float degrees)
+	    {
+			return Turn(degrees - Direction);
+	    }
+
+	    public SnakeModel Increase(int s)
 		{
 			return SetLength(_length + s, _nodes, _headDirection);
 		}
@@ -99,7 +104,7 @@ namespace snake_game.Snake
 			return SetLength(_length - s, _nodes, _headDirection);
 		}
 
-		static SnakeModel SetLength(double length, Point[] nodes, double headDirection)
+		static SnakeModel SetLength(float length, Point[] nodes, float headDirection)
 		{
 			if (nodes.Length == 0) throw new Exception();
 
@@ -114,13 +119,9 @@ namespace snake_game.Snake
 					Direction = headDirection
 				};
 			}
-		    if (seg == null)
-		    {
-		        throw new Exception();
-		    }
 
 			int i;
-			double c;
+			float c;
 			Segment tail = null;
 			for (i = 1, c = 0; i < nodes.Length && c < length; i++)
 			{
