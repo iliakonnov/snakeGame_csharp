@@ -37,30 +37,24 @@ namespace Snake
 
 		public SnakeModel ContinueMove(int s)
 		{
+			if (_nodes.Length == 0)
+				throw new Exception();
+
 			var head = _nodes[0];
 			var pt = Point.FromPolar(_headDirection, s);
 			if (_nodes.Length == 1)
 			{
 				return new SnakeModel()
 				{
-					_nodes = new[] { head.Add(pt), head },
-					_length = _length + s,
-					_headDirection = _headDirection
-				};
-			}
-			else if (_nodes.Length > 1)
-			{
-				var nodes = _nodes.ToArray();
-				nodes[0] = head.Add(pt);
-				return new SnakeModel()
-				{
-					_nodes = nodes,
-					_length = _length + s,
+					_nodes = new[] { head.Add(pt) },
+					_length = 0,
 					_headDirection = _headDirection
 				};
 			}
 
-			throw new Exception();
+			var nodes = _nodes.ToArray();
+			nodes[0] = head.Add(pt);
+			return SetLength(_length, nodes, _headDirection);
 		}
 
 		public SnakeModel Turn(double alpha)
@@ -83,32 +77,7 @@ namespace Snake
 
 		public SnakeModel Increase(int s)
 		{
-			if (_nodes.Length == 1)
-			{
-				var head = _nodes[0];
-				var pt = Point.FromPolar(_headDirection, -s);
-				return new SnakeModel
-				{
-					_nodes = new[] { head, pt },
-					_length = s,
-					_headDirection = _headDirection
-				};
-			}
-			else if (_nodes.Length > 1)
-			{
-				var nodes = _nodes;
-				var tail = new Segment(nodes[nodes.Length - 1], nodes[nodes.Length - 2]);
-				var pt = tail.MoveFromAToB(-s);
-				nodes[nodes.Length - 1] = pt;
-				return new SnakeModel
-				{
-					_nodes = nodes,
-					_length = _length + s,
-					_headDirection = _headDirection
-				};
-			}
-
-			throw new NotImplementedException();
+			return SetLength(_length + s, _nodes, _headDirection);
 		}
 
 		public SnakeModel Decrease(int s)
@@ -122,29 +91,56 @@ namespace Snake
 					_headDirection = _headDirection
 				};
 
-			double c;
+			return SetLength(_length - s, _nodes, _headDirection);
+		}
+
+		static SnakeModel SetLength(double length, Point[] nodes, double headDirection)
+		{
+			if (nodes.Length == 0) throw new Exception();
+
+			if (nodes.Length == 1)
+			{
+				var head = nodes[0];
+				var pt = Point.FromPolar(headDirection, -length);
+				return new SnakeModel
+				{
+					_nodes = new[] { head, pt },
+					_length = length,
+					_headDirection = headDirection
+				};
+			}
+
 			int i;
-			Segment seg = null;
-			for (c = 0, i = 1; i < _nodes.Length && c < _length - s; i++)
+			double c;
+			Segment tail = null;
+			for (i = 1, c = 0; i < nodes.Length && c < length; i++)
 			{
-				seg = new Segment(_nodes[i], _nodes[i - 1]);
-				c += seg.Length;
+				tail = new Segment(nodes[i], nodes[i - 1]);
+				c += tail.Length;
 			}
+			var newNodes = nodes.Take(i).ToArray();
 
-			var extra = c - (_length - s);
-			var nodes = _nodes.Take(i).ToArray();
-			if (Math.Abs(extra) > EPS)
+			if (Math.Abs(c - length) < EPS)
 			{
-				var pt = seg.MoveFromAToB(extra);
+				return new SnakeModel
+				{
+					_nodes = nodes,
+					_length = c,
+					_headDirection = headDirection
+				};
+			}
+			else
+			{
+				// надо укоротить или удлинить
+				var pt = tail.MoveFromAToB(c - length);
 				nodes[nodes.Length - 1] = pt;
+				return new SnakeModel
+				{
+					_nodes = nodes,
+					_length = length,
+					_headDirection = headDirection
+				};
 			}
-
-			return new SnakeModel
-			{
-				_nodes = nodes,
-				_length = c,
-				_headDirection = _headDirection
-			};
 		}
 	}
 }
