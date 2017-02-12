@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Snake
+namespace snake_game.Snake
 {
 	/// <summary>
 	/// Модель змеи, состоящей из отрезков. Голова может двигаться в любом направлении.
@@ -19,23 +17,30 @@ namespace Snake
 		// точки, задающие повороты змеи. Первый - голова
 		Point[] _nodes;
 		// направление движения головы в градусах
-		double _headDirection;
-		private SnakeModel() { }
+	    double _headDirection;
+
+	    SnakeModel() { }
 		public SnakeModel(Point head, int direction)
 		{
 			_length = 0;
 			_nodes = new[] { head };
-			_headDirection = direction;
+			Direction = direction;
 		}
 
-		public IReadOnlyCollection<Point> Points
-		{
-			get { return new ReadOnlyCollection<Point>(_nodes); }
-		}
+		public IReadOnlyCollection<Point> Points => new ReadOnlyCollection<Point>(_nodes);
 
-		public double Direction { get { return _headDirection; } }
+	    public double Direction
+	    {
+	        get { return _headDirection; }
+	        set
+	        {
+	            if (value < 0) value += 360;
+	            if (value >= 360) value -= 360;
+	            _headDirection = value;
+	        }
+	    }
 
-		public SnakeModel ContinueMove(int s)
+	    public SnakeModel ContinueMove(int s)
 		{
 			if (_nodes.Length == 0)
 				throw new Exception();
@@ -44,11 +49,11 @@ namespace Snake
 			var pt = Point.FromPolar(_headDirection, s);
 			if (_nodes.Length == 1)
 			{
-				return new SnakeModel()
+				return new SnakeModel
 				{
 					_nodes = new[] { head.Add(pt) },
 					_length = 0,
-					_headDirection = _headDirection
+					Direction = _headDirection
 				};
 			}
 
@@ -66,11 +71,11 @@ namespace Snake
 				nodes = new[] { head }.Concat(_nodes).ToArray();
 			}
 
-			return new SnakeModel()
+			return new SnakeModel
 			{
 				_nodes = nodes,
 				_length = _length,
-				_headDirection = _headDirection + alpha
+				Direction = _headDirection + alpha
 			};
 
 		}
@@ -88,7 +93,7 @@ namespace Snake
 				{
 					_nodes = new[] { _nodes[0] },
 					_length = 0,
-					_headDirection = _headDirection
+					Direction = _headDirection
 				};
 
 			return SetLength(_length - s, _nodes, _headDirection);
@@ -106,9 +111,13 @@ namespace Snake
 				{
 					_nodes = new[] { head, pt },
 					_length = length,
-					_headDirection = headDirection
+					Direction = headDirection
 				};
 			}
+		    if (seg == null)
+		    {
+		        throw new Exception();
+		    }
 
 			int i;
 			double c;
@@ -126,7 +135,7 @@ namespace Snake
 				{
 					_nodes = nodes,
 					_length = c,
-					_headDirection = headDirection
+					Direction = headDirection
 				};
 			}
 			else
@@ -138,7 +147,7 @@ namespace Snake
 				{
 					_nodes = nodes,
 					_length = length,
-					_headDirection = headDirection
+					Direction = headDirection
 				};
 			}
 		}

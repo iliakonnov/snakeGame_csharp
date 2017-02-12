@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Snake
+namespace snake_game.Snake
 {
 	public class BagelWorld
 	{
@@ -73,7 +70,7 @@ namespace Snake
 		{
 			var pts = s.Points.ToArray();
 			var segs = new Segment[pts.Length - 1];
-			for (int i = 0; i < pts.Length - 1; i++)
+			for (var i = 0; i < pts.Length - 1; i++)
 			{
 				segs[i] = new Segment(pts[i], pts[i + 1]);
 			}
@@ -82,12 +79,12 @@ namespace Snake
 			return segs;
 		}
 
-		private Segment[] NormalizeFromInternal(BagelPoint bpA, BagelPoint bpB)
+		Segment[] NormalizeFromInternal(BagelPoint bpA, BagelPoint bpB)
 		{
 			return Normalize(bpA, bpB, new[] { LeftSide, TopSide, RightSide, BottomSide });
 		}
 
-		private Segment[] NormalizeFromBottomSide(BagelPoint bpA, BagelPoint bpB)
+		Segment[] NormalizeFromBottomSide(BagelPoint bpA, BagelPoint bpB)
 		{
 			if (bpB.YP < 0)
 			{
@@ -130,7 +127,7 @@ namespace Snake
 
 			return Normalize(bpA, bpB, new[] { LeftSide, TopSide, RightSide }); // - BottomSide 
 		}
-		private Segment[] NormalizeFromLeftSide(BagelPoint bpA, BagelPoint bpB)
+		Segment[] NormalizeFromLeftSide(BagelPoint bpA, BagelPoint bpB)
 		{
 			if (bpB.XP < 0)
 			{
@@ -173,7 +170,7 @@ namespace Snake
 
 			return Normalize(bpA, bpB, new[] { BottomSide, TopSide, RightSide }); // - LeftSide 
 		}
-		private Segment[] NormalizeFromVertex(BagelPoint bpA, BagelPoint bpB)
+		Segment[] NormalizeFromVertex(BagelPoint bpA, BagelPoint bpB)
 		{
 			var yside = RightSide;
 			var xside = TopSide;
@@ -211,7 +208,7 @@ namespace Snake
 
 			return Normalize(bpA, bpB, new[] { xside, yside });
 		}
-		private Segment[] Normalize(BagelPoint bpA, BagelPoint bpB, Segment[] sides)
+		Segment[] Normalize(BagelPoint bpA, BagelPoint bpB, Segment[] sides)
 		{
 			var a = GetStandardPoint(bpA);
 			var b = GetStandardPoint(bpB);
@@ -260,12 +257,14 @@ namespace Snake
 		}
 		BagelPoint GetBagelPoint(Point pt)
 		{
-			int ix = (int)pt.X;
-			int iy = (int)pt.Y;
-			int hp = ix / Width;
-			int vp = iy / Height;
+			var ix = (int)pt.X;
+			var iy = (int)pt.Y;
+			var hp = ix / Width;
+		    var vp = iy / Height;
+
 			if (hp < 0) hp -= 1;
 			if (vp < 0) vp -= 1;
+
 			return new BagelPoint
 			{
 				X = ix - hp * Width,

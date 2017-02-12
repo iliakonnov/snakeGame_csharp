@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-namespace snake_game
+
+namespace snake_game.Snake
 {
 	public enum TailType
 	{
