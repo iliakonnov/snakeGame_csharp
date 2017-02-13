@@ -56,7 +56,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Snake\BagelWorld.cs" />
     <Compile Include="Snake\MathUtils.cs" />
-    <Compile Include="Snake\TailPart.cs" />
     <Compile Include="Snake\SnakeModel.cs" />
   </ItemGroup>
   <ItemGroup>

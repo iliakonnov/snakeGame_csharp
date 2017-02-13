@@ -51,7 +51,7 @@ namespace snake_game.MainGame
                 }
                 else
                 {
-					_snake.Direction = control.Turn.TurnDegrees;
+					_snake = _snake.TurnAt(control.Turn.TurnDegrees);
                 }
             }
 
