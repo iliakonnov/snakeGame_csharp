@@ -34,10 +34,10 @@ namespace snake_game.MainGame
         {
 			InternalDrawLine(sb, seg);
 			var vp = sb.GraphicsDevice.Viewport;
-			if (((int)seg.A.X == vp.Width && (int)seg.B.X == vp.Width) ||
-			    ((int)seg.A.Y == vp.Height && (int)seg.B.Y == vp.Height) ||
-			    ((int)seg.A.X == 0 && (int)seg.B.X == 0) ||
-				((int)seg.A.Y == 0 && (int)seg.B.Y == 0)
+			if ((int)seg.A.X == vp.Width && (int)seg.B.X == vp.Width ||
+			    (int)seg.A.Y == vp.Height && (int)seg.B.Y == vp.Height ||
+			    (int)seg.A.X == 0 && (int)seg.B.X == 0 ||
+				(int)seg.A.Y == 0 && (int)seg.B.Y == 0
 			   )
 				// Draw reverse
 				InternalDrawLine(sb, new Segment(seg.B, seg.A));

@@ -14,6 +14,7 @@ namespace snake_game.MainGame
         SnakeModel _newSnake;
         BagelWorld _world;
         LineDrawer _lineD;
+        Controller _ctrl;
 
         public MainGame()
         {
@@ -21,23 +22,19 @@ namespace snake_game.MainGame
             IsMouseVisible = true;
         }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-        }
-
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _lineD = new LineDrawer(5, Color.Blue, GraphicsDevice);
-			_snake = new SnakeModel(new Snake.Point(0, 0), 0).Increase(300);
+			_snake = new SnakeModel(new Snake.Point(400, 150), 0).Increase(300);
+            _ctrl = new Controller(30);
 
             base.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            var control = Controller.Control(Keyboard.GetState());
+            var control = _ctrl.Control(Keyboard.GetState());
 
             if (control.IsExit)
             {
@@ -47,11 +44,11 @@ namespace snake_game.MainGame
             {
                 if (control.Turn.ReplaceTurn)
                 {
-                    _snake = _snake.Turn(control.Turn.TurnDegrees);
+                    _snake = _snake.TurnAt(control.Turn.TurnDegrees);
                 }
                 else
                 {
-					_snake = _snake.TurnAt(control.Turn.TurnDegrees);
+					_snake = _snake.Turn(control.Turn.TurnDegrees);
                 }
             }
 

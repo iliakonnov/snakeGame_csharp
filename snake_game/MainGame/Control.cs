@@ -17,9 +17,17 @@ namespace snake_game.MainGame
         }
     }
 
-    public static class Controller
+    public class Controller
     {
-        public static ControlResult.Result Control(KeyboardState state)
+        bool _IsTurned;
+        readonly int _step;
+
+        public Controller(int step)
+        {
+            _step = step;
+        }
+
+        public ControlResult.Result Control(KeyboardState state)
         {
             var result = new ControlResult.Result();
 
@@ -67,21 +75,34 @@ namespace snake_game.MainGame
 
 			if (state.IsKeyDown(Keys.Right))
 			{
-				result.Turn = new ControlResult.Turn
-				{
-					ToTurn = true,
-					ReplaceTurn = true,
-					TurnDegrees = 10
-				};
+			    if (!_IsTurned)
+			    {
+			        _IsTurned = true;
+			        result.Turn = new ControlResult.Turn
+			        {
+			            ToTurn = true,
+			            ReplaceTurn = false,
+			            TurnDegrees = _step
+			        };
+			    }
 			}
 			else if (state.IsKeyDown(Keys.Left))
-			{
-				result.Turn = new ControlResult.Turn
-				{
-					ToTurn = true,
-					TurnDegrees = -10
-				};
-			}
+            {
+                if (!_IsTurned)
+                {
+                    _IsTurned = true;
+                    result.Turn = new ControlResult.Turn
+                    {
+                        ToTurn = true,
+                        ReplaceTurn = false,
+                        TurnDegrees = -_step
+                    };
+                }
+            }
+            else
+            {
+                _IsTurned = false;
+            }
 
             return result;
         }

@@ -44,10 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Content\bin\DejaVu Sans Mono.xnb">
-      <Link>Content\DejaVu Sans Mono.xnb</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainGame\Control.cs" />
@@ -57,27 +53,6 @@
     <Compile Include="Snake\BagelWorld.cs" />
     <Compile Include="Snake\MathUtils.cs" />
     <Compile Include="Snake\SnakeModel.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Content\images\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Content\bin\images\apple.xnb">
-      <Link>Content\images\apple.xnb</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\bin\images\brick.xnb">
-      <Link>Content\images\brick.xnb</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\bin\images\head.xnb">
-      <Link>Content\images\head.xnb</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\bin\images\snake.xnb">
-      <Link>Content\images\snake.xnb</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

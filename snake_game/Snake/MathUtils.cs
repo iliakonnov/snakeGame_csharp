@@ -17,6 +17,7 @@ namespace snake_game.Snake
 
 		public static Point FromPolar(float alpha, float r)
 		{
+		    alpha = (float)(alpha / 180 * Math.PI);
 			return new Point(r * (float)Math.Cos(alpha), r * (float)Math.Sin(alpha));
 		}
 

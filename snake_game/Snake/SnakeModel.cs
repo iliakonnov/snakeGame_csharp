@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace snake_game.Snake
@@ -36,6 +37,7 @@ namespace snake_game.Snake
 			if (_nodes.Length == 0)
 				throw new Exception();
 
+		    Debug.WriteLine($"Snake move forward {s}");
 			var head = _nodes[0];
 			var pt = Point.FromPolar(_headDirection, s);
 			if (_nodes.Length == 1)
@@ -55,7 +57,8 @@ namespace snake_game.Snake
 
 		public SnakeModel Turn(float alpha)
 		{
-			if (Math.Abs(alpha) <= EPS) return this;
+		    Debug.WriteLine($"Snake turn {alpha}");
+		    if (Math.Abs(alpha) <= EPS) return this;
 			var nodes = _nodes;
 			if (_nodes.Length > 1)
 			{
@@ -81,12 +84,14 @@ namespace snake_game.Snake
 
 		public SnakeModel Increase(int s)
 		{
-			return SetLength(_length + s, _nodes, _headDirection);
+		    Debug.WriteLine($"Snake increase length {s}");
+		    return SetLength(_length + s, _nodes, _headDirection);
 		}
 
 		public SnakeModel Decrease(int s)
 		{
-			if (_length < s) throw new ArgumentException();
+		    Debug.WriteLine($"Snake decrease length {s}");
+		    if (_length < s) throw new ArgumentException();
 			if (Math.Abs(_length - s) < EPS)
 				return new SnakeModel
 				{
@@ -106,9 +111,10 @@ namespace snake_game.Snake
 			{
 				var head = nodes[0];
 				var pt = Point.FromPolar(headDirection, -length);
+			    Debug.WriteLine($"Snake result nodes:{2}, length:{length}, direction:{headDirection}");
 				return new SnakeModel
 				{
-					_nodes = new[] { head, pt },
+					_nodes = new[] { head, head.Add(pt) },
 					_length = length,
 					_headDirection = headDirection
 				};
@@ -126,9 +132,10 @@ namespace snake_game.Snake
 
 			if (Math.Abs(c - length) < EPS)
 			{
-				return new SnakeModel
+			    Debug.WriteLine($"Snake result nodes:{newNodes.Length}, length:{c}, direction:{headDirection}");
+			    return new SnakeModel
 				{
-					_nodes = nodes,
+					_nodes = newNodes,
 					_length = c,
 					_headDirection = headDirection
 				};
@@ -137,10 +144,11 @@ namespace snake_game.Snake
 			{
 				// надо укоротить или удлинить
 				var pt = tail.MoveFromAToB(c - length);
-				nodes[nodes.Length - 1] = pt;
-				return new SnakeModel
+				newNodes[newNodes.Length - 1] = pt;
+			    Debug.WriteLine($"Snake result nodes:{newNodes.Length}, length:{length}, direction:{headDirection}");
+			    return new SnakeModel
 				{
-					_nodes = nodes,
+					_nodes = newNodes,
 					_length = length,
 					_headDirection = headDirection
 				};
