@@ -37,7 +37,7 @@ namespace snake_game.Snake
 			if (_nodes.Length == 0)
 				throw new Exception();
 
-		    Debug.WriteLine($"Snake move forward {s}");
+			Debug.WriteLine($"Snake move forward {s}");
 			var head = _nodes[0];
 			var pt = Point.FromPolar(_headDirection, s);
 			if (_nodes.Length == 1)
@@ -57,8 +57,8 @@ namespace snake_game.Snake
 
 		public SnakeModel Turn(float alpha)
 		{
-		    Debug.WriteLine($"Snake turn {alpha}");
-		    if (Math.Abs(alpha) <= EPS) return this;
+			Debug.WriteLine($"Snake turn {alpha}");
+			if (Math.Abs(alpha) <= EPS) return this;
 			var nodes = _nodes;
 			if (_nodes.Length > 1)
 			{
@@ -66,7 +66,7 @@ namespace snake_game.Snake
 				nodes = new[] { head }.Concat(_nodes).ToArray();
 			}
 
-			var dir = ((int)(_headDirection + alpha))%360;
+			var dir = ((int)(_headDirection + alpha)) % 360;
 			if (dir < 0) dir += 360;
 			return new SnakeModel
 			{
@@ -84,14 +84,14 @@ namespace snake_game.Snake
 
 		public SnakeModel Increase(int s)
 		{
-		    Debug.WriteLine($"Snake increase length {s}");
-		    return SetLength(_length + s, _nodes, _headDirection);
+			Debug.WriteLine($"Snake increase length {s}");
+			return SetLength(_length + s, _nodes, _headDirection);
 		}
 
 		public SnakeModel Decrease(int s)
 		{
-		    Debug.WriteLine($"Snake decrease length {s}");
-		    if (_length < s) throw new ArgumentException();
+			Debug.WriteLine($"Snake decrease length {s}");
+			if (_length < s) throw new ArgumentException();
 			if (Math.Abs(_length - s) < EPS)
 				return new SnakeModel
 				{
@@ -103,6 +103,61 @@ namespace snake_game.Snake
 			return SetLength(_length - s, _nodes, _headDirection);
 		}
 
+		public Point[] GetSnakeAsPoints(float pointDistance)
+		{
+			var result = new List<Point>((int)(_length / pointDistance));
+			result.Add(_nodes[0]);
+			var skip = 0f;
+			for (int i = 0; i < _nodes.Length - 1; i++)
+			{
+				var pts = AsSetOfPoints(_nodes[i], _nodes[i + 1], pointDistance, ref skip);
+				result.AddRange(pts);
+			}
+
+			return result.ToArray();
+		}
+
+		public static Point[] AsSetOfPoints(Point start, Point finish, float distance, ref float skip)
+		{
+			var seg = new Segment(start, finish);
+			var len = seg.Length;
+			if (Math.Abs(skip) < EPS)
+			{
+				skip = distance;
+			}
+			if (len <= skip)
+			{
+				skip -= len;
+				return new Point[0];
+			}
+			var p = distance / len;
+			var kx = (finish.X - start.X) * p;
+			var ky = (finish.Y - start.Y) * p;
+
+			var x = start.X;
+			var y = start.Y;
+
+			var count = (int)((len - skip) / distance);
+			if (Math.Abs(skip + count * distance + distance - len) < EPS)
+			{
+				count += 1;
+				skip = 0;
+			}
+			else
+			{
+				skip = len - (skip + count * distance);
+			}
+			var result = new List<Point>(count);
+			for (int i = 0; i < count; i++)
+			{
+				x += kx;
+				y += ky;
+				result.Add(new Point(x, y));
+			}
+
+			return result.ToArray();
+		}
+
 		static SnakeModel SetLength(float length, Point[] nodes, float headDirection)
 		{
 			if (nodes.Length == 0) throw new Exception();
@@ -111,7 +166,7 @@ namespace snake_game.Snake
 			{
 				var head = nodes[0];
 				var pt = Point.FromPolar(headDirection, -length);
-			    Debug.WriteLine($"Snake result nodes:{2}, length:{length}, direction:{headDirection}");
+				Debug.WriteLine($"Snake result nodes:{2}, length:{length}, direction:{headDirection}");
 				return new SnakeModel
 				{
 					_nodes = new[] { head, head.Add(pt) },
@@ -132,8 +187,8 @@ namespace snake_game.Snake
 
 			if (Math.Abs(c - length) < EPS)
 			{
-			    Debug.WriteLine($"Snake result nodes:{newNodes.Length}, length:{c}, direction:{headDirection}");
-			    return new SnakeModel
+				Debug.WriteLine($"Snake result nodes:{newNodes.Length}, length:{c}, direction:{headDirection}");
+				return new SnakeModel
 				{
 					_nodes = newNodes,
 					_length = c,
@@ -145,8 +200,8 @@ namespace snake_game.Snake
 				// надо укоротить или удлинить
 				var pt = tail.MoveFromAToB(c - length);
 				newNodes[newNodes.Length - 1] = pt;
-			    Debug.WriteLine($"Snake result nodes:{newNodes.Length}, length:{length}, direction:{headDirection}");
-			    return new SnakeModel
+				Debug.WriteLine($"Snake result nodes:{newNodes.Length}, length:{length}, direction:{headDirection}");
+				return new SnakeModel
 				{
 					_nodes = newNodes,
 					_length = length,
