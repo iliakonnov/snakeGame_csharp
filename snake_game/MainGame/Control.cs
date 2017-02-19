@@ -6,6 +6,7 @@ namespace snake_game.MainGame
     {
         public class Result
         {
+            public bool Debug;
             public bool IsExit;
             public Turn Turn = new Turn();
         }
@@ -20,6 +21,7 @@ namespace snake_game.MainGame
     public class Controller
     {
         bool _IsTurned;
+        bool _IsDebugPressed;
         readonly int _step;
 
         public Controller(int step)
@@ -30,6 +32,19 @@ namespace snake_game.MainGame
         public ControlResult.Result Control(KeyboardState state)
         {
             var result = new ControlResult.Result();
+
+            if (state.IsKeyDown(Keys.OemTilde))
+            {
+                if (!_IsDebugPressed)
+                {
+                    result.Debug = true;
+                    _IsDebugPressed = true;
+                }
+            }
+            else
+            {
+                _IsDebugPressed = false;
+            }
 
             if (state.IsKeyDown(Keys.Escape))
             {

@@ -47,7 +47,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainGame\Control.cs" />
-    <Compile Include="MainGame\DrawLine.cs" />
+    <Compile Include="MainGame\Debug.cs" />
+    <Compile Include="MainGame\Fog.cs" />
     <Compile Include="MainGame\Game.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Snake\BagelWorld.cs" />

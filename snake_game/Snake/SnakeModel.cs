@@ -108,7 +108,7 @@ namespace snake_game.Snake
 			var result = new List<Point>((int)(_length / pointDistance));
 			result.Add(_nodes[0]);
 			var skip = 0f;
-			for (int i = 0; i < _nodes.Length - 1; i++)
+			for (var i = 0; i < _nodes.Length - 1; i++)
 			{
 				var pts = AsSetOfPoints(_nodes[i], _nodes[i + 1], pointDistance, ref skip);
 				result.AddRange(pts);
