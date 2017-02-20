@@ -8,7 +8,7 @@ using snake_game.Snake;
 
 namespace snake_game.MainGame
 {
-    public class MainGame : Game
+    public partial class MainGame : Game
     {
         GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
@@ -18,42 +18,60 @@ namespace snake_game.MainGame
         Controller _ctrl;
         Color[] _colors;
         Fog _fog;
-        readonly Debug _dbg = new Debug();
-        const int SnakeCircleSize = 40;
-        const int SnakeCircleOffset = 5;
-        const int SnakeInitLen = 30;
+        readonly Debug _dbg;
+        readonly int SnakeCircleSize = 40;
+        readonly int SnakeCircleOffset = 5;
+        readonly int SnakeInitLen = 30;
+        readonly Config _config;
 
-        public MainGame()
+        public MainGame(Config config)
         {
             _graphics = new GraphicsDeviceManager(this);
-            IsMouseVisible = true;
+
+            IsMouseVisible = config.ScreenConfig.IsMouseVisible;
+            _graphics.IsFullScreen = config.ScreenConfig.IsFullScreen;
+            _graphics.PreferredBackBufferHeight = config.ScreenConfig.ScreenHeight;
+            _graphics.PreferredBackBufferWidth = config.ScreenConfig.ScreenWidth;
+
+            SnakeCircleOffset = config.SnakeConfig.CircleOffset;
+            SnakeCircleSize = config.SnakeConfig.CircleSize;
+            SnakeInitLen = config.SnakeConfig.InitLen;
+
+            _config = config;
+
             Content.RootDirectory = "Content";
+
+            _dbg = new Debug(this, _config.GameConfig.DebugColor);
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _fog = new Fog(GraphicsDevice, Color.DarkSlateBlue, Color.Transparent);
+            _fog = new Fog(GraphicsDevice, _config.GameConfig.FogColor.Item1, _config.GameConfig.FogColor.Item2);
 			_snake = new SnakeModel(new Snake.Point(400, 150), 0).Increase(SnakeInitLen*SnakeCircleOffset);
             _ctrl = new Controller(30);
 
-            var properties = typeof(Color).GetProperties(BindingFlags.Public|BindingFlags.Static);
-
-            var colors = new List<Color>();
-            foreach (var propertyInfo in properties)
+            if (_config.SnakeConfig.Colors == null)
             {
-                if (propertyInfo.GetGetMethod() != null && propertyInfo.PropertyType == typeof(Color))
+                var properties = typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static);
+
+                var colors = new List<Color>();
+                foreach (var propertyInfo in properties)
                 {
-                    colors.Add((Color) propertyInfo.GetValue(null, null));
+                    if (propertyInfo.GetGetMethod() != null && propertyInfo.PropertyType == typeof(Color))
+                    {
+                        colors.Add((Color) propertyInfo.GetValue(null, null));
+                    }
                 }
+                _colors = colors.ToArray();
             }
-            _colors = colors.ToArray();
+            else
+            {
+                _colors = _config.SnakeConfig.Colors;
+            }
 
-            _dbg.LoadContent(Content, GraphicsDevice);
-
-            #if DEBUG
-            _dbg.Enable();
-            #endif
+            _dbg.LoadContent();
+            _dbg.IsEnabled = _config.GameConfig.DebugShow;
 
             base.LoadContent();
         }
@@ -90,14 +108,13 @@ namespace snake_game.MainGame
         protected override void Draw(GameTime gameTime)
         {
             var circle = CreateCircleTexture(SnakeCircleSize);
-            var newSize = _dbg.Size(Window.ClientBounds.Width, Window.ClientBounds.Height);
+            var newSize = _dbg.Size();
             _world = new BagelWorld(newSize.Height - SnakeCircleSize, newSize.Width - SnakeCircleSize);
             var snakePoints = _newSnake.GetSnakeAsPoints(SnakeCircleOffset).Select(x =>  _world.Normalize(x)).ToArray();
 
             _graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-            _dbg.Draw(_spriteBatch, Window.ClientBounds.Width, Window.ClientBounds.Height,
-                snakePoints, _snake, _world);
+            _dbg.Draw(snakePoints);
 
             for (var i = 0; i < snakePoints.Length; i++)
             {
@@ -109,25 +126,25 @@ namespace snake_game.MainGame
             }
             _snake = _newSnake;
 
-            _fog.CreateFog(_spriteBatch, newSize, (int)(SnakeCircleSize*1.5));
+            if (_config.GameConfig.FogEnabled) _fog.CreateFog(_spriteBatch, newSize, SnakeCircleSize);
 
             _spriteBatch.End();
             base.Draw(gameTime);
         }
         Texture2D CreateCircleTexture(int radius)
         {
-            Texture2D texture = new Texture2D(GraphicsDevice, radius, radius);
-            Color[] colorData = new Color[radius*radius];
+            var texture = new Texture2D(GraphicsDevice, radius, radius);
+            var colorData = new Color[radius*radius];
 
-            float diam = radius / 2f;
-            float diamsq = diam * diam;
+            var diam = radius / 2f;
+            var diamsq = diam * diam;
 
-            for (int x = 0; x < radius; x++)
+            for (var x = 0; x < radius; x++)
             {
-                for (int y = 0; y < radius; y++)
+                for (var y = 0; y < radius; y++)
                 {
-                    int index = x * radius + y;
-                    Vector2 pos = new Vector2(x - diam, y - diam);
+                    var index = x * radius + y;
+                    var pos = new Vector2(x - diam, y - diam);
                     if (pos.LengthSquared() <= diamsq)
                     {
                         colorData[index] = Color.White;

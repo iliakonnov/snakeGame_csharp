@@ -15,7 +15,9 @@ namespace snake_game.Snake
 
 		// Длина змеи
 		float _length;
-		// точки, задающие повороты змеи. Первый - голова
+	    public float length => _length;
+
+	    // точки, задающие повороты змеи. Первый - голова
 		Point[] _nodes;
 		// направление движения головы в градусах
 		float _headDirection;

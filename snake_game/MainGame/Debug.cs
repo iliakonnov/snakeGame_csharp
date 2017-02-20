@@ -1,76 +1,88 @@
 ﻿using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using snake_game.Snake;
 
 
 namespace snake_game.MainGame
 {
-    public class Debug
+
+    public partial class MainGame
     {
-        SpriteFont _font;
-        Texture2D _dummyTexture;
-        int _frames;
-        int _fps;
-        int _time;
-        const int Width = 300;
-        public bool IsEnabled;
-
-        public void Enable()
+        class Debug
         {
-            IsEnabled = true;
-        }
+            readonly MainGame _game;
+            SpriteFont _font;
+            Texture2D _dummyTexture;
+            Color _color;
+            int _frames;
+            int _fps;
+            int _time;
+            const int Width = 300;
+            public bool IsEnabled;
 
-        public void Disable()
-        {
-            IsEnabled = false;
-        }
-
-        public Rectangle Size(int width, int height)
-        {
-            return new Rectangle(0, 0, IsEnabled ? width - Width : width, height);
-        }
-
-        public void LoadContent(ContentManager Content, GraphicsDevice gd)
-        {
-            _font = Content.Load<SpriteFont>("DejaVu Sans Mono");
-            _dummyTexture = new Texture2D(gd, 1, 1);
-            _dummyTexture.SetData(new [] { Color.White });
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            if (IsEnabled)
+            public Debug(MainGame game, Color color)
             {
-                _time += gameTime.ElapsedGameTime.Milliseconds;
-                if (_time >= 1000)
+                _game = game;
+                _color = color;
+            }
+
+            public Rectangle Size()
+            {
+                return new Rectangle(0, 0,
+                    IsEnabled ?
+                        _game.Window.ClientBounds.Width - Width :
+                        _game.Window.ClientBounds.Width, _game.Window.ClientBounds.Height
+                );
+            }
+
+            public void LoadContent()
+            {
+                _font = _game.Content.Load<SpriteFont>("DejaVu Sans Mono");
+                _dummyTexture = new Texture2D(_game.GraphicsDevice, 1, 1);
+                _dummyTexture.SetData(new[] {Color.White});
+            }
+
+            public void Update(GameTime gameTime)
+            {
+                if (IsEnabled)
                 {
-                    _fps = _frames / (_time / 1000);
-                    _time = 0;
-                    _frames = 0;
+                    _time += gameTime.ElapsedGameTime.Milliseconds;
+                    if (_time >= 1000)
+                    {
+                        _fps = _frames / (_time / 1000);
+                        _time = 0;
+                        _frames = 0;
+                    }
                 }
             }
-        }
 
-        public void Draw(SpriteBatch sb, int width, int height,
-            Snake.Point[] snakePoints, SnakeModel snake, BagelWorld world)
-        {
-            if (IsEnabled)
+            public void Draw(Snake.Point[] snakePoints)
             {
-                _frames++;
-                sb.Draw(_dummyTexture, new Rectangle(width - Width, 0, Width, height), Color.LightGray);
+                if (IsEnabled)
+                {
+                    _frames++;
+                    _game._spriteBatch.Draw(_dummyTexture, new Rectangle(
+                        _game.Window.ClientBounds.Width - Width,
+                        0,
+                        _game.Window.ClientBounds.Width,
+                        _game.Window.ClientBounds.Height),
+                        _color
+                    );
 
-                var debugString =
-                    "    DEBUG\n" +
-                    $"Game size: ({width-Width}; {height})\n" +
-                    $"World size: ({world.Width}; {world.Height})\n" +
-                    $"FPS: {_fps}\n" +
-                    $"Snake length: {snakePoints.Length}\n" +
-                    $"Snake direction: {snake.Direction}\n" +
-                    $"Head point: ({snakePoints.Last().X}; {snakePoints.Last().Y})";
+                    var debugString =
+                        "    DEBUG\n" +
+                        $"Game size: ({Size().Width}; {Size().Height})\n" +
+                        $"World size: ({_game._world.Width}; {_game._world.Height})\n" +
+                        $"FPS: {_fps}\n" +
+                        $"Snake length: {_game._snake.length} pixel(s)\n" +
+                        $"Snake length: {snakePoints.Length} circle(s)\n" +
+                        $"Snake direction: {_game._snake.Direction}\n" +
+                        $"Head point: ({snakePoints.Last().X}; {snakePoints.Last().Y})";
 
-                sb.DrawString(_font, debugString, new Vector2(width - Width, 0), Color.Black);
+                    _game._spriteBatch.DrawString(_font, debugString, new Vector2(
+                        _game.Window.ClientBounds.Width - Width, 0
+                    ), Color.Black);
+                }
             }
         }
     }
