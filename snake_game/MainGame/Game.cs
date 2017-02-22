@@ -4,6 +4,7 @@ using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Shapes;
 using snake_game.Snake;
 using System;
 
@@ -19,6 +20,7 @@ namespace snake_game.MainGame
 		Controller _ctrl;
 		Color[] _colors;
 		Fog _fog;
+		List<Snake.Point> _intersectingCircles = new List<Snake.Point>();
 		readonly Debug _dbg;
 		readonly int SnakeCircleSize = 40;
 		readonly int SnakeCircleOffset = 5;
@@ -71,6 +73,24 @@ namespace snake_game.MainGame
 				_colors = _config.SnakeConfig.Colors;
 			}
 
+			var points = _snake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset);
+			var headCenter = points.First();
+			var head = new CircleF(
+				new Vector2(headCenter.X, headCenter.Y), _config.SnakeConfig.CircleSize
+			);
+
+			var i = 1;
+			bool intersects;
+			do
+			{
+				var current = new CircleF(
+					new Vector2(points[i].X, points[i].Y), _config.SnakeConfig.CircleSize
+				);
+				i++;
+				intersects = head.Intersects(current);
+				_intersectingCircles.Add(points[i]);
+			} while (intersects);
+
 			_dbg.LoadContent();
 			_dbg.IsEnabled = _config.GameConfig.DebugShow;
 
@@ -103,6 +123,22 @@ namespace snake_game.MainGame
 			}
 
 			_newSnake = _snake.ContinueMove(150 * gameTime.ElapsedGameTime.Milliseconds/1000);
+
+			var points = _newSnake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset);
+			var headCenter = points.First();
+			var head = new CircleF(
+				new Vector2(headCenter.X, headCenter.Y), _config.SnakeConfig.CircleSize
+			);
+			for (int i = 1; i < points.Length; i++)
+			{
+				var current = new CircleF(
+					new Vector2(points[i].X, points[i].Y), _config.SnakeConfig.CircleSize
+				);
+				if (head.Intersects(current) && !_intersectingCircles.Contains(points[i]))
+				{
+					Exit();
+				}
+			}
 			base.Update(gameTime);
 		}
 
