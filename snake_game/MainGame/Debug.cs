@@ -74,7 +74,7 @@ namespace snake_game.MainGame
                         $"Game size: ({Size().Width}; {Size().Height})\n" +
                         $"World size: ({_game._world.Width}; {_game._world.Height})\n" +
                         $"FPS: {_fps}\n" +
-                        $"Snake length: {_game._snake.length} pixel(s)\n" +
+                        $"Snake length: {_game._snake.Length} pixel(s)\n" +
                         $"Snake length: {snakePoints.Length} circle(s)\n" +
                         $"Snake direction: {_game._snake.Direction}\n" +
                         $"Head point: ({snakePoints.Last().X}; {snakePoints.Last().Y})";

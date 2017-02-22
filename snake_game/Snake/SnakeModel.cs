@@ -15,9 +15,9 @@ namespace snake_game.Snake
 
 		// Длина змеи
 		float _length;
-	    public float length => _length;
+		public float Length => _length;
 
-	    // точки, задающие повороты змеи. Первый - голова
+		// точки, задающие повороты змеи. Первый - голова
 		Point[] _nodes;
 		// направление движения головы в градусах
 		float _headDirection;
@@ -30,11 +30,22 @@ namespace snake_game.Snake
 			_headDirection = direction;
 		}
 
+		internal SnakeModel(float direction, Point[] points)
+		{
+			_nodes = points.ToArray();
+			_headDirection = direction;
+			_length = 0;
+			for (int i = 0; i < points.Length - 1; i++)
+			{
+				_length += new Segment(points[i], points[i + 1]).Length;
+			}
+		}
+
 		public IReadOnlyCollection<Point> Points => new ReadOnlyCollection<Point>(_nodes);
 
 		public float Direction { get { return _headDirection; } }
 
-		public SnakeModel ContinueMove(int s)
+		public SnakeModel ContinueMove(float s)
 		{
 			if (_nodes.Length == 0)
 				throw new Exception();
@@ -65,7 +76,10 @@ namespace snake_game.Snake
 			if (_nodes.Length > 1)
 			{
 				var head = _nodes[0];
-				nodes = new[] { head }.Concat(_nodes).ToArray();
+				if (head.Equals(_nodes[1]))
+					nodes = _nodes;
+				else
+					nodes = new[] { head }.Concat(_nodes).ToArray();
 			}
 
 			var dir = ((int)(_headDirection + alpha)) % 360;
@@ -84,13 +98,13 @@ namespace snake_game.Snake
 			return Turn(degrees - Direction);
 		}
 
-		public SnakeModel Increase(int s)
+		public SnakeModel Increase(float s)
 		{
 			Debug.WriteLine($"Snake increase length {s}");
 			return SetLength(_length + s, _nodes, _headDirection);
 		}
 
-		public SnakeModel Decrease(int s)
+		public SnakeModel Decrease(float s)
 		{
 			Debug.WriteLine($"Snake decrease length {s}");
 			if (_length < s) throw new ArgumentException();
@@ -112,55 +126,17 @@ namespace snake_game.Snake
 			var skip = 0f;
 			for (var i = 0; i < _nodes.Length - 1; i++)
 			{
-				var pts = AsSetOfPoints(_nodes[i], _nodes[i + 1], pointDistance, ref skip);
-				result.AddRange(pts);
+				Tuple<Point[], float> tuple = new Segment(_nodes[i], _nodes[i + 1])
+					.AsSetOfPoints(pointDistance, skip);
+
+				result.AddRange(tuple.Item1);
+				skip = tuple.Item2;
 			}
 
 			return result.ToArray();
 		}
 
-		public static Point[] AsSetOfPoints(Point start, Point finish, float distance, ref float skip)
-		{
-			var seg = new Segment(start, finish);
-			var len = seg.Length;
-			if (Math.Abs(skip) < EPS)
-			{
-				skip = distance;
-			}
-			if (len <= skip)
-			{
-				skip -= len;
-				return new Point[0];
-			}
-			var p = distance / len;
-			var kx = (finish.X - start.X) * p;
-			var ky = (finish.Y - start.Y) * p;
-
-			var x = start.X;
-			var y = start.Y;
-
-			var count = (int)((len - skip) / distance);
-			if (Math.Abs(skip + count * distance + distance - len) < EPS)
-			{
-				count += 1;
-				skip = 0;
-			}
-			else
-			{
-				skip = len - (skip + count * distance);
-			}
-			var result = new List<Point>(count);
-			for (int i = 0; i < count; i++)
-			{
-				x += kx;
-				y += ky;
-				result.Add(new Point(x, y));
-			}
-
-			return result.ToArray();
-		}
-
-		static SnakeModel SetLength(float length, Point[] nodes, float headDirection)
+		internal static SnakeModel SetLength(float length, Point[] nodes, float headDirection)
 		{
 			if (nodes.Length == 0) throw new Exception();
 

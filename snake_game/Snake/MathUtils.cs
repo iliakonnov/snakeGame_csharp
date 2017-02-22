@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace snake_game.Snake
@@ -8,7 +9,7 @@ namespace snake_game.Snake
 	/// </summary>
 	public class Point
 	{
-		const float EPSILON = 1e-16f;
+		const float EPSILON = 1e-6f;
 		public Point(float x, float y)
 		{
 			_x = x;
@@ -17,7 +18,7 @@ namespace snake_game.Snake
 
 		public static Point FromPolar(float alpha, float r)
 		{
-		    alpha = (float)(alpha / 180 * Math.PI);
+			alpha = (float)(alpha / 180 * Math.PI);
 			return new Point(r * (float)Math.Cos(alpha), r * (float)Math.Sin(alpha));
 		}
 
@@ -62,7 +63,7 @@ namespace snake_game.Snake
 	public class Line
 	{
 		// на таком отличии 1.GetHashCode() не замечает разницы 
-		const float EPSILON = 1e-16f;
+		const float EPSILON = 1e-6f;
 		/// <summary>
 		/// Прямая ax + by + c = 0
 		/// </summary>
@@ -150,6 +151,7 @@ namespace snake_game.Snake
 	/// </summary>
 	public class Segment
 	{
+		const float EPSILON = 1e-6f;
 		public Segment(Point a, Point b)
 		{
 			B = b;
@@ -176,6 +178,49 @@ namespace snake_game.Snake
 				A.X + p * (B.X - A.X),
 				A.Y + p * (B.Y - A.Y)
 				);
+		}
+
+		// TODO: Обновить для C#7
+		public Tuple<Point[], float> AsSetOfPoints(float distance, float skip)
+		{
+			const float EPSILON = 1e-3f;
+			var len = Length;
+			if (Math.Abs(skip) < EPSILON)
+			{
+				skip = distance;
+			}
+			if (len <= skip)
+			{
+				return Tuple.Create(new Point[0], skip - len);
+			}
+
+			var x = A.X + (B.X - A.X) * skip / len;
+			var y = A.Y + (B.Y - A.Y) * skip / len;
+
+			var count = (int)((len - skip) / distance);
+			if (Math.Abs(skip + count * distance + distance - len) < EPSILON)
+			{
+				count += 1;
+				skip = 0;
+			}
+			else
+			{
+				skip = distance - (len - (skip + count * distance));
+			}
+			var result = new List<Point>(count);
+
+			var p = distance / len;
+			var kx = (B.X - A.X) * p;
+			var ky = (B.Y - A.Y) * p;
+
+			for (int i = 0; i <= count; i++)
+			{
+				result.Add(new Point(x, y));
+				x += kx;
+				y += ky;
+			}
+
+			return Tuple.Create(result.ToArray(), skip);
 		}
 
 		public override bool Equals(object obj)
