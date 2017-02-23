@@ -12,6 +12,7 @@ namespace snake_game.MainGame
 			public int CircleSize = 40;  // Radius
 			public int CircleOffset = 5;
 			public int InitLen = 30;
+			public Color? HeadColor = null;
 			public Color[] Colors = null;
 		}
 

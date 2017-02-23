@@ -52,12 +52,13 @@ namespace snake_game.MainGame
 				var properties = typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static);
 
 				var colors = new List<Color>();
+				if (_config.SnakeConfig.HeadColor != null) colors.Add((Color)_config.SnakeConfig.HeadColor);
 				foreach (var propertyInfo in properties)
 				{
 					if (propertyInfo.GetGetMethod() != null && propertyInfo.PropertyType == typeof(Color))
 					{
 						var col = (Color)propertyInfo.GetValue(null, null);
-						if (col != _config.GameConfig.BackgroundColor && col.A == 255)
+						if (col != _config.GameConfig.BackgroundColor && col != _config.SnakeConfig.HeadColor && col.A == 255)
 						{
 							colors.Add(col);
 						}

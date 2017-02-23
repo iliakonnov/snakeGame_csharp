@@ -117,19 +117,22 @@ namespace snake_game.Snake
 
 		public Point[] GetSnakeAsPoints(float pointDistance)
 		{
-			var result = new List<Point>((int)(_length / pointDistance));
-			result.Add(_nodes[0]);
+			var result = new Point[(int)(_length / pointDistance)];
+			var n = 0;
+			result[n++] = (_nodes[0]);
 			var skip = 0f;
 			for (var i = 0; i < _nodes.Length - 1; i++)
 			{
 				Tuple<Point[], float> tuple = new Segment(_nodes[i], _nodes[i + 1])
 					.AsSetOfPoints(pointDistance, skip);
-
-				result.AddRange(tuple.Item1);
+				foreach (var item in tuple.Item1)
+				{
+					if (n < result.Length) result[n++] = item;
+				}
 				skip = tuple.Item2;
 			}
 
-			return result.ToArray();
+			return result;
 		}
 
 		internal static SnakeModel SetLength(float length, Point[] nodes, float headDirection)
