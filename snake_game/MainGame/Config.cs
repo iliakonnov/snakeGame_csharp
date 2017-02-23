@@ -20,6 +20,7 @@ namespace snake_game.MainGame
 		{
 			public bool IsMouseVisible = true;
 			public bool IsFullScreen;
+			public bool IsFullScreen = false;
 			public int ScreenWidth = 800;
 			public int ScreenHeight = 600;
 		}
@@ -27,6 +28,7 @@ namespace snake_game.MainGame
 		public class GameConfigClass
 		{
 			public bool DebugShow;
+			public bool DebugShow = false;
 			public Color DebugColor = Color.LightGray;
 			public bool FogEnabled = true;
 			public Tuple<Color,Color> FogColor = new Tuple<Color, Color>(Color.DarkSlateBlue, Color.Transparent);
