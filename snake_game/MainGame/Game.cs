@@ -20,11 +20,8 @@ namespace snake_game.MainGame
 		Controller _ctrl;
 		Color[] _colors;
 		Fog _fog;
-		List<Snake.Point> _intersectingCircles = new List<Snake.Point>();
+		int _intersectStart;
 		readonly Debug _dbg;
-		readonly int SnakeCircleSize = 40;
-		readonly int SnakeCircleOffset = 5;
-		readonly int SnakeInitLen = 30;
 		readonly Config _config;
 
 		public MainGame(Config config)
@@ -35,10 +32,6 @@ namespace snake_game.MainGame
 			_graphics.IsFullScreen = config.ScreenConfig.IsFullScreen;
 			_graphics.PreferredBackBufferHeight = config.ScreenConfig.ScreenHeight;
 			_graphics.PreferredBackBufferWidth = config.ScreenConfig.ScreenWidth;
-
-			SnakeCircleOffset = config.SnakeConfig.CircleOffset;
-			SnakeCircleSize = config.SnakeConfig.CircleSize;
-			SnakeInitLen = config.SnakeConfig.InitLen;
 
 			_config = config;
 
@@ -51,7 +44,7 @@ namespace snake_game.MainGame
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 			_fog = new Fog(GraphicsDevice, _config.GameConfig.FogColor.Item1, _config.GameConfig.FogColor.Item2);
-			_snake = new SnakeModel(new Snake.Point(400, 150), 0).Increase(SnakeInitLen*SnakeCircleOffset);
+			_snake = new SnakeModel(new Snake.Point(400, 150), 0).Increase(_config.SnakeConfig.InitLen * _config.SnakeConfig.CircleOffset);
 			_ctrl = new Controller(30);
 
 			if (_config.SnakeConfig.Colors == null)
@@ -63,7 +56,11 @@ namespace snake_game.MainGame
 				{
 					if (propertyInfo.GetGetMethod() != null && propertyInfo.PropertyType == typeof(Color))
 					{
-						colors.Add((Color) propertyInfo.GetValue(null, null));
+						var col = (Color)propertyInfo.GetValue(null, null);
+						if (col != _config.GameConfig.BackgroundColor && col.A == 255)
+						{
+							colors.Add(col);
+						}
 					}
 				}
 				_colors = colors.ToArray();
@@ -88,8 +85,8 @@ namespace snake_game.MainGame
 				);
 				i++;
 				intersects = head.Intersects(current);
-				_intersectingCircles.Add(points[i]);
 			} while (intersects);
+			_intersectStart = i;
 
 			_dbg.LoadContent();
 			_dbg.IsEnabled = _config.GameConfig.DebugShow;
@@ -122,19 +119,21 @@ namespace snake_game.MainGame
 				}
 			}
 
-			_newSnake = _snake.ContinueMove(150 * gameTime.ElapsedGameTime.Milliseconds/1000);
+			_newSnake = _snake.ContinueMove(_config.SnakeConfig.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
 
 			var points = _newSnake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset);
 			var headCenter = points.First();
+
+			var halfSize = _config.SnakeConfig.CircleSize / 2;
 			var head = new CircleF(
-				new Vector2(headCenter.X, headCenter.Y), _config.SnakeConfig.CircleSize
+				new Vector2(headCenter.X, headCenter.Y), halfSize
 			);
-			for (int i = 1; i < points.Length; i++)
+			for (int i = _intersectStart; i < points.Length; i++)
 			{
 				var current = new CircleF(
-					new Vector2(points[i].X, points[i].Y), _config.SnakeConfig.CircleSize
+					new Vector2(points[i].X, points[i].Y), halfSize
 				);
-				if (head.Intersects(current) && !_intersectingCircles.Contains(points[i]))
+				if (head.Intersects(current))
 				{
 					Exit();
 				}
@@ -144,10 +143,11 @@ namespace snake_game.MainGame
 
 		protected override void Draw(GameTime gameTime)
 		{
-			var circle = CreateCircleTexture(SnakeCircleSize);
+			var halfSize = _config.SnakeConfig.CircleSize / 2;
+			var circle = CreateCircleTexture(_config.SnakeConfig.CircleSize);
 			var newSize = _dbg.Size();
-			_world = new BagelWorld(newSize.Height - SnakeCircleSize, newSize.Width - SnakeCircleSize);
-			var snakePoints = _newSnake.GetSnakeAsPoints(SnakeCircleOffset).Select(x =>  _world.Normalize(x)).ToArray();
+			_world = new BagelWorld(newSize.Height, newSize.Width);
+			var snakePoints = _newSnake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset).Select(x => _world.Normalize(x)).ToArray();
 
 			_graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 			_spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
@@ -157,13 +157,16 @@ namespace snake_game.MainGame
 			{
 				_spriteBatch.Draw(
 					circle,
-					new Vector2(snakePoints[i].X, snakePoints[i].Y),
+					new Vector2(
+						snakePoints[i].X - halfSize,
+						snakePoints[i].Y - halfSize
+					),
 					_colors[i % _colors.Length]
 				);
 			}
 			_snake = _newSnake;
 
-			if (_config.GameConfig.FogEnabled) _fog.CreateFog(_spriteBatch, newSize, (int)Math.Round(SnakeCircleSize*_config.GameConfig.FogSizeMultiplier));
+			if (_config.GameConfig.FogEnabled) _fog.CreateFog(_spriteBatch, newSize, (int)Math.Round(_config.SnakeConfig.CircleSize * _config.GameConfig.FogSizeMultiplier));
 
 			_spriteBatch.End();
 			base.Draw(gameTime);
@@ -171,7 +174,7 @@ namespace snake_game.MainGame
 		Texture2D CreateCircleTexture(int radius)
 		{
 			var texture = new Texture2D(GraphicsDevice, radius, radius);
-			var colorData = new Color[radius*radius];
+			var colorData = new Color[radius * radius];
 
 			var diam = radius / 2f;
 			var diamsq = diam * diam;

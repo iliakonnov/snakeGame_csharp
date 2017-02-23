@@ -8,7 +8,8 @@ namespace snake_game.MainGame
 	{
 		public class SnakeConfigClass
 		{
-			public int CircleSize = 40;
+			public int Speed = 150;  // Pixels per second
+			public int CircleSize = 40;  // Radius
 			public int CircleOffset = 5;
 			public int InitLen = 30;
 			public Color[] Colors = null;
@@ -29,6 +30,7 @@ namespace snake_game.MainGame
 			public bool FogEnabled = true;
 			public Tuple<Color,Color> FogColor = new Tuple<Color, Color>(Color.DarkSlateBlue, Color.Transparent);
 			public double FogSizeMultiplier = 1.5;
+			public Color BackgroundColor = Color.CornflowerBlue;
 		}
 
 		public class BonusConfigClass
