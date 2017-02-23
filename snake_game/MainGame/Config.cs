@@ -19,7 +19,6 @@ namespace snake_game.MainGame
 		public class ScreenConfigClass
 		{
 			public bool IsMouseVisible = true;
-			public bool IsFullScreen;
 			public bool IsFullScreen = false;
 			public int ScreenWidth = 800;
 			public int ScreenHeight = 600;
@@ -27,7 +26,6 @@ namespace snake_game.MainGame
 
 		public class GameConfigClass
 		{
-			public bool DebugShow;
 			public bool DebugShow = false;
 			public Color DebugColor = Color.LightGray;
 			public bool FogEnabled = true;
@@ -38,7 +36,18 @@ namespace snake_game.MainGame
 
 		public class BonusConfigClass
 		{
-			public bool BonusEnable = true;
+			public class BonusSettingsClass
+			{
+				public bool EnableBonuses = true;
+				public string[] BonusesEnabled = null;
+			}
+			public class BrickConfigClass
+			{
+				public Color BrickColor = Color.OrangeRed;
+				public int size = 80;
+			}
+			public BonusSettingsClass BonusSettings = new BonusSettingsClass();
+			public BrickConfigClass BrickConfig = new BrickConfigClass();
 		}
 		public SnakeConfigClass SnakeConfig = new SnakeConfigClass();
 		public ScreenConfigClass ScreenConfig = new ScreenConfigClass();

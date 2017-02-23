@@ -61,6 +61,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bonuses\Brick.cs" />
+    <Compile Include="Bonuses\BonusBase.cs" />
+    <Compile Include="Bonuses\BonusFactory.cs" />
+    <Compile Include="MainGame\BonusManager.cs" />
     <Compile Include="MainGame\Config.cs" />
     <Compile Include="MainGame\Control.cs" />
     <Compile Include="MainGame\Debug.cs" />
@@ -72,5 +76,6 @@
     <Compile Include="Snake\MathUtils.cs" />
     <Compile Include="Snake\SnakeModel.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
