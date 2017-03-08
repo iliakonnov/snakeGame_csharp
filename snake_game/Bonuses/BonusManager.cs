@@ -20,9 +20,11 @@ namespace snake_game.Bonuses
                 _config = config;
                 _rnd = new Random();
                 var bonuses = new List<IBonusManager>();
-                var bonusesEnabled = config.BonusSettings.BonusesEnabled.Length == 0
-                    ? new[] {"brick"}
-                    : config.BonusSettings.BonusesEnabled;
+                var bonusesEnabled =
+                    config.BonusSettings.BonusesEnabled == null ||
+                    config.BonusSettings.BonusesEnabled.Length == 0
+                        ? new[] {"brick"}
+                        : config.BonusSettings.BonusesEnabled;
                 foreach (var bonus in bonusesEnabled)
                 {
                     switch (bonus)
@@ -34,6 +36,7 @@ namespace snake_game.Bonuses
                             throw new ArgumentException($"Unknown bonus: {bonus}");
                     }
                 }
+                _bonuses = bonuses.ToArray();
             }
             else
             {

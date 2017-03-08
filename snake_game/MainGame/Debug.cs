@@ -28,11 +28,11 @@ namespace snake_game.MainGame
 
 			public Rectangle Size()
 			{
-				return new Rectangle(0, 0,
-					IsEnabled ?
-						_game.Window.ClientBounds.Width - Width :
-						_game.Window.ClientBounds.Width, _game.Window.ClientBounds.Height
-				);
+			    return new Rectangle(0, 0,
+			        IsEnabled
+			            ? _game.Window.ClientBounds.Width - Width
+			            : _game.Window.ClientBounds.Width, _game.Window.ClientBounds.Height
+			    );
 			}
 
 			public void LoadContent()
@@ -74,6 +74,8 @@ namespace snake_game.MainGame
 						$"Game Size: ({Size().Width}; {Size().Height})\n" +
 						$"World Size: ({_game._world.Width}; {_game._world.Height})\n" +
 						$"FPS: {_fps}\n" +
+						$"Game time: {_game._gameTime}\n"+
+						$"Damage timout: {_game._gameTime - _game._dieTime}\n"+
 						$"Snake length: {_game._snake.Length} pixel(s)\n" +
 						$"Snake length: {snakePoints.Length} circle(s)\n" +
 						$"Snake direction: {_game._snake.Direction}\n" +

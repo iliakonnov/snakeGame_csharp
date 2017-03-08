@@ -22,6 +22,7 @@ namespace snake_game.Bonuses
 
 	    public BrickManager(Config.BonusConfigClass.BrickConfigClass cfg, Random rnd, MainGame.MainGame game)
 	    {
+	        _bricks = new List<BrickBonus>();
 	        _config = cfg;
 	        _random = rnd;
 	        _game = game;
@@ -29,7 +30,8 @@ namespace snake_game.Bonuses
 
 	    public void LoadContent(GraphicsDevice graphicsDevice)
 	    {
-	        _texture = new Texture2D(graphicsDevice, 1, 1);
+	        _texture = new Texture2D(graphicsDevice, 1, 1, false, SurfaceFormat.Color);
+	        _texture.SetData(new[] { Color.White });
 	    }
 
 	    public void Update(GameTime gameTime, IBonusManager[] bonuses, CircleF snakeHead, Rectangle size)
@@ -41,12 +43,16 @@ namespace snake_game.Bonuses
 	            foreach (var brick in _bricks)
 	            {
 	                brick.Move(
-	                    _random.NextDouble() >= _config.MoveChance
+	                    _random.NextDouble() <= _config.MoveChance
 	                        ? new Vector2()
-	                        : new Vector2((float) _random.NextDouble(), (float) _random.NextDouble())
+	                        : new Vector2(
+	                            (float) (_config.Step / 2 - _random.NextDouble() * _config.Step),
+	                            (float) (_config.Step / 2 - _random.NextDouble() * _config.Step)
+	                        ),
+	                    new BagelWorld(size.Height, size.Width)
 	                );
 	            }
-	            if (_random.NextDouble() >= _config.NewChance)
+	            if (_random.NextDouble() <= _config.NewChance)
 	            {
 	                _bricks.Add(new BrickBonus(new Vector2(
 	                    _random.Next(size.Width), _random.Next(size.Height)
@@ -84,16 +90,15 @@ namespace snake_game.Bonuses
         public Rectangle GetRectangle(int size)
         {
             return new Rectangle(
-                (int) position.X,
-                (int) position.Y,
-                (int) (position.X + size),
-                (int) (position.Y + size)
+                (int) position.X, (int) position.Y, size, size
             );
         }
 
-        public void Move(Vector2 move)
+        public void Move(Vector2 move, BagelWorld world)
         {
             position += move;
+            var newPos = world.Normalize(new Snake.Point(position.X, position.Y));
+            position = new Vector2(newPos.X, newPos.Y);
         }
     }
 }

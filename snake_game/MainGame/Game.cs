@@ -22,6 +22,8 @@ namespace snake_game.MainGame
 		Color[] _colors;
 		Fog _fog;
 	    BonusManager _bonusManager;
+	    int _dieTime;
+	    int _gameTime = 0;
 	    int _lives;
 		int _intersectStart;
 		readonly Debug _dbg;
@@ -38,6 +40,7 @@ namespace snake_game.MainGame
 
 			_config = config;
 		    _lives = _config.GameConfig.Lives;
+		    _dieTime = _config.GameConfig.DamageTimeout;
 
 			Content.RootDirectory = "Content";
 
@@ -94,6 +97,7 @@ namespace snake_game.MainGame
 			_intersectStart = i;
 
 		    _bonusManager = new BonusManager(_config.BonusConfig, this);
+		    _bonusManager.LoadContent(GraphicsDevice);
 
 			_dbg.LoadContent();
 			_dbg.IsEnabled = _config.GameConfig.DebugShow;
@@ -103,6 +107,7 @@ namespace snake_game.MainGame
 
 		protected override void Update(GameTime gameTime)
 		{
+		    _gameTime += gameTime.ElapsedGameTime.Milliseconds;
 			_dbg.Update(gameTime);
 			var control = _ctrl.Control(Keyboard.GetState());
 
@@ -140,6 +145,7 @@ namespace snake_game.MainGame
 					Die(1);
 				}
 			}
+		    _bonusManager.Update(gameTime, head, _dbg.Size());
 			base.Update(gameTime);
 		}
 
@@ -167,6 +173,7 @@ namespace snake_game.MainGame
 				);
 			}
 			_snake = _newSnake;
+		    _bonusManager.Draw(_spriteBatch);
 
 			if (_config.GameConfig.FogEnabled) _fog.CreateFog(_spriteBatch, newSize, (int)Math.Round(_config.SnakeConfig.CircleSize * _config.GameConfig.FogSizeMultiplier));
 
@@ -204,13 +211,17 @@ namespace snake_game.MainGame
 
 	    public void Die(int damage)
 	    {
-	        System.Threading.Thread.Sleep(1000);
-
-	        _lives -= damage;
-	        if (_lives <= 0)
+	        if (_gameTime - _dieTime > _config.GameConfig.DamageTimeout)
 	        {
-	            System.Threading.Thread.Sleep(1000);
-	            Exit();
+	            _lives -= damage;
+	            if (_lives <= 0)
+	            {
+	                Exit();
+	            }
+	            else
+	            {
+	                _dieTime = _gameTime;
+	            }
 	        }
 	    }
 	}
