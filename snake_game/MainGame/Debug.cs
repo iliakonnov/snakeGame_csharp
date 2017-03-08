@@ -11,7 +11,6 @@ namespace snake_game.MainGame
 		class Debug
 		{
 			readonly MainGame _game;
-			SpriteFont _font;
 			Texture2D _dummyTexture;
 			Color _color;
 			int _frames;
@@ -37,7 +36,6 @@ namespace snake_game.MainGame
 
 			public void LoadContent()
 			{
-				_font = _game.Content.Load<SpriteFont>("DejaVu Sans Mono");
 				_dummyTexture = new Texture2D(_game.GraphicsDevice, 1, 1);
 				_dummyTexture.SetData(new[] { Color.White });
 			}
@@ -81,7 +79,7 @@ namespace snake_game.MainGame
 						$"Snake direction: {_game._snake.Direction}\n" +
 						$"Head point: ({snakePoints.First().X}; {snakePoints.First().Y})";
 
-					_game._spriteBatch.DrawString(_font, debugString, new Vector2(
+					_game._spriteBatch.DrawString(_game._font, debugString, new Vector2(
 						_game.Window.ClientBounds.Width - Width, 0
 					), Color.Black);
 				}

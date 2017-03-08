@@ -12,6 +12,7 @@ namespace snake_game.MainGame
 			public int CircleSize = 40;  // Radius
 			public int CircleOffset = 5;
 			public int InitLen = 30;
+		    public Color DamageColor = Color.WhiteSmoke;
 			public Color? HeadColor = null;
 			public Color[] Colors = null;
 		}
@@ -28,6 +29,8 @@ namespace snake_game.MainGame
 		{
 		    public int Lives = 3;
 		    public int DamageTimeout = 1500;
+		    public int FoodToLive = 10;
+		    public Color TextColor = Color.Black;
 			public bool DebugShow = false;
 			public Color DebugColor = Color.LightGray;
 			public bool FogEnabled = true;

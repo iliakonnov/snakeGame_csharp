@@ -17,10 +17,11 @@ namespace snake_game.Bonuses
         readonly List<AppleBonus> _apples = new List<AppleBonus>();
         MainGame.MainGame _game;
 
-        public AppleManager(Config.BonusConfigClass.AppleConfigClass cfg, Random rnd)
+        public AppleManager(Config.BonusConfigClass.AppleConfigClass cfg, Random rnd, MainGame.MainGame game)
         {
             _config = cfg;
             _random = rnd;
+            _game = game;
         }
 
         public void LoadContent(GraphicsDevice graphicsDevice)
@@ -48,6 +49,7 @@ namespace snake_game.Bonuses
                 apple.Move(gameTime.ElapsedGameTime.TotalSeconds, _config.Speed, size, _config.Radius);
                 if (apple.GetCircle(_config.Radius).Intersects(snakeHead))
                 {
+                    _game.Eat(1);
                     remove.Add(i);
                 }
             }

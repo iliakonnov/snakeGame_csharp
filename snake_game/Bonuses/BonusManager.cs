@@ -32,7 +32,7 @@ namespace snake_game.Bonuses
                             bonuses.Add(new BrickManager(_config.BrickConfig, _rnd, game));
                             break;
                         case "apple":
-                            bonuses.Add(new AppleManager(_config.AppleConfig, _rnd));
+                            bonuses.Add(new AppleManager(_config.AppleConfig, _rnd, game));
                             break;
                         default:
                             throw new ArgumentException($"Unknown bonus: {bonus}");
