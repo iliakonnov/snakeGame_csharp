@@ -7,12 +7,14 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Shapes;
 using snake_game.Snake;
 using System;
+using snake_game.Bonuses;
 
 namespace snake_game.MainGame
 {
 	public partial class MainGame : Game
 	{
 		GraphicsDeviceManager _graphics;
+	    SpriteFont _font;
 		SpriteBatch _spriteBatch;
 		SnakeModel _snake;
 		SnakeModel _newSnake;
@@ -20,6 +22,11 @@ namespace snake_game.MainGame
 		Controller _ctrl;
 		Color[] _colors;
 		Fog _fog;
+	    BonusManager _bonusManager;
+	    int _score;
+	    int _dieTime;
+	    int _gameTime;
+	    int _lives;
 		int _intersectStart;
 		readonly Debug _dbg;
 		readonly Config _config;
@@ -34,6 +41,8 @@ namespace snake_game.MainGame
 			_graphics.PreferredBackBufferWidth = config.ScreenConfig.ScreenWidth;
 
 			_config = config;
+		    _lives = _config.GameConfig.Lives;
+		    _dieTime = -_config.GameConfig.DamageTimeout;
 
 			Content.RootDirectory = "Content";
 
@@ -46,6 +55,7 @@ namespace snake_game.MainGame
 			_fog = new Fog(GraphicsDevice, _config.GameConfig.FogColor.Item1, _config.GameConfig.FogColor.Item2);
 			_snake = new SnakeModel(new Snake.Point(400, 150), 0).Increase(_config.SnakeConfig.InitLen * _config.SnakeConfig.CircleOffset);
 			_ctrl = new Controller(30);
+		    _font = Content.Load<SpriteFont>("DejaVu Sans Mono");
 
 			if (_config.SnakeConfig.Colors == null)
 			{
@@ -89,6 +99,9 @@ namespace snake_game.MainGame
 			} while (intersects);
 			_intersectStart = i;
 
+		    _bonusManager = new BonusManager(_config.BonusConfig, this);
+		    _bonusManager.LoadContent(GraphicsDevice);
+
 			_dbg.LoadContent();
 			_dbg.IsEnabled = _config.GameConfig.DebugShow;
 
@@ -97,6 +110,7 @@ namespace snake_game.MainGame
 
 		protected override void Update(GameTime gameTime)
 		{
+		    _gameTime += gameTime.ElapsedGameTime.Milliseconds;
 			_dbg.Update(gameTime);
 			var control = _ctrl.Control(Keyboard.GetState());
 
@@ -110,19 +124,14 @@ namespace snake_game.MainGame
 			}
 			if (control.Turn.ToTurn)
 			{
-				if (control.Turn.ReplaceTurn)
-				{
-					_snake = _snake.TurnAt(control.Turn.TurnDegrees);
-				}
-				else
-				{
-					_snake = _snake.Turn(control.Turn.TurnDegrees);
-				}
+			    _snake = control.Turn.ReplaceTurn
+			        ? _snake.TurnAt(control.Turn.TurnDegrees)
+			        : _snake.Turn(control.Turn.TurnDegrees);
 			}
 
 			_newSnake = _snake.ContinueMove(_config.SnakeConfig.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
 
-			var points = _newSnake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset);
+		    var points = _newSnake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset);
 			var headCenter = points.First();
 
 			var halfSize = _config.SnakeConfig.CircleSize / 2;
@@ -136,9 +145,17 @@ namespace snake_game.MainGame
 				);
 				if (head.Intersects(current))
 				{
-					Exit();
+					Die(1);
 				}
 			}
+
+		    var newSize = _dbg.Size();
+		    headCenter = new BagelWorld(newSize.Height, newSize.Width).Normalize(headCenter);
+		    head = new CircleF(
+		        new Vector2(headCenter.X, headCenter.Y), halfSize
+		    );
+		    _bonusManager.Update(gameTime, head, _dbg.Size());
+
 			base.Update(gameTime);
 		}
 
@@ -149,10 +166,19 @@ namespace snake_game.MainGame
 			var newSize = _dbg.Size();
 			_world = new BagelWorld(newSize.Height, newSize.Width);
 			var snakePoints = _newSnake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset).Select(x => _world.Normalize(x)).ToArray();
+		    var fogDistance = _config.SnakeConfig.CircleSize * _config.GameConfig.FogSizeMultiplier;
 
 			_graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 			_spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 			_dbg.Draw(snakePoints);
+
+		    _spriteBatch.DrawString(
+		        _font, $"Score: {_score}\nLives: {_lives}",
+		        new Vector2(
+		            (int)Math.Ceiling(fogDistance),
+		            (int)Math.Ceiling(fogDistance)
+		        ), _config.GameConfig.TextColor
+		    );
 
 			for (var i = 0; i < snakePoints.Length; i++)
 			{
@@ -162,12 +188,15 @@ namespace snake_game.MainGame
 						snakePoints[i].X - halfSize,
 						snakePoints[i].Y - halfSize
 					),
-					_colors[i % _colors.Length]
+					_gameTime - _dieTime > _config.GameConfig.DamageTimeout
+					    ? _colors[i % _colors.Length]
+			            : _config.SnakeConfig.DamageColor
 				);
 			}
 			_snake = _newSnake;
+		    _bonusManager.Draw(_spriteBatch);
 
-			if (_config.GameConfig.FogEnabled) _fog.CreateFog(_spriteBatch, newSize, (int)Math.Round(_config.SnakeConfig.CircleSize * _config.GameConfig.FogSizeMultiplier));
+			if (_config.GameConfig.FogEnabled) _fog.CreateFog(_spriteBatch, newSize, (int)Math.Round(fogDistance));
 
 			_spriteBatch.End();
 			base.Draw(gameTime);
@@ -201,5 +230,29 @@ namespace snake_game.MainGame
 			return texture;
 		}
 
+	    public void Die(int damage)
+	    {
+	        if (_gameTime - _dieTime > _config.GameConfig.DamageTimeout)
+	        {
+	            _lives -= damage;
+	            if (_lives <= 0)
+	            {
+	                Exit();
+	            }
+	            else
+	            {
+	                _dieTime = _gameTime;
+	            }
+	        }
+	    }
+
+	    public void Eat(int food)
+	    {
+	        _score += food;
+	        if (_score % _config.GameConfig.FoodToLive == 0)
+	        {
+	            _lives += 1;
+	        }
+	    }
 	}
 }

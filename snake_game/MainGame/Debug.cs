@@ -11,7 +11,6 @@ namespace snake_game.MainGame
 		class Debug
 		{
 			readonly MainGame _game;
-			SpriteFont _font;
 			Texture2D _dummyTexture;
 			Color _color;
 			int _frames;
@@ -28,16 +27,15 @@ namespace snake_game.MainGame
 
 			public Rectangle Size()
 			{
-				return new Rectangle(0, 0,
-					IsEnabled ?
-						_game.Window.ClientBounds.Width - Width :
-						_game.Window.ClientBounds.Width, _game.Window.ClientBounds.Height
-				);
+			    return new Rectangle(0, 0,
+			        IsEnabled
+			            ? _game.Window.ClientBounds.Width - Width
+			            : _game.Window.ClientBounds.Width, _game.Window.ClientBounds.Height
+			    );
 			}
 
 			public void LoadContent()
 			{
-				_font = _game.Content.Load<SpriteFont>("DejaVu Sans Mono");
 				_dummyTexture = new Texture2D(_game.GraphicsDevice, 1, 1);
 				_dummyTexture.SetData(new[] { Color.White });
 			}
@@ -71,15 +69,17 @@ namespace snake_game.MainGame
 
 					var debugString =
 						"    DEBUG\n" +
-						$"Game size: ({Size().Width}; {Size().Height})\n" +
-						$"World size: ({_game._world.Width}; {_game._world.Height})\n" +
+						$"Game Size: ({Size().Width}; {Size().Height})\n" +
+						$"World Size: ({_game._world.Width}; {_game._world.Height})\n" +
 						$"FPS: {_fps}\n" +
+						$"Game time: {_game._gameTime}\n"+
+						$"Damage timout: {_game._gameTime - _game._dieTime}\n"+
 						$"Snake length: {_game._snake.Length} pixel(s)\n" +
 						$"Snake length: {snakePoints.Length} circle(s)\n" +
 						$"Snake direction: {_game._snake.Direction}\n" +
-						$"Head point: ({snakePoints.Last().X}; {snakePoints.Last().Y})";
+						$"Head point: ({snakePoints.First().X}; {snakePoints.First().Y})";
 
-					_game._spriteBatch.DrawString(_font, debugString, new Vector2(
+					_game._spriteBatch.DrawString(_game._font, debugString, new Vector2(
 						_game.Window.ClientBounds.Width - Width, 0
 					), Color.Black);
 				}

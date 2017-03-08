@@ -12,6 +12,7 @@ namespace snake_game.MainGame
 			public int CircleSize = 40;  // Radius
 			public int CircleOffset = 5;
 			public int InitLen = 30;
+		    public Color DamageColor = Color.WhiteSmoke;
 			public Color? HeadColor = null;
 			public Color[] Colors = null;
 		}
@@ -19,7 +20,6 @@ namespace snake_game.MainGame
 		public class ScreenConfigClass
 		{
 			public bool IsMouseVisible = true;
-			public bool IsFullScreen;
 			public bool IsFullScreen = false;
 			public int ScreenWidth = 800;
 			public int ScreenHeight = 600;
@@ -27,7 +27,10 @@ namespace snake_game.MainGame
 
 		public class GameConfigClass
 		{
-			public bool DebugShow;
+		    public int Lives = 3;
+		    public int DamageTimeout = 1500;
+		    public int FoodToLive = 10;
+		    public Color TextColor = Color.Black;
 			public bool DebugShow = false;
 			public Color DebugColor = Color.LightGray;
 			public bool FogEnabled = true;
@@ -38,7 +41,32 @@ namespace snake_game.MainGame
 
 		public class BonusConfigClass
 		{
-			public bool BonusEnable = true;
+			public class BonusSettingsClass
+			{
+				public bool EnableBonuses = true;
+				public string[] BonusesEnabled = null;
+			}
+			public class BrickConfigClass
+			{
+			    public int ChanceTime = 1500;
+			    public double MoveChance = 0.25;
+			    public double NewChance = 0.1;
+			    public int Step = 50;
+				public Color BrickColor = Color.OrangeRed;
+				public int Size = 25;
+			}
+		    public class AppleConfigClass
+		    {
+		        public int AppleCount = 1;
+		        public int Thickness = 10;
+		        public int Radius = 25;
+		        public int Sides = 30;
+		        public int Speed = 100;
+		        public Color AppleColor = Color.SpringGreen;
+		    }
+			public BonusSettingsClass BonusSettings = new BonusSettingsClass();
+			public BrickConfigClass BrickConfig = new BrickConfigClass();
+		    public AppleConfigClass AppleConfig = new AppleConfigClass();
 		}
 		public SnakeConfigClass SnakeConfig = new SnakeConfigClass();
 		public ScreenConfigClass ScreenConfig = new ScreenConfigClass();

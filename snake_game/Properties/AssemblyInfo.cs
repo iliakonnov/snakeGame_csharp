@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Snake Game")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Honeywell")]
-[assembly: AssemblyProduct("snake_game.Properties")]
-[assembly: AssemblyCopyright("Copyright © Honeywell 2017")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("snake_game")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
