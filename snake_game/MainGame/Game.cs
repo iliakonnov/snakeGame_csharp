@@ -128,7 +128,7 @@ namespace snake_game.MainGame
 
 			_newSnake = _snake.ContinueMove(_config.SnakeConfig.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
 
-			var points = _newSnake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset);
+		    var points = _newSnake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset);
 			var headCenter = points.First();
 
 			var halfSize = _config.SnakeConfig.CircleSize / 2;
@@ -145,7 +145,14 @@ namespace snake_game.MainGame
 					Die(1);
 				}
 			}
+
+		    var newSize = _dbg.Size();
+		    headCenter = new BagelWorld(newSize.Height, newSize.Width).Normalize(headCenter);
+		    head = new CircleF(
+		        new Vector2(headCenter.X, headCenter.Y), halfSize
+		    );
 		    _bonusManager.Update(gameTime, head, _dbg.Size());
+
 			base.Update(gameTime);
 		}
 

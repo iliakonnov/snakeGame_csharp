@@ -16,13 +16,12 @@ namespace snake_game.Bonuses
 	    int _time;
 	    MainGame.MainGame _game;
 	    Texture2D _texture;
-	    List<BrickBonus> _bricks;
+	    List<BrickBonus> _bricks = new List<BrickBonus>();
 
 	    public string Name => "brick";
 
 	    public BrickManager(Config.BonusConfigClass.BrickConfigClass cfg, Random rnd, MainGame.MainGame game)
 	    {
-	        _bricks = new List<BrickBonus>();
 	        _config = cfg;
 	        _random = rnd;
 	        _game = game;

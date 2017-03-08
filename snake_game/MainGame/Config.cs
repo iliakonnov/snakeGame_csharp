@@ -52,8 +52,18 @@ namespace snake_game.MainGame
 				public Color BrickColor = Color.OrangeRed;
 				public int Size = 25;
 			}
+		    public class AppleConfigClass
+		    {
+		        public int AppleCount = 1;
+		        public int Thickness = 10;
+		        public int Radius = 25;
+		        public int Sides = 30;
+		        public int Speed = 100;
+		        public Color AppleColor = Color.SpringGreen;
+		    }
 			public BonusSettingsClass BonusSettings = new BonusSettingsClass();
 			public BrickConfigClass BrickConfig = new BrickConfigClass();
+		    public AppleConfigClass AppleConfig = new AppleConfigClass();
 		}
 		public SnakeConfigClass SnakeConfig = new SnakeConfigClass();
 		public ScreenConfigClass ScreenConfig = new ScreenConfigClass();

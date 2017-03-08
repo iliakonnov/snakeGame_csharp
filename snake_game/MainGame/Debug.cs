@@ -79,7 +79,7 @@ namespace snake_game.MainGame
 						$"Snake length: {_game._snake.Length} pixel(s)\n" +
 						$"Snake length: {snakePoints.Length} circle(s)\n" +
 						$"Snake direction: {_game._snake.Direction}\n" +
-						$"Head point: ({snakePoints.Last().X}; {snakePoints.Last().Y})";
+						$"Head point: ({snakePoints.First().X}; {snakePoints.First().Y})";
 
 					_game._spriteBatch.DrawString(_font, debugString, new Vector2(
 						_game.Window.ClientBounds.Width - Width, 0
