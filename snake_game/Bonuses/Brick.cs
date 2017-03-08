@@ -2,109 +2,98 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Shapes;
+using snake_game.Snake;
 
 namespace snake_game.Bonuses
 {
-	class Brick : BonusBase
+	class BrickManager : IBonusManager
 	{
-		List<BrickModel> _bricks;
-		Config.BonusConfigClass.BrickConfigClass _config;
-		Texture2D Texture;
+	    readonly Random _random;
+	    readonly Config.BonusConfigClass.BrickConfigClass _config;
+	    int _time;
+	    MainGame.MainGame _game;
+	    Texture2D _texture;
+	    List<BrickBonus> _bricks;
 
-		static Brick()
-		{
-			BonusFactory.RegisterBonus(nameof(Brick), typeof(Brick));
-		}
+	    public string Name => "brick";
 
-		public override void Draw(SpriteBatch sb)
-		{
-			foreach (var item in _bricks)
-			{
-				item.Draw(sb);
-			}
-		}
-		public override void Init(Config.BonusConfigClass config)
-		{
-			_config = config.BrickConfig;
-		}
+	    public BrickManager(Config.BonusConfigClass.BrickConfigClass cfg, Random rnd, MainGame.MainGame game)
+	    {
+	        _config = cfg;
+	        _random = rnd;
+	        _game = game;
+	    }
 
-		public override void LoadContent(GraphicsDevice gd)
-		{
-			Texture = new Texture2D(gd, _config.size, _config.size);
-		}
+	    public void LoadContent(GraphicsDevice graphicsDevice)
+	    {
+	        _texture = new Texture2D(graphicsDevice, 1, 1);
+	    }
 
-		public override void Update(GameTime time)
-		{
-			foreach (var item in _bricks)
-			{
-				item.Update(time);
-			}
-		}
+	    public void Update(GameTime gameTime, IBonusManager[] bonuses, CircleF snakeHead, Rectangle size)
+	    {
+	        _time += gameTime.ElapsedGameTime.Milliseconds;
+	        if (_time >= _config.ChanceTime)
+	        {
+	            _time = 0;
+	            foreach (var brick in _bricks)
+	            {
+	                brick.Move(
+	                    _random.NextDouble() >= _config.MoveChance
+	                        ? new Vector2()
+	                        : new Vector2((float) _random.NextDouble(), (float) _random.NextDouble())
+	                );
+	            }
+	            if (_random.NextDouble() >= _config.NewChance)
+	            {
+	                _bricks.Add(new BrickBonus(new Vector2(
+	                    _random.Next(size.Width), _random.Next(size.Height)
+	                )));
+	            }
+	        }
 
-		public override bool Collides(IShapeF shape)
-		{
-			var bound = shape.GetBoundingRectangle();
-			return Collides(bound);
-		}
-		public bool Collides(RectangleF shape)
-		{
-			foreach (var item in _bricks)
-			{
-				if (item.Collides(shape))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-		public bool Collides(CircleF shape)
-		{
-			foreach (var item in _bricks)
-			{
-				if (item.Collides(shape))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
+	        foreach (var brick in _bricks)
+	        {
+	            if (snakeHead.Intersects(brick.GetRectangle(_config.Size)))
+	            {
+                    _game.Die(1);
+	            }
+	        }
+	    }
+
+	    public void Draw(SpriteBatch sb)
+	    {
+	        foreach (var brick in _bricks)
+	        {
+	            sb.Draw(_texture, brick.GetRectangle(_config.Size), _config.BrickColor);
+	        }
+	    }
 	}
-	public class BrickModel : BonusModel
-	{
-		Vector2 _position;
-		int _size;
-		BrickModel(Brick bonus, Vector2 position, int size) : base(bonus)
-		{
-			_position = position;
-			_size = size;
-		}
-		public override void Draw(SpriteBatch sb)
-		{
-			throw new NotImplementedException();
-		}
 
-		public override void Update(GameTime time)
-		{
-			throw new NotImplementedException();
-		}
+    class BrickBonus
+    {
+        public Vector2 position;  // Left upper corner
 
-		public override bool Collides(IShapeF shape)
-		{
-			var bound = shape.GetBoundingRectangle();
-			return Collides(bound);
-		}
-		public bool Collides(RectangleF shape)
-		{
-			throw new NotImplementedException();
-		}
-		public bool Collides(CircleF shape)
-		{
-			throw new NotImplementedException();
-		}
-	}
+        public BrickBonus(Vector2 position)
+        {
+            this.position = position;
+        }
+
+        public Rectangle GetRectangle(int size)
+        {
+            return new Rectangle(
+                (int) position.X,
+                (int) position.Y,
+                (int) (position.X + size),
+                (int) (position.Y + size)
+            );
+        }
+
+        public void Move(Vector2 move)
+        {
+            position += move;
+        }
+    }
 }

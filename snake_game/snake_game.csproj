@@ -54,10 +54,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bonuses\BonusManager.cs" />
     <Compile Include="Bonuses\Brick.cs" />
-    <Compile Include="Bonuses\BonusBase.cs" />
-    <Compile Include="Bonuses\BonusFactory.cs" />
-    <Compile Include="MainGame\BonusManager.cs" />
+    <Compile Include="Bonuses\IBonusManager.cs" />
     <Compile Include="MainGame\Config.cs" />
     <Compile Include="MainGame\Control.cs" />
     <Compile Include="MainGame\Debug.cs" />

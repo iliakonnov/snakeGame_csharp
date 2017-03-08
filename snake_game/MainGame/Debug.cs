@@ -71,8 +71,8 @@ namespace snake_game.MainGame
 
 					var debugString =
 						"    DEBUG\n" +
-						$"Game size: ({Size().Width}; {Size().Height})\n" +
-						$"World size: ({_game._world.Width}; {_game._world.Height})\n" +
+						$"Game Size: ({Size().Width}; {Size().Height})\n" +
+						$"World Size: ({_game._world.Width}; {_game._world.Height})\n" +
 						$"FPS: {_fps}\n" +
 						$"Snake length: {_game._snake.Length} pixel(s)\n" +
 						$"Snake length: {snakePoints.Length} circle(s)\n" +

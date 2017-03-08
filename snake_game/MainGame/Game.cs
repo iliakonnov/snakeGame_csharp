@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Shapes;
 using snake_game.Snake;
 using System;
+using snake_game.Bonuses;
 
 namespace snake_game.MainGame
 {
@@ -20,6 +21,8 @@ namespace snake_game.MainGame
 		Controller _ctrl;
 		Color[] _colors;
 		Fog _fog;
+	    BonusManager _bonusManager;
+	    int _lives;
 		int _intersectStart;
 		readonly Debug _dbg;
 		readonly Config _config;
@@ -34,6 +37,7 @@ namespace snake_game.MainGame
 			_graphics.PreferredBackBufferWidth = config.ScreenConfig.ScreenWidth;
 
 			_config = config;
+		    _lives = _config.GameConfig.Lives;
 
 			Content.RootDirectory = "Content";
 
@@ -89,6 +93,8 @@ namespace snake_game.MainGame
 			} while (intersects);
 			_intersectStart = i;
 
+		    _bonusManager = new BonusManager(_config.BonusConfig, this);
+
 			_dbg.LoadContent();
 			_dbg.IsEnabled = _config.GameConfig.DebugShow;
 
@@ -110,14 +116,9 @@ namespace snake_game.MainGame
 			}
 			if (control.Turn.ToTurn)
 			{
-				if (control.Turn.ReplaceTurn)
-				{
-					_snake = _snake.TurnAt(control.Turn.TurnDegrees);
-				}
-				else
-				{
-					_snake = _snake.Turn(control.Turn.TurnDegrees);
-				}
+			    _snake = control.Turn.ReplaceTurn
+			        ? _snake.TurnAt(control.Turn.TurnDegrees)
+			        : _snake.Turn(control.Turn.TurnDegrees);
 			}
 
 			_newSnake = _snake.ContinueMove(_config.SnakeConfig.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
@@ -136,7 +137,7 @@ namespace snake_game.MainGame
 				);
 				if (head.Intersects(current))
 				{
-					Exit();
+					Die(1);
 				}
 			}
 			base.Update(gameTime);
@@ -201,5 +202,16 @@ namespace snake_game.MainGame
 			return texture;
 		}
 
+	    public void Die(int damage)
+	    {
+	        System.Threading.Thread.Sleep(1000);
+
+	        _lives -= damage;
+	        if (_lives <= 0)
+	        {
+	            System.Threading.Thread.Sleep(1000);
+	            Exit();
+	        }
+	    }
 	}
 }

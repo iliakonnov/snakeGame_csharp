@@ -26,6 +26,7 @@ namespace snake_game.MainGame
 
 		public class GameConfigClass
 		{
+		    public int Lives = 3;
 			public bool DebugShow = false;
 			public Color DebugColor = Color.LightGray;
 			public bool FogEnabled = true;
@@ -43,8 +44,11 @@ namespace snake_game.MainGame
 			}
 			public class BrickConfigClass
 			{
+			    public int ChanceTime = 1000;
+			    public double MoveChance = 0.1;
+			    public double NewChance = 0.2;
 				public Color BrickColor = Color.OrangeRed;
-				public int size = 80;
+				public int Size = 80;
 			}
 			public BonusSettingsClass BonusSettings = new BonusSettingsClass();
 			public BrickConfigClass BrickConfig = new BrickConfigClass();
