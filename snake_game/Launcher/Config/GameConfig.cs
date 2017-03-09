@@ -29,9 +29,9 @@ namespace snake_game.Launcher.Config
         {
             return new MainGame.Config.GameConfigClass
             {
-                Lives = (int)_lives.Value,
-                DamageTimeout = (int)_damageTimeout.Value,
-                FoodToLive = (int)_foodToLive.Value,
+                Lives = (int) _lives.Value,
+                DamageTimeout = (int) (_damageTimeout.Value * 1000),
+                FoodToLive = (int) _foodToLive.Value,
                 TextColor = ColorConverter.ToXna(_textColor.Value),
                 DebugShow = _debugEnabled.Checked ?? false,
                 DebugColor = ColorConverter.ToXna(_debugColor.Value),
@@ -45,7 +45,7 @@ namespace snake_game.Launcher.Config
         public TabPage GetPage()
         {
             _lives = new NumericUpDown {Value = _config.Lives};
-            _damageTimeout = new NumericUpDown {Value = _config.DamageTimeout};
+            _damageTimeout = new NumericUpDown {Value = _config.DamageTimeout / 1000};
             _foodToLive = new NumericUpDown {Value = _config.FoodToLive};
             _textColor = new ColorPicker {Value = ColorConverter.ToEto(_config.TextColor)};
             _bgColor = new ColorPicker {Value = ColorConverter.ToEto(_config.BackgroundColor)};

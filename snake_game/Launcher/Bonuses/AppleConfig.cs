@@ -4,6 +4,7 @@ namespace snake_game.Launcher.Bonuses
 {
     public class AppleConfig
     {
+        CheckBox _enabled;
         NumericUpDown _appleCount;
         NumericUpDown _thickness;
         NumericUpDown _radius;
@@ -12,8 +13,9 @@ namespace snake_game.Launcher.Bonuses
         ColorPicker _appleColor;
         MainGame.Config.BonusConfigClass.AppleConfigClass _config;
 
-        public AppleConfig(MainGame.Config.BonusConfigClass.AppleConfigClass config)
+        public AppleConfig(MainGame.Config.BonusConfigClass.AppleConfigClass config, bool enabled)
         {
+            _enabled = new CheckBox {Checked = enabled};
             _config = config;
         }
 
@@ -30,6 +32,11 @@ namespace snake_game.Launcher.Bonuses
             };
         }
 
+        public bool IsEnabled()
+        {
+            return _enabled.Checked ?? false;
+        }
+
         public TabPage GetPage()
         {
             _appleCount = new NumericUpDown {Value = _config.AppleCount};
@@ -42,6 +49,11 @@ namespace snake_game.Launcher.Bonuses
             {
                 Items =
                 {
+                    new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Items = { _enabled, new Label { Text = "Bonus enabled"} }
+                    },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,

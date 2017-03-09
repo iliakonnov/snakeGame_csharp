@@ -1,26 +1,34 @@
 ﻿using System;
+using System.IO;
 using Eto.Forms;
 using snake_game.Launcher.Config;
+using snake_game.MainGame;
 
 namespace snake_game.Launcher
 {
     public class LauncherForm : Form
     {
         MainGame.Config _config = new MainGame.Config();
-        public void SaveHandler(object sender, EventArgs e)
+        void SaveHandler(object sender, EventArgs e)
         {
+            File.WriteAllText("config.json", ConfigLoad.Save(_config));
         }
 
-        public void StartHandler(object sender, EventArgs e)
+        void StartHandler(object sender, EventArgs e)
         {
+            var game = new MainGame.MainGame(_config);
+            game.Run();
         }
 
-        public void ResetHandler(object sender, EventArgs e)
+        void ResetHandler(object sender, EventArgs e)
         {
+            _config = new MainGame.Config();
         }
 
         public LauncherForm()
         {
+            _config = ConfigLoad.Parse(File.ReadAllText("config.json"));
+
             var gameCfg = new GameConfig(_config.GameConfig);
             var screenCfg = new ScreenConfig(_config.ScreenConfig);
             var snakeCfg = new SnakeConfig(_config.SnakeConfig);
@@ -29,9 +37,9 @@ namespace snake_game.Launcher
             var saveButton = new Button {Text = "Save config"};
             saveButton.Click += SaveHandler;
             var startButton = new Button {Text = "Start!"};
-            saveButton.Click += StartHandler;
+            startButton.Click += StartHandler;
             var resetButton = new Button {Text = "Reset to default"};
-            saveButton.Click += ResetHandler;
+            resetButton.Click += ResetHandler;
 
             Content = new StackLayout
             {
