@@ -17,7 +17,6 @@ namespace snake_game.MainGame
 	    SpriteFont _font;
 		SpriteBatch _spriteBatch;
 		SnakeModel _snake;
-		SnakeModel _newSnake;
 		BagelWorld _world;
 		Controller _ctrl;
 		Color[] _colors;
@@ -129,9 +128,9 @@ namespace snake_game.MainGame
 			        : _snake.Turn(control.Turn.TurnDegrees);
 			}
 
-			_newSnake = _snake.ContinueMove(_config.SnakeConfig.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
+			_snake = _snake.ContinueMove(_config.SnakeConfig.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
 
-		    var points = _newSnake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset);
+		    var points = _snake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset);
 			var headCenter = points.First();
 
 			var halfSize = _config.SnakeConfig.CircleSize / 2;
@@ -165,7 +164,7 @@ namespace snake_game.MainGame
 			var circle = CreateCircleTexture(_config.SnakeConfig.CircleSize);
 			var newSize = _dbg.Size();
 			_world = new BagelWorld(newSize.Height, newSize.Width);
-			var snakePoints = _newSnake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset).Select(x => _world.Normalize(x)).ToArray();
+			var snakePoints = _snake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset).Select(x => _world.Normalize(x)).ToArray();
 		    var fogDistance = _config.SnakeConfig.CircleSize * _config.GameConfig.FogSizeMultiplier;
 
 			_graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -193,7 +192,6 @@ namespace snake_game.MainGame
 			            : _config.SnakeConfig.DamageColor
 				);
 			}
-			_snake = _newSnake;
 		    _bonusManager.Draw(_spriteBatch);
 
 			if (_config.GameConfig.FogEnabled) _fog.CreateFog(_spriteBatch, newSize, (int)Math.Round(fogDistance));
@@ -253,6 +251,7 @@ namespace snake_game.MainGame
 	        {
 	            _lives += 1;
 	        }
+	        _snake = _snake.Increase(_config.SnakeConfig.CircleOffset);
 	    }
 	}
 }
