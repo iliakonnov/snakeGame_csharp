@@ -90,5 +90,10 @@
     <Compile Include="Snake\MathUtils.cs" />
     <Compile Include="Snake\SnakeModel.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\DejaVu Sans Mono.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

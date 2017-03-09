@@ -51,7 +51,9 @@ namespace snake_game.Launcher
 
         public LauncherForm()
         {
-            _config = ConfigLoad.Parse(File.ReadAllText("config.json"));
+            _config = File.Exists("config.json")
+                ? ConfigLoad.Parse(File.ReadAllText("config.json"))
+                : new MainGame.Config();
             Draw();
         }
 
