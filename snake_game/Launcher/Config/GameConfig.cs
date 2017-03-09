@@ -113,7 +113,7 @@ namespace snake_game.Launcher.Config
                 }
             })
             {
-                Text = "GameConfig"
+                Text = "Game"
             };
         }
     }

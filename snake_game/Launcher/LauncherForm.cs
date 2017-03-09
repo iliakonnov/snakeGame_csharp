@@ -22,9 +22,9 @@ namespace snake_game.Launcher
         public LauncherForm()
         {
             var gameCfg = new GameConfig(_config.GameConfig);
-            var screenCfg = new ScreenConfig(_config);
+            var screenCfg = new ScreenConfig(_config.ScreenConfig);
             var snakeCfg = new SnakeConfig(_config.SnakeConfig);
-            var bonusCfg = new BonusConfig(_config);
+            var bonusCfg = new BonusConfig(_config.BonusConfig);
 
             var saveButton = new Button {Text = "Save config"};
             saveButton.Click += SaveHandler;
