@@ -27,10 +27,10 @@ namespace snake_game.Launcher
         public static Color ToXna(Eto.Drawing.Color color)
         {
             return new Color(
-                color.R * 255,
-                color.G * 255,
-                color.B * 255,
-                color.A * 255
+                (int) (color.R * 255.0f),
+                (int) (color.G * 255.0f),
+                (int) (color.B * 255.0f),
+                (int) (color.A * 255.0f)
             );
         }
 

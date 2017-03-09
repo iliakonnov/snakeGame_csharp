@@ -23,7 +23,7 @@ namespace snake_game.Launcher.Bonuses
         {
             return new MainGame.Config.BonusConfigClass.BrickConfigClass
             {
-                ChanceTime = (int) _chanceTime.Value,
+                ChanceTime = (int) _chanceTime.Value*1000,
                 MoveChance = _moveChance.Value / 100,
                 NewChance = _newChance.Value / 100,
                 Step = (int) _step.Value,
