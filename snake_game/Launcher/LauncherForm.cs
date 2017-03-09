@@ -15,17 +15,23 @@ namespace snake_game.Launcher
         {
         }
 
+        public void ResetHandler(object sender, EventArgs e)
+        {
+        }
+
         public LauncherForm()
         {
             var gameCfg = new GameConfig(_config.GameConfig);
             var screenCfg = new ScreenConfig(_config);
-            var snakeCfg = new SnakeConfig(_config);
+            var snakeCfg = new SnakeConfig(_config.SnakeConfig);
             var bonusCfg = new BonusConfig(_config);
 
             var saveButton = new Button {Text = "Save config"};
             saveButton.Click += SaveHandler;
             var startButton = new Button {Text = "Start!"};
             saveButton.Click += StartHandler;
+            var resetButton = new Button {Text = "Reset to default"};
+            saveButton.Click += ResetHandler;
 
             Content = new StackLayout
             {
@@ -46,6 +52,7 @@ namespace snake_game.Launcher
                         Orientation = Orientation.Horizontal,
                         Items =
                         {
+                            resetButton,
                             saveButton,
                             startButton
                         }
