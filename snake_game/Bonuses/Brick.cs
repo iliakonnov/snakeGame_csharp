@@ -1,7 +1,6 @@
 ﻿using snake_game.MainGame;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Shapes;
@@ -42,7 +41,7 @@ namespace snake_game.Bonuses
 	            foreach (var brick in _bricks)
 	            {
 	                brick.Move(
-	                    _random.NextDouble() <= _config.MoveChance
+	                    _random.NextDouble() > _config.MoveChance
 	                        ? new Vector2()
 	                        : new Vector2(
 	                            (float) (_config.Step / 2 - _random.NextDouble() * _config.Step),
@@ -68,7 +67,10 @@ namespace snake_game.Bonuses
 
 	        foreach (var brick in _bricks)
 	        {
-	            if (snakeHead.Intersects(brick.GetRectangle(_config.Size)))
+	            var rect = brick.GetRectangle(_config.Size);
+	            rect.X += rect.Width / 2;
+	            rect.Y += rect.Height / 2;
+	            if (snakeHead.Intersects(rect))
 	            {
                     _game.Die(1);
 	            }
