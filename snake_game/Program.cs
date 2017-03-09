@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
+using snake_game.Launcher;
 using snake_game.MainGame;
 
 namespace snake_game
 {
 	static class Program
 	{
-		static void Main(string[] args)
+		/*static void Main(string[] args)
 		{
 			string cfg;
 			switch (args.Length)
@@ -26,6 +27,13 @@ namespace snake_game
 			}
 			var game = new MainGame.MainGame(ConfigLoad.Parse(cfg));
 			game.Run();
-		}
+		}*/
+	    [STAThread]
+	    public static void Main(string[] args)
+	    {
+	        var application = new Eto.Forms.Application();
+	        var form = new LauncherForm();
+	        application.Run(form);
+	    }
 	}
 }

@@ -9,6 +9,7 @@ namespace snake_game.Bonuses
 {
     public class BonusManager
     {
+        public static readonly string[] AvailableBonuses = {"brick", "apple"};
         Config.BonusConfigClass _config;
         Random _rnd;
         readonly IBonusManager[] _bonuses;
@@ -22,7 +23,7 @@ namespace snake_game.Bonuses
                 var bonusesEnabled =
                     config.BonusSettings.BonusesEnabled == null ||
                     config.BonusSettings.BonusesEnabled.Length == 0
-                        ? new[] {"brick", "apple"}
+                        ? AvailableBonuses
                         : config.BonusSettings.BonusesEnabled;
                 foreach (var bonus in bonusesEnabled)
                 {
