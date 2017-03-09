@@ -53,9 +53,16 @@ namespace snake_game.Bonuses
 	            }
 	            if (_random.NextDouble() <= _config.NewChance)
 	            {
-	                _bricks.Add(new BrickBonus(new Vector2(
-	                    _random.Next(size.Width), _random.Next(size.Height)
-	                )));
+	                var bigHead = snakeHead;
+	                bigHead.Radius *= 2;
+	                BrickBonus newBrick;
+	                do
+	                {
+	                    newBrick = new BrickBonus(new Vector2(
+	                        _random.Next(size.Width), _random.Next(size.Height)
+	                    ));
+	                } while (snakeHead.Intersects(newBrick.GetRectangle(_config.Size)));
+	                _bricks.Add(newBrick);
 	            }
 	        }
 

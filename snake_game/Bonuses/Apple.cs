@@ -56,10 +56,16 @@ namespace snake_game.Bonuses
             foreach (var index in remove)
             {
                 _apples.RemoveAt(index);
-                _apples.Add(new AppleBonus(new Vector2(
-                    _random.Next(size.X, size.X + size.Width),
-                    _random.Next(size.Y, size.Y + size.Height)
-                )));
+                var bigHead = snakeHead;
+                bigHead.Radius *= 2;
+                AppleBonus newApple;
+                do
+                {
+                    newApple = new AppleBonus(new Vector2(
+                        _random.Next(size.Width), _random.Next(size.Height)
+                    ));
+                } while (snakeHead.Intersects(newApple.GetCircle(_config.Radius)));
+                _apples.Add(newApple);
             }
         }
 
