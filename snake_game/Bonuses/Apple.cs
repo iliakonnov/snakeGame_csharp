@@ -37,6 +37,9 @@ namespace snake_game.Bonuses
                     _apples.Add(new AppleBonus(new Vector2(
                         _random.Next(size.X, size.X + size.Width),
                         _random.Next(size.Y, size.Y + size.Height)
+                    ), new Vector2(
+                        _random.NextDouble() > 0.5 ? 1 : -1,
+                        _random.NextDouble() > 0.5 ? 1 : -1
                     )));
                 }
                 _first = false;
@@ -59,11 +62,15 @@ namespace snake_game.Bonuses
                 var bigHead = snakeHead;
                 bigHead.Radius *= 2;
                 AppleBonus newApple;
+                Vector2 direction = new Vector2(
+                    _random.NextDouble() > 0.5 ? 1 : -1,
+                    _random.NextDouble() > 0.5 ? 1 : -1
+                );
                 do
                 {
                     newApple = new AppleBonus(new Vector2(
                         _random.Next(size.Width), _random.Next(size.Height)
-                    ));
+                    ), direction);
                 } while (snakeHead.Intersects(newApple.GetCircle(_config.Radius)));
                 _apples.Add(newApple);
             }
@@ -81,11 +88,12 @@ namespace snake_game.Bonuses
     class AppleBonus
     {
         public Vector2 position;
-        Vector2 _direction = new Vector2(1, 1);
+        Vector2 _direction;
 
-        public AppleBonus(Vector2 pos)
+        public AppleBonus(Vector2 pos, Vector2 direction)
         {
             position = pos;
+            _direction = direction;
         }
 
         public CircleF GetCircle(int radius)
