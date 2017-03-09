@@ -77,17 +77,17 @@ namespace snake_game.Launcher.Config
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _speed, new Label { Text = "Speed"} }
+                        Items = { _speed, new Label { Text = "Speed (px/s)"} }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _circleSize, new Label { Text = "Circles size"} }
+                        Items = { _circleSize, new Label { Text = "Circles radius (px)"} }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _circleOffset, new Label { Text = "Offset between circles"} }
+                        Items = { _circleOffset, new Label { Text = "Offset between circles (px)"} }
                     },
                     new StackLayout
                     {

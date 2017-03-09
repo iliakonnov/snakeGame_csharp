@@ -26,7 +26,7 @@ namespace snake_game.Launcher.Bonuses
                 ChanceTime = (int) _chanceTime.Value*1000,
                 MoveChance = _moveChance.Value / 100,
                 NewChance = _newChance.Value / 100,
-                Step = (int) _step.Value,
+                Step = (int) _step.Value * 2,
                 BrickColor = ColorConverter.ToXna(_brickColor.Value),
                 Size = (int) _size.Value
             };
@@ -42,7 +42,7 @@ namespace snake_game.Launcher.Bonuses
             _chanceTime = new NumericUpDown {Value = _config.ChanceTime / 1000};
             _moveChance = new NumericUpDown {Value = _config.MoveChance * 100};
             _newChance = new NumericUpDown {Value = _config.NewChance * 100};
-            _step = new NumericUpDown {Value = _config.Step};
+            _step = new NumericUpDown {Value = _config.Step / 2};
             _size = new NumericUpDown {Value = _config.Size};
             _brickColor = new ColorPicker {Value = ColorConverter.ToEto(_config.BrickColor)};
 
@@ -58,27 +58,27 @@ namespace snake_game.Launcher.Bonuses
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _chanceTime, new Label { Text = "Random events time"} }
+                        Items = { _chanceTime, new Label { Text = "Random events time (sec)"} }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _moveChance, new Label { Text = "Chance for brick move"} }
+                        Items = { _moveChance, new Label { Text = "Chance for brick move (%)"} }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _newChance, new Label { Text = "Chance for new brick spawn"} }
+                        Items = { _newChance, new Label { Text = "Chance for new brick spawn (%)"} }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _step, new Label { Text = "Move step"} }
+                        Items = { _step, new Label { Text = "Move step (px)"} }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _size, new Label { Text = "Brick size"} }
+                        Items = { _size, new Label { Text = "Brick size (px)"} }
                     },
                     new StackLayout
                     {

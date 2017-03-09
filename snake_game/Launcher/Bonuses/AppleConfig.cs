@@ -62,12 +62,12 @@ namespace snake_game.Launcher.Bonuses
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _speed, new Label { Text = "Apple speed"} }
+                        Items = { _speed, new Label { Text = "Apple speed (px/s)"} }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _radius, new Label { Text = "Apple size"} }
+                        Items = { _radius, new Label { Text = "Apple radius (px)"} }
                     },
                     new StackLayout
                     {
@@ -77,7 +77,7 @@ namespace snake_game.Launcher.Bonuses
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _thickness, new Label { Text = "Circle thickness"} }
+                        Items = { _thickness, new Label { Text = "Circle thickness (px)"} }
                     },
                     new StackLayout
                     {

@@ -67,7 +67,7 @@ namespace snake_game.Launcher.Config
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _damageTimeout, new Label { Text = "Damage timeout"} }
+                        Items = { _damageTimeout, new Label { Text = "Damage timeout (sec)"} }
                     },
                     new StackLayout
                     {

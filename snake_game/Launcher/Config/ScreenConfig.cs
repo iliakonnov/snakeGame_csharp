@@ -50,12 +50,12 @@ namespace snake_game.Launcher.Config
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _width, new Label { Text = "Screen width"} }
+                        Items = { _width, new Label { Text = "Screen width (px)"} }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _height, new Label { Text = "Screen height"} }
+                        Items = { _height, new Label { Text = "Screen height (px)"} }
                     }
                 }
             })
