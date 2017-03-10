@@ -40,7 +40,7 @@ namespace snake_game.Bonuses
                     ), new Vector2(
                         _random.NextDouble() > 0.5 ? 1 : -1,
                         _random.NextDouble() > 0.5 ? 1 : -1
-                    )));
+                    ), _config));
                 }
                 _first = false;
             }
@@ -49,8 +49,8 @@ namespace snake_game.Bonuses
             for (var i = 0; i < _apples.Count; i++)
             {
                 var apple = _apples[i];
-                apple.Move(gameTime.ElapsedGameTime.TotalSeconds, _config.Speed, size, _config.Radius);
-                if (apple.GetCircle(_config.Radius).Intersects(snakePoints.First()))
+                apple.Move(gameTime.ElapsedGameTime.TotalSeconds, size);
+                if (apple.GetCircle().Intersects(snakePoints.First()))
                 {
                     _game.Eat(1);
                     remove.Add(i);
@@ -62,80 +62,90 @@ namespace snake_game.Bonuses
                 var bigHead = snakePoints.First();
                 bigHead.Radius *= 2;
                 AppleBonus newApple;
-                Vector2 direction = new Vector2(
-                    _random.NextDouble() > 0.5 ? 1 : -1,
-                    _random.NextDouble() > 0.5 ? 1 : -1
-                );
                 do
                 {
                     newApple = new AppleBonus(new Vector2(
-                        _random.Next(size.Width), _random.Next(size.Height)
-                    ), direction);
-                } while (snakePoints.First().Intersects(newApple.GetCircle(_config.Radius)));
+                        _random.Next(size.Width - _config.Radius), _random.Next(size.Height - _config.Radius)
+                    ), GetRandomDirection(), _config);
+                } while (snakePoints.First().Intersects(newApple.GetCircle()));
                 _apples.Add(newApple);
             }
+        }
+
+        Vector2 GetRandomDirection()
+        {
+            var x = _random.NextDouble();
+            var y = _random.NextDouble();
+            if (x <= 0.5)
+            {
+                x -= 1;
+            }
+            if (y <= 0.5)
+            {
+                y -= 1;
+            }
+            return new Vector2((float) x, (float) y);
         }
 
         public void Draw(SpriteBatch sb)
         {
             foreach (var apple in _apples)
             {
-                sb.DrawCircle(apple.GetCircle(_config.Radius), _config.Sides, _config.AppleColor, _config.Thickness);
+                sb.DrawCircle(apple.GetCircle(), _config.Sides, _config.AppleColor, _config.Thickness);
             }
         }
-    }
 
-    class AppleBonus
-    {
-        public Vector2 position;
-        Vector2 _direction;
-
-        public AppleBonus(Vector2 pos, Vector2 direction)
+        public class AppleBonus
         {
-            position = pos;
-            _direction = direction;
-        }
+            Vector2 position;
+            Vector2 _direction;
+            readonly Config.BonusConfigClass.AppleConfigClass _config;
 
-        public CircleF GetCircle(int radius)
-        {
-            return new CircleF(position, radius);
-        }
-
-        public void Move(double time, double speed, Rectangle size, int radius)
-        {
-            position += new Vector2(
-                            (float)(speed * _direction.X),
-                            (float)(speed * _direction.Y)
-                        ) * (float)time;
-            
-            var MaxX = size.Width - radius;
-            var MinX = 0;
-            var MaxY = size.Height - radius;
-            var MinY = 0;
-
-            // Check for bounce.
-            if (position.X > MaxX)
+            public AppleBonus(Vector2 pos, Vector2 direction, Config.BonusConfigClass.AppleConfigClass config)
             {
-                _direction.X *= -1;
-                position.X = MaxX;
+                position = pos;
+                _direction = direction;
+                _config = config;
             }
 
-            else if (position.X < MinX)
+            public CircleF GetCircle()
             {
-                _direction.X *= -1;
-                position.X = MinX;
+                return new CircleF(position, _config.Radius);
             }
 
-            if (position.Y > MaxY)
+            public void Move(double time, Rectangle size)
             {
-                _direction.Y *= -1;
-                position.Y = MaxY;
+                position += new Vector2(
+                                _config.Speed * _direction.X,
+                                _config.Speed * _direction.Y
+                            ) * (float)time;
+
+                var MaxX = size.Width - _config.Radius;
+                var MinX = _config.Radius;
+                var MaxY = size.Height - _config.Radius;
+                var MinY = _config.Radius;
+
+                // Check for bounce.
+                if (position.X > MaxX || position.X < MinX) bounce(1, 0);
+                if (position.Y > MaxY || position.Y < MinY) bounce(0, 1);
             }
 
-            else if (position.Y < MinY)
+            void bounce(double a, double b)
             {
-                _direction.Y *= -1;
-                position.Y = MinY;
+                var c = a * a + b * b;
+                a /= c;
+                b /= c;
+                var a2 = a * a;
+                var b2 = b * b;
+                var doubleAB = 2 * a * b;
+                _direction = new Vector2(
+                    (float) (
+                        (b2 - a2) * _direction.X +  //  (b^2 - a^2)Vx +
+                        doubleAB * _direction.Y),  // + 2ab * Vy
+                    (float) (
+                        doubleAB * _direction.X +  //   2ab * Vx +
+                        (a2 - b2) * _direction.Y)  // + (a^2 - b^2)Vy
+                );
             }
         }
     }
