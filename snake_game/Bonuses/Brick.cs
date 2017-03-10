@@ -9,14 +9,14 @@ using snake_game.Snake;
 
 namespace snake_game.Bonuses
 {
-	class BrickManager : IBonusManager
+	public class BrickManager : IBonusManager
 	{
 	    readonly Random _random;
 	    readonly Config.BonusConfigClass.BrickConfigClass _config;
 	    int _time;
 	    MainGame.MainGame _game;
 	    Texture2D _texture;
-	    List<BrickBonus> _bricks = new List<BrickBonus>();
+	    public List<BrickBonus> Bricks = new List<BrickBonus>();
 
 	    public string Name => "brick";
 
@@ -39,7 +39,7 @@ namespace snake_game.Bonuses
 	        if (_time >= _config.ChanceTime)
 	        {
 	            _time = 0;
-	            foreach (var brick in _bricks)
+	            foreach (var brick in Bricks)
 	            {
 	                brick.Move(
 	                    _random.NextDouble() > _config.MoveChance
@@ -60,15 +60,15 @@ namespace snake_game.Bonuses
 	                {
 	                    newBrick = new BrickBonus(new Vector2(
 	                        _random.Next(size.Width), _random.Next(size.Height)
-	                    ));
-	                } while (bigHead.Intersects(newBrick.GetRectangle(_config.Size)));
-	                _bricks.Add(newBrick);
+	                    ), _config);
+	                } while (bigHead.Intersects(newBrick.GetRectangle()));
+	                Bricks.Add(newBrick);
 	            }
 	        }
 
-	        foreach (var brick in _bricks)
+	        foreach (var brick in Bricks)
 	        {
-	            var rect = brick.GetRectangle(_config.Size);
+	            var rect = brick.GetRectangle();
 	            rect.X += rect.Width / 2;
 	            rect.Y += rect.Height / 2;
 	            if (snakePoints.First().Intersects(rect))
@@ -80,34 +80,36 @@ namespace snake_game.Bonuses
 
 	    public void Draw(SpriteBatch sb)
 	    {
-	        foreach (var brick in _bricks)
+	        foreach (var brick in Bricks)
 	        {
-	            sb.Draw(_texture, brick.GetRectangle(_config.Size), _config.BrickColor);
+	            sb.Draw(_texture, brick.GetRectangle(), _config.BrickColor);
 	        }
 	    }
+
+	    public class BrickBonus
+	    {
+	        Vector2 _position;  // Left upper corner
+	        Config.BonusConfigClass.BrickConfigClass _config;
+
+	        public BrickBonus(Vector2 position, Config.BonusConfigClass.BrickConfigClass config)
+	        {
+	            _position = position;
+	            _config = config;
+	        }
+
+	        public Rectangle GetRectangle()
+	        {
+	            return new Rectangle(
+	                (int) _position.X, (int) _position.Y, _config.Size, _config.Size
+	            );
+	        }
+
+	        public void Move(Vector2 move, BagelWorld world)
+	        {
+	            _position += move;
+	            var newPos = world.Normalize(new Snake.Point(_position.X, _position.Y));
+	            _position = new Vector2(newPos.X, newPos.Y);
+	        }
 	}
-
-    class BrickBonus
-    {
-        public Vector2 position;  // Left upper corner
-
-        public BrickBonus(Vector2 position)
-        {
-            this.position = position;
-        }
-
-        public Rectangle GetRectangle(int size)
-        {
-            return new Rectangle(
-                (int) position.X, (int) position.Y, size, size
-            );
-        }
-
-        public void Move(Vector2 move, BagelWorld world)
-        {
-            position += move;
-            var newPos = world.Normalize(new Snake.Point(position.X, position.Y));
-            position = new Vector2(newPos.X, newPos.Y);
-        }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Shapes;
 using snake_game.MainGame;
+using snake_game.Snake;
 
 namespace snake_game.Bonuses
 {
@@ -14,7 +15,7 @@ namespace snake_game.Bonuses
         readonly Config.BonusConfigClass.AppleConfigClass _config;
         readonly Random _random;
         bool _first = true;
-        readonly List<AppleBonus> _apples = new List<AppleBonus>();
+        public readonly List<AppleBonus> _apples = new List<AppleBonus>();
         MainGame.MainGame _game;
 
         public AppleManager(Config.BonusConfigClass.AppleConfigClass cfg, Random rnd, MainGame.MainGame game)
@@ -45,12 +46,41 @@ namespace snake_game.Bonuses
                 _first = false;
             }
 
+            var brickManagers = bonuses.Where(x => x.Name == "brick").ToArray();
+            var obstaclesL = new List<Segment>();
+            if (brickManagers.Length != 0)
+            {
+                var brickManager = (BrickManager) brickManagers[0];
+                foreach (var brick in brickManager.Bricks)
+                {
+                    var rect = brick.GetRectangle();
+                    obstaclesL.Add(new Segment(
+                        new Snake.Point(rect.X, rect.Y),
+                        new Snake.Point(rect.X + rect.Height, rect.Y)
+                    ));
+                    obstaclesL.Add(new Segment(
+                        new Snake.Point(rect.X, rect.Y),
+                        new Snake.Point(rect.X, rect.Y + rect.Width)
+                    ));
+                    obstaclesL.Add(new Segment(
+                        new Snake.Point(rect.X, rect.Y + rect.Width),
+                        new Snake.Point(rect.X + rect.Height, rect.Y + rect.Width)
+                    ));
+                    obstaclesL.Add(new Segment(
+                        new Snake.Point(rect.X + rect.Height, rect.Y),
+                        new Snake.Point(rect.X + rect.Height, rect.Y + rect.Width)
+                    ));
+                }
+            }
+            var obstacles = obstaclesL.ToArray();
+
             var remove = new List<int>();
             for (var i = 0; i < _apples.Count; i++)
             {
                 var apple = _apples[i];
-                apple.Move(gameTime.ElapsedGameTime.TotalSeconds, size);
-                if (apple.GetCircle().Intersects(snakePoints.First()))
+                var appleCircle = apple.GetCircle();
+                apple.Move(gameTime.ElapsedGameTime.TotalSeconds, size, obstacles);
+                if (appleCircle.Intersects(snakePoints.First()))
                 {
                     _game.Eat(1);
                     remove.Add(i);
@@ -113,7 +143,7 @@ namespace snake_game.Bonuses
                 return new CircleF(position, _config.Radius);
             }
 
-            public void Move(double time, Rectangle size)
+            public void Move(double time, Rectangle size, Segment[] obstacles)
             {
                 position += new Vector2(
                                 _config.Speed * _direction.X,
@@ -128,6 +158,11 @@ namespace snake_game.Bonuses
                 // Check for bounce.
                 if (position.X > MaxX || position.X < MinX) bounce(1, 0);
                 if (position.Y > MaxY || position.Y < MinY) bounce(0, 1);
+
+                foreach (var o in obstacles)
+                {
+
+                }
             }
 
             void bounce(double a, double b)
