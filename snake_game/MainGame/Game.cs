@@ -130,30 +130,27 @@ namespace snake_game.MainGame
 
 			_snake = _snake.ContinueMove(_config.SnakeConfig.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
 
+		    var halfSize = _config.SnakeConfig.CircleSize / 2;
+		    var newSize = _dbg.Size();
+		    var world = new BagelWorld(newSize.Height, newSize.Width);
 		    var points = _snake.GetSnakeAsPoints(_config.SnakeConfig.CircleOffset);
-			var headCenter = points.First();
+		    var circles = new CircleF[points.Length];
+		    for (var i = 0; i < points.Length; i++)
+		    {
+		        var normPoint = world.Normalize(points[i]);
+		        circles[i] = new CircleF(new Vector2(normPoint.X, normPoint.Y), halfSize);
+		    }
+			var head = circles.First();
 
-			var halfSize = _config.SnakeConfig.CircleSize / 2;
-			var head = new CircleF(
-				new Vector2(headCenter.X, headCenter.Y), halfSize
-			);
-			for (int i = _intersectStart; i < points.Length; i++)
+			for (int i = _intersectStart; i < circles.Length; i++)
 			{
-				var current = new CircleF(
-					new Vector2(points[i].X, points[i].Y), halfSize
-				);
-				if (head.Intersects(current))
-				{
-					Die(1);
-				}
+                if (head.Intersects(circles[i]))
+                {
+                    Die(1);
+                }
 			}
 
-		    var newSize = _dbg.Size();
-		    headCenter = new BagelWorld(newSize.Height, newSize.Width).Normalize(headCenter);
-		    head = new CircleF(
-		        new Vector2(headCenter.X, headCenter.Y), halfSize
-		    );
-		    _bonusManager.Update(gameTime, head, _dbg.Size());
+		    _bonusManager.Update(gameTime, circles, newSize);
 
 			base.Update(gameTime);
 		}

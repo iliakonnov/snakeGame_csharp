@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Shapes;
@@ -28,7 +28,7 @@ namespace snake_game.Bonuses
         {
         }
 
-        public void Update(GameTime gameTime, IBonusManager[] bonuses, CircleF snakeHead, Rectangle size)
+        public void Update(GameTime gameTime, IBonusManager[] bonuses, CircleF[] snakePoints, Rectangle size)
         {
             if (_first)
             {
@@ -50,7 +50,7 @@ namespace snake_game.Bonuses
             {
                 var apple = _apples[i];
                 apple.Move(gameTime.ElapsedGameTime.TotalSeconds, _config.Speed, size, _config.Radius);
-                if (apple.GetCircle(_config.Radius).Intersects(snakeHead))
+                if (apple.GetCircle(_config.Radius).Intersects(snakePoints.First()))
                 {
                     _game.Eat(1);
                     remove.Add(i);
@@ -59,7 +59,7 @@ namespace snake_game.Bonuses
             foreach (var index in remove)
             {
                 _apples.RemoveAt(index);
-                var bigHead = snakeHead;
+                var bigHead = snakePoints.First();
                 bigHead.Radius *= 2;
                 AppleBonus newApple;
                 Vector2 direction = new Vector2(
@@ -71,7 +71,7 @@ namespace snake_game.Bonuses
                     newApple = new AppleBonus(new Vector2(
                         _random.Next(size.Width), _random.Next(size.Height)
                     ), direction);
-                } while (snakeHead.Intersects(newApple.GetCircle(_config.Radius)));
+                } while (snakePoints.First().Intersects(newApple.GetCircle(_config.Radius)));
                 _apples.Add(newApple);
             }
         }

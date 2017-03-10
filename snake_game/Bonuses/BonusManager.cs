@@ -55,11 +55,11 @@ namespace snake_game.Bonuses
             }
         }
 
-        public void Update(GameTime gameTime, CircleF snakeHead, Rectangle size)
+        public void Update(GameTime gameTime, CircleF[] snakePoints, Rectangle size)
         {
             foreach (var bonus in _bonuses)
             {
-                bonus.Update(gameTime, _bonuses, snakeHead, size);
+                bonus.Update(gameTime, _bonuses, snakePoints, size);
             }
         }
 

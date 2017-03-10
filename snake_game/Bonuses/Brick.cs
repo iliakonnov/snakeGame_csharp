@@ -1,6 +1,7 @@
 ﻿using snake_game.MainGame;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Shapes;
@@ -32,7 +33,7 @@ namespace snake_game.Bonuses
 	        _texture.SetData(new[] { Color.White });
 	    }
 
-	    public void Update(GameTime gameTime, IBonusManager[] bonuses, CircleF snakeHead, Rectangle size)
+	    public void Update(GameTime gameTime, IBonusManager[] bonuses, CircleF[] snakePoints, Rectangle size)
 	    {
 	        _time += gameTime.ElapsedGameTime.Milliseconds;
 	        if (_time >= _config.ChanceTime)
@@ -52,7 +53,7 @@ namespace snake_game.Bonuses
 	            }
 	            if (_random.NextDouble() <= _config.NewChance)
 	            {
-	                var bigHead = snakeHead;
+	                var bigHead = snakePoints.First();
 	                bigHead.Radius *= 2;
 	                BrickBonus newBrick;
 	                do
@@ -60,7 +61,7 @@ namespace snake_game.Bonuses
 	                    newBrick = new BrickBonus(new Vector2(
 	                        _random.Next(size.Width), _random.Next(size.Height)
 	                    ));
-	                } while (snakeHead.Intersects(newBrick.GetRectangle(_config.Size)));
+	                } while (bigHead.Intersects(newBrick.GetRectangle(_config.Size)));
 	                _bricks.Add(newBrick);
 	            }
 	        }
@@ -70,7 +71,7 @@ namespace snake_game.Bonuses
 	            var rect = brick.GetRectangle(_config.Size);
 	            rect.X += rect.Width / 2;
 	            rect.Y += rect.Height / 2;
-	            if (snakeHead.Intersects(rect))
+	            if (snakePoints.First().Intersects(rect))
 	            {
                     _game.Die(1);
 	            }
