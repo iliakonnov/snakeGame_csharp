@@ -5,7 +5,7 @@ using System.Linq;
 namespace snake_game.Snake
 {
 	/// <summary>
-	/// Точка внутри плоскости
+	/// Точка/вектор внутри плоскости
 	/// </summary>
 	public class Point
 	{
@@ -31,7 +31,50 @@ namespace snake_game.Snake
 		{
 			return new Point(X + pt.X, Y + pt.Y);
 		}
+		public Point Multiply(float k)
+		{
+			return new Point(_x * k, _y * k);
+		}
+		public float Multiply(Point pt)
+		{
+			return _x * pt._x + _y * pt._y;
+		}
 
+		public static Point operator +(Point a, Point b)
+		{
+			return a.Add(b);
+		}
+		public static Point operator -(Point a, Point b)
+		{
+			return a + (-1f * b);
+		}
+		public static Point operator -(Point a)
+		{
+			return -1f * a;
+		}
+		public static Point operator *(Point a, float k)
+		{
+			return a.Multiply(k);
+		}
+		public static Point operator *(float k, Point a)
+		{
+			return a * k;
+		}
+
+		public static float operator *(Point a, Point b)
+		{
+			return a.Multiply(b);
+		}
+
+		public static bool operator ==(Point a, Point b)
+		{
+			return a.Equals(b);
+		}
+
+		public static bool operator !=(Point a, Point b)
+		{
+			return !(a == b);
+		}
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
@@ -58,7 +101,7 @@ namespace snake_game.Snake
 	}
 
 	/// <summary>
-	/// Каноническое уравнение прямой
+	/// Каноническое уравнение прямой Ax + By + C = 0
 	/// </summary>
 	public class Line
 	{
@@ -308,8 +351,8 @@ namespace snake_game.Snake
 		/// <returns></returns>
 		public static Point Intersect(Segment a, Segment b)
 		{
-			if (a.A.Equals(b.A) || a.A.Equals(b.B)) return a.A;
-			if (a.B.Equals(b.A) || a.B.Equals(b.B)) return a.B;
+			if (a.A == b.A || a.A == b.B) return a.A;
+			if (a.B == b.A || a.B == b.B) return a.B;
 
 			var aXmin = new[] { a.A.X, a.B.X }.Min();
 			var aXmax = new[] { a.A.X, a.B.X }.Max();
@@ -369,5 +412,27 @@ namespace snake_game.Snake
 			return Intersect(lineA, lineB);
 		}
 
+		/// <summary>
+		/// Расстояние от точки до отрезка.
+		/// </summary>
+		/// <param name="seg"></param>
+		/// <param name="pt"></param>
+		/// <returns></returns>
+		public static float Distance(Segment seg, Point pt)
+		{
+			var vecAB = seg.B - seg.A;
+			var vecAP = pt - seg.A;
+			var t = (vecAB * vecAP) / (vecAB * vecAB);
+			if (t < 0) t = 0;
+			if (t > 1) t = 1;
+			var s = vecAP - t * vecAB;
+			return (float)Math.Sqrt(s * s);
+		}
+		public static float Distance(Line line, Point pt)
+		{
+			var z = line.Apply(pt);
+			var d = Math.Sqrt(line.A * line.A + line.B * line.B);
+			return (float)Math.Abs(z / d);
+		}
 	}
 }
