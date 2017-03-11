@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NullGuard;
 
 namespace snake_game.Snake
 {
@@ -66,22 +67,24 @@ namespace snake_game.Snake
 			return a.Multiply(b);
 		}
 
-		public static bool operator ==(Point a, Point b)
+		public static bool operator ==([AllowNull] Point a, [AllowNull] Point b)
 		{
-			return a.Equals(b);
+		    return ReferenceEquals(a, null)
+		        ? ReferenceEquals(b, null)
+		        : a.Equals(b);
 		}
 
-		public static bool operator !=(Point a, Point b)
+		public static bool operator !=([AllowNull] Point a, [AllowNull] Point b)
 		{
 			return !(a == b);
 		}
-		public override bool Equals(object obj)
+		public override bool Equals([AllowNull] object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
 			return Equals(obj as Point);
 		}
-		public bool Equals(Point obj)
+		public bool Equals([AllowNull] Point obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
@@ -150,13 +153,13 @@ namespace snake_game.Snake
 			return A * a.X + B * a.Y + C;
 		}
 
-		public override bool Equals(object obj)
+		public override bool Equals([AllowNull] object obj)
 		{
 			if (ReferenceEquals(obj, null)) return false;
 			if (ReferenceEquals(obj, this)) return true;
 			return Equals(obj as Line);
 		}
-		public bool Equals(Line obj)
+		public bool Equals([AllowNull] Line obj)
 		{
 			if (ReferenceEquals(obj, null)) return false;
 			if (ReferenceEquals(obj, this)) return true;
@@ -167,7 +170,6 @@ namespace snake_game.Snake
 
 		public bool Parallels(Line obj)
 		{
-			if (ReferenceEquals(obj, null)) return false;
 			if (ReferenceEquals(obj, this)) return true;
 
 			//var D = A * obj.B - obj.A * B;
@@ -266,14 +268,14 @@ namespace snake_game.Snake
 			return Tuple.Create(result.ToArray(), skip);
 		}
 
-		public override bool Equals(object obj)
+		public override bool Equals([AllowNull] object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
 			return Equals(obj as Segment);
 		}
 
-		public bool Equals(Segment obj)
+		public bool Equals([AllowNull] Segment obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
@@ -349,6 +351,7 @@ namespace snake_game.Snake
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
+		[return:AllowNull]
 		public static Point Intersect(Segment a, Segment b)
 		{
 			if (a.A == b.A || a.A == b.B) return a.A;
