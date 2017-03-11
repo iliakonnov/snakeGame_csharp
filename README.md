@@ -1,41 +1,13 @@
 # snakeGame_csharp
 Snake game
 
-![demo](https://cloud.githubusercontent.com/assets/9402179/22743876/94c02faa-ee2c-11e6-94d7-812b611a2168.gif)
+[![demo](https://cloud.githubusercontent.com/assets/9402179/23825053/b7f4caba-0693-11e7-8417-497ed021fc92.gif)](https://youtu.be/afS9fdB7-nY)
+
+[Download](https://github.com/iliakonnov/snakeGame_csharp/releases/tag/v1.0)
 
 ## Управление:
 * Движение
 
 	<kbd>←</kbd> – Повернуть змею влево
 	
-	<kbd>↑</kbd> – Повернуть змею вверх
-	
 	<kbd>→</kbd> – Повернуть змею вправо
-	
-	<kbd>↓</kbd> – Повернуть змею вниз
-
-* Скорость
-
-	<kbd>~</kbd> – Сбросить скорость на 300
-	
-	<kbd>Q</kbd> – Уменьшить скорость на 10
-	
-	<kbd>W</kbd> – Увеличить скорость на 10
-	
-	<kbd>A</kbd> – Уменьшить скорость на 30
-	
-	<kbd>S</kbd> – Увеличить скорость на 30
-	
-	<kbd>Z</kbd> – Уменьшить скорость на 50
-	
-	<kbd>X</kbd> – Увеличить скорость на 50
-	
-	<kbd>ctrl</kbd> – Зажать чтобы менять скорость быстро
-	
-* Debug (только в debug версии!)
-
-	<kbd>1-5</kbd> – Информация о части хвоста с начала
-    
-    <kbd>6-9</kbd> – Информация о части хвоста с конца
-	
-	<kbd>0</kbd> – Скрыть информацию о чаcти хвоста
