@@ -9,9 +9,9 @@ namespace snake_game.Launcher
 {
     public class LauncherForm : Form
     {
-		const int WINDOW_WIDTH = 500;
-		const int WINDOW_HEIGHT = 300;
-		const int BUTTON_HEIGHT = 30;
+		const int WindowWidth = 400;
+		const int WindowHeight = 400;
+		const int ButtonHeight = 30;
 
 		GameConfig _gameCfg;
         ScreenConfig _screenCfg;
@@ -55,7 +55,7 @@ namespace snake_game.Launcher
 
         public LauncherForm()
         {
-			ClientSize = new Eto.Drawing.Size(WINDOW_WIDTH, WINDOW_HEIGHT);
+			ClientSize = new Eto.Drawing.Size(WindowWidth, WindowHeight);
             _config = File.Exists("config.json")
                 ? ConfigLoad.Parse(File.ReadAllText("config.json"))
                 : new MainGame.Config();
@@ -71,21 +71,21 @@ namespace snake_game.Launcher
 
             var saveButton = new Button {
 				Text = "Save config",
-				Size = new Eto.Drawing.Size(WINDOW_WIDTH / 3, BUTTON_HEIGHT)
+				Size = new Eto.Drawing.Size(WindowWidth / 3, ButtonHeight)
 			};
             saveButton.Click += SaveHandler;
             var startButton = new Button {
 				Text = "Start!",
-				Size = new Eto.Drawing.Size(WINDOW_WIDTH / 3, BUTTON_HEIGHT)
+				Size = new Eto.Drawing.Size(WindowWidth / 3, ButtonHeight)
 			};
             startButton.Click += StartHandler;
             var resetButton = new Button {
 				Text = "Reset to default",
-				Size = new Eto.Drawing.Size(WINDOW_WIDTH / 3, BUTTON_HEIGHT)
+				Size = new Eto.Drawing.Size(WindowWidth / 3, ButtonHeight)
 			};
             resetButton.Click += ResetHandler;
 
-			var tabControlSize = new Eto.Drawing.Size(WINDOW_WIDTH, WINDOW_HEIGHT - BUTTON_HEIGHT);
+			var tabControlSize = new Eto.Drawing.Size(WindowWidth, WindowHeight - ButtonHeight);
 
 			Content = new StackLayout
 			{
@@ -99,12 +99,12 @@ namespace snake_game.Launcher
                             _gameCfg.GetPage(),
                             _screenCfg.GetPage(),
                             _snakeCfg.GetPage(),
-                            _bonusCfg.GetPage(tabControlSize, BUTTON_HEIGHT)
+                            _bonusCfg.GetPage(tabControlSize, ButtonHeight)
                         }
                     },
                     new StackLayout  // Buttons
                     {
-						Size = new Eto.Drawing.Size(WINDOW_WIDTH, BUTTON_HEIGHT
+						Size = new Eto.Drawing.Size(WindowWidth, ButtonHeight
 						),
 						Orientation = Orientation.Horizontal,
                         Items =
