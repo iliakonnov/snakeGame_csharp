@@ -79,7 +79,7 @@ namespace snake_game.Bonuses
             {
                 var apple = _apples[i];
                 var appleCircle = apple.GetCircle();
-                apple.Move(gameTime.ElapsedGameTime.TotalSeconds, size, obstacles);
+                apple.Move(gameTime.ElapsedGameTime.TotalSeconds, size, obstacles, snakePoints);
                 if (appleCircle.Intersects(snakePoints.First()))
                 {
                     _game.Eat(1);
@@ -104,17 +104,8 @@ namespace snake_game.Bonuses
 
         Vector2 GetRandomDirection()
         {
-            var x = _random.NextDouble();
-            var y = _random.NextDouble();
-            if (x <= 0.5)
-            {
-                x -= 1;
-            }
-            if (y <= 0.5)
-            {
-                y -= 1;
-            }
-            return new Vector2((float) x, (float) y);
+            var degrees = _random.Next(0, 360);
+            return new Vector2((float) Math.Cos(degrees), (float) Math.Sin(degrees));
         }
 
         public void Draw(SpriteBatch sb)
@@ -127,25 +118,25 @@ namespace snake_game.Bonuses
 
         public class AppleBonus
         {
-            Vector2 position;
+            Vector2 _position;
             Vector2 _direction;
             readonly Config.BonusConfigClass.AppleConfigClass _config;
 
             public AppleBonus(Vector2 pos, Vector2 direction, Config.BonusConfigClass.AppleConfigClass config)
             {
-                position = pos;
+                _position = pos;
                 _direction = direction;
                 _config = config;
             }
 
             public CircleF GetCircle()
             {
-                return new CircleF(position, _config.Radius);
+                return new CircleF(_position, _config.Radius);
             }
 
-            public void Move(double time, Rectangle size, Segment[] obstacles)
+            public void Move(double time, Rectangle size, Segment[] obstacles, CircleF[] snakePoints)
             {
-                position += new Vector2(
+                _position += new Vector2(
                                 _config.Speed * _direction.X,
                                 _config.Speed * _direction.Y
                             ) * (float)time;
@@ -156,30 +147,48 @@ namespace snake_game.Bonuses
                 var MinY = _config.Radius;
 
                 // Check for bounce.
-                if (position.X > MaxX || position.X < MinX) bounce(1, 0);
-                if (position.Y > MaxY || position.Y < MinY) bounce(0, 1);
+                if (_position.X > MaxX || _position.X < MinX) bounce(new Line(1, 0, 0));
+                if (_position.Y > MaxY || _position.Y < MinY) bounce(new Line(0, 1, 0));
 
                 foreach (var o in obstacles)
                 {
+                    if (MathUtils.Distance(o, new Snake.Point(_position.X, _position.Y)) <= _config.Radius)
+                    {
+                        bounce(MathUtils.StandardLine(o.A, o.B));
+                    }
+                }
 
+                var old = snakePoints[0];
+                for (var i = 1; i < snakePoints.Length; i++)
+                {
+                    var current = snakePoints[i];
+                    var seg = new Segment(
+                        new Snake.Point(old.Center.X, old.Center.Y),
+                        new Snake.Point(current.Center.X, current.Center.Y)
+                    );
+                    if (MathUtils.Distance(seg, new Snake.Point(_position.X, _position.Y)) <= _config.Radius + old.Radius)
+                    {
+                        bounce(MathUtils.StandardLine(seg.A, seg.B));
+                    }
                 }
             }
 
-            void bounce(double a, double b)
+            void bounce(Line line)
             {
-                var c = a * a + b * b;
+                // a, b, c are not Line parameters, but triangle
+                var a = line.A;
+                var b = line.B;
+                var c = (float)Math.Sqrt(a * a + b * b);
                 a /= c;
                 b /= c;
                 var a2 = a * a;
                 var b2 = b * b;
                 var doubleAB = 2 * a * b;
                 _direction = new Vector2(
-                    (float) (
-                        (b2 - a2) * _direction.X +  //  (b^2 - a^2)Vx +
-                        doubleAB * _direction.Y),  // + 2ab * Vy
-                    (float) (
-                        doubleAB * _direction.X +  //   2ab * Vx +
-                        (a2 - b2) * _direction.Y)  // + (a^2 - b^2)Vy
+                    (b2 - a2) * _direction.X +  // (b^2 - a^2)Vx +
+                    doubleAB * _direction.Y,  // + 2ab * Vy;
+                    doubleAB * _direction.X +  //  2ab * Vx +
+                    (a2 - b2) * _direction.Y  // + (a^2 - b^2)Vy
                 );
             }
         }
