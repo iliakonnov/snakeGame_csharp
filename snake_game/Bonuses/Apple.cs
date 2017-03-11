@@ -146,16 +146,34 @@ namespace snake_game.Bonuses
                 var MaxY = size.Height - _config.Radius;
                 var MinY = _config.Radius;
 
-                // Check for bounce.
-                if (_position.X > MaxX || _position.X < MinX) bounce(new Line(1, 0, 0));
-                if (_position.Y > MaxY || _position.Y < MinY) bounce(new Line(0, 1, 0));
+				// Check for bounce.
+				if (_position.X > MaxX || _position.X < MinX)
+				{
+					var newDirection = MathUtils.Bounce(
+						new Line(1, 0, 0),
+						new Snake.Point(_direction.X, _direction.Y)
+					);
+					_direction = new Vector2(newDirection.X, newDirection.Y);
+				}
+				if (_position.Y > MaxY || _position.Y < MinY)
+				{
+					var newDirection = MathUtils.Bounce(
+						new Line(0, 1, 0),
+						new Snake.Point(_direction.X, _direction.Y)
+					);
+					_direction = new Vector2(newDirection.X, newDirection.Y);
+				}
 
-                foreach (var o in obstacles)
+				foreach (var o in obstacles)
                 {
                     if (MathUtils.Distance(o, new Snake.Point(_position.X, _position.Y)) <= _config.Radius)
                     {
-                        bounce(MathUtils.StandardLine(o.A, o.B));
-                    }
+						var newDirection = MathUtils.Bounce(
+							MathUtils.StandardLine(o.A, o.B),
+							new Snake.Point(_direction.X, _direction.Y)
+						);
+						_direction = new Vector2(newDirection.X, newDirection.Y);
+					}
                 }
 
                 var old = snakePoints[0];
@@ -169,29 +187,14 @@ namespace snake_game.Bonuses
                             new Snake.Point(old.Center.X, old.Center.Y),
                             new Snake.Point(current.Center.X, current.Center.Y)
                         );
-                        bounce(MathUtils.StandardLine(seg.A, seg.B));
+                        var newDirection = MathUtils.Bounce(
+							MathUtils.StandardLine(seg.A, seg.B),
+							new Snake.Point(_direction.X, _direction.Y)
+						);
+						_direction = new Vector2(newDirection.X, newDirection.Y);
                     }
                     old = current;
                 }
-            }
-
-            void bounce(Line line)
-            {
-                // a, b, c are not Line parameters, but triangle
-                var a = line.A;
-                var b = line.B;
-                var c = (float)Math.Sqrt(a * a + b * b);
-                a /= c;
-                b /= c;
-                var a2 = a * a;
-                var b2 = b * b;
-                var doubleAB = 2 * a * b;
-                _direction = new Vector2(
-                    (b2 - a2) * _direction.X +  // (b^2 - a^2)Vx +
-                    doubleAB * _direction.Y,  // + 2ab * Vy;
-                    doubleAB * _direction.X +  //  2ab * Vx +
-                    (a2 - b2) * _direction.Y  // + (a^2 - b^2)Vy
-                );
             }
         }
     }

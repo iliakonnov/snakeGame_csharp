@@ -431,11 +431,44 @@ namespace snake_game.Snake
 			var s = vecAP - t * vecAB;
 			return (float)Math.Sqrt(s * s);
 		}
+
+		/// <summary>
+		/// Расстояние от точки до прямой
+		/// </summary>
+		/// <param name="line"></param>
+		/// <param name="pt"></param>
+		/// <returns></returns>
 		public static float Distance(Line line, Point pt)
 		{
 			var z = line.Apply(pt);
 			var d = Math.Sqrt(line.A * line.A + line.B * line.B);
 			return (float)Math.Abs(z / d);
+		}
+
+		/// <summary>
+		/// Вектор скорости после отскока от прямой.
+		/// Не проверяется, что точка касается прямой.
+		/// </summary>
+		/// <param name="line">Уравнение прямой</param>
+		/// <param name="direction">Вектор начальной скорости</param>
+		/// <returns>Вектор скорости после отскока</returns>
+		public static Point Bounce(Line line, Point direction)
+		{
+			// a, b, c are not Line parameters, but triangle
+			var a = line.A;
+			var b = line.B;
+			var c = (float)Math.Sqrt(a * a + b * b);
+			a /= c;
+			b /= c;
+			var a2 = a * a;
+			var b2 = b * b;
+			var doubleAB = 2 * a * b;
+			return new Point(
+				(b2 - a2) * direction.X +  // (b^2 - a^2)Vx +
+				doubleAB * direction.Y,  // + 2ab * Vy;
+				doubleAB * direction.X +  //  2ab * Vx +
+				(a2 - b2) * direction.Y  // + (a^2 - b^2)Vy
+			);
 		}
 	}
 }
