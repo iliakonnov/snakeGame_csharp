@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NullGuard;
 
 namespace snake_game.Snake
 {
 	/// <summary>
-	/// Точка внутри плоскости
+	/// Точка/вектор внутри плоскости
 	/// </summary>
 	public class Point
 	{
@@ -31,14 +32,59 @@ namespace snake_game.Snake
 		{
 			return new Point(X + pt.X, Y + pt.Y);
 		}
+		public Point Multiply(float k)
+		{
+			return new Point(_x * k, _y * k);
+		}
+		public float Multiply(Point pt)
+		{
+			return _x * pt._x + _y * pt._y;
+		}
 
-		public override bool Equals(object obj)
+		public static Point operator +(Point a, Point b)
+		{
+			return a.Add(b);
+		}
+		public static Point operator -(Point a, Point b)
+		{
+			return a + (-1f * b);
+		}
+		public static Point operator -(Point a)
+		{
+			return -1f * a;
+		}
+		public static Point operator *(Point a, float k)
+		{
+			return a.Multiply(k);
+		}
+		public static Point operator *(float k, Point a)
+		{
+			return a * k;
+		}
+
+		public static float operator *(Point a, Point b)
+		{
+			return a.Multiply(b);
+		}
+
+		public static bool operator ==([AllowNull] Point a, [AllowNull] Point b)
+		{
+		    return ReferenceEquals(a, null)
+		        ? ReferenceEquals(b, null)
+		        : a.Equals(b);
+		}
+
+		public static bool operator !=([AllowNull] Point a, [AllowNull] Point b)
+		{
+			return !(a == b);
+		}
+		public override bool Equals([AllowNull] object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
 			return Equals(obj as Point);
 		}
-		public bool Equals(Point obj)
+		public bool Equals([AllowNull] Point obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
@@ -58,7 +104,7 @@ namespace snake_game.Snake
 	}
 
 	/// <summary>
-	/// Каноническое уравнение прямой
+	/// Каноническое уравнение прямой Ax + By + C = 0
 	/// </summary>
 	public class Line
 	{
@@ -107,13 +153,13 @@ namespace snake_game.Snake
 			return A * a.X + B * a.Y + C;
 		}
 
-		public override bool Equals(object obj)
+		public override bool Equals([AllowNull] object obj)
 		{
 			if (ReferenceEquals(obj, null)) return false;
 			if (ReferenceEquals(obj, this)) return true;
 			return Equals(obj as Line);
 		}
-		public bool Equals(Line obj)
+		public bool Equals([AllowNull] Line obj)
 		{
 			if (ReferenceEquals(obj, null)) return false;
 			if (ReferenceEquals(obj, this)) return true;
@@ -124,7 +170,6 @@ namespace snake_game.Snake
 
 		public bool Parallels(Line obj)
 		{
-			if (ReferenceEquals(obj, null)) return false;
 			if (ReferenceEquals(obj, this)) return true;
 
 			//var D = A * obj.B - obj.A * B;
@@ -223,14 +268,14 @@ namespace snake_game.Snake
 			return Tuple.Create(result.ToArray(), skip);
 		}
 
-		public override bool Equals(object obj)
+		public override bool Equals([AllowNull] object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
 			return Equals(obj as Segment);
 		}
 
-		public bool Equals(Segment obj)
+		public bool Equals([AllowNull] Segment obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
@@ -306,10 +351,11 @@ namespace snake_game.Snake
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
+		[return:AllowNull]
 		public static Point Intersect(Segment a, Segment b)
 		{
-			if (a.A.Equals(b.A) || a.A.Equals(b.B)) return a.A;
-			if (a.B.Equals(b.A) || a.B.Equals(b.B)) return a.B;
+			if (a.A == b.A || a.A == b.B) return a.A;
+			if (a.B == b.A || a.B == b.B) return a.B;
 
 			var aXmin = new[] { a.A.X, a.B.X }.Min();
 			var aXmax = new[] { a.A.X, a.B.X }.Max();
@@ -369,5 +415,60 @@ namespace snake_game.Snake
 			return Intersect(lineA, lineB);
 		}
 
+		/// <summary>
+		/// Расстояние от точки до отрезка.
+		/// </summary>
+		/// <param name="seg"></param>
+		/// <param name="pt"></param>
+		/// <returns></returns>
+		public static float Distance(Segment seg, Point pt)
+		{
+			var vecAB = seg.B - seg.A;
+			var vecAP = pt - seg.A;
+			var t = (vecAB * vecAP) / (vecAB * vecAB);
+			if (t < 0) t = 0;
+			if (t > 1) t = 1;
+			var s = vecAP - t * vecAB;
+			return (float)Math.Sqrt(s * s);
+		}
+
+		/// <summary>
+		/// Расстояние от точки до прямой
+		/// </summary>
+		/// <param name="line"></param>
+		/// <param name="pt"></param>
+		/// <returns></returns>
+		public static float Distance(Line line, Point pt)
+		{
+			var z = line.Apply(pt);
+			var d = Math.Sqrt(line.A * line.A + line.B * line.B);
+			return (float)Math.Abs(z / d);
+		}
+
+		/// <summary>
+		/// Вектор скорости после отскока от прямой.
+		/// Не проверяется, что точка касается прямой.
+		/// </summary>
+		/// <param name="line">Уравнение прямой</param>
+		/// <param name="direction">Вектор начальной скорости</param>
+		/// <returns>Вектор скорости после отскока</returns>
+		public static Point Bounce(Line line, Point direction)
+		{
+			// a, b, c are not Line parameters, but triangle
+			var a = line.A;
+			var b = line.B;
+			var c = (float)Math.Sqrt(a * a + b * b);
+			a /= c;
+			b /= c;
+			var a2 = a * a;
+			var b2 = b * b;
+			var doubleAB = 2 * a * b;
+			return new Point(
+				(b2 - a2) * direction.X +  // (b^2 - a^2)Vx +
+				doubleAB * direction.Y,  // + 2ab * Vy;
+				doubleAB * direction.X +  //  2ab * Vx +
+				(a2 - b2) * direction.Y  // + (a^2 - b^2)Vy
+			);
+		}
 	}
 }
