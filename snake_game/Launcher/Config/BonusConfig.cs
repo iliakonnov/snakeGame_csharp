@@ -35,9 +35,12 @@ namespace snake_game.Launcher.Config
             };
         }
 
-        public TabPage GetPage()
+        public TabPage GetPage(Eto.Drawing.Size size, int height)
         {
-            _enableBonuses = new CheckBox {Checked = _config.BonusSettings.EnableBonuses};
+            _enableBonuses = new CheckBox {
+				Height = height,
+				Checked = _config.BonusSettings.EnableBonuses
+			};
             if (_config.BonusSettings.BonusesEnabled == null)
             {
                 _apple = new AppleConfig(_config.AppleConfig, true);
@@ -56,10 +59,11 @@ namespace snake_game.Launcher.Config
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = {_enableBonuses, new Label {Text = "Enable bonuses"}}
+                        Items = {_enableBonuses, new Label {Text = "Enable bonuses", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new TabControl
                     {
+						Size = new Eto.Drawing.Size(size.Width, size.Height - height),
                         Pages =
                         {
                             _brick.GetPage(),

@@ -53,37 +53,37 @@ namespace snake_game.Launcher.Bonuses
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _enabled, new Label { Text = "Bonus enabled"} }
+                        Items = { _enabled, new Label { Text = "Bonus enabled", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _chanceTime, new Label { Text = "Random events time (sec)"} }
+                        Items = { _chanceTime, new Label { Text = "Random events time (sec)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _moveChance, new Label { Text = "Chance for brick move (%)"} }
+                        Items = { _moveChance, new Label { Text = "Chance for brick move (%)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _newChance, new Label { Text = "Chance for new brick spawn (%)"} }
+                        Items = { _newChance, new Label { Text = "Chance for new brick spawn (%)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _step, new Label { Text = "Move step (px)"} }
+                        Items = { _step, new Label { Text = "Move step (px)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _size, new Label { Text = "Brick size (px)"} }
+                        Items = { _size, new Label { Text = "Brick size (px)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _brickColor, new Label { Text = "Brick color"} }
+                        Items = { _brickColor, new Label { Text = "Brick color", VerticalAlignment = VerticalAlignment.Center } }
                     }
                 }
             })

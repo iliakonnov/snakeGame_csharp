@@ -62,53 +62,53 @@ namespace snake_game.Launcher.Config
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _lives, new Label { Text = "Lives"} }
+                        Items = { _lives, new Label { Text = "Lives", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _damageTimeout, new Label { Text = "Damage timeout (sec)"} }
+                        Items = { _damageTimeout, new Label { Text = "Damage timeout (sec)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _foodToLive, new Label { Text = "Food to get extra live"} }
+                        Items = { _foodToLive, new Label { Text = "Food to get extra live", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _textColor, new Label { Text = "Information text color"} }
+                        Items = { _textColor, new Label { Text = "Information text color", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _bgColor, new Label { Text = "Background color"} }
+                        Items = { _bgColor, new Label { Text = "Background color", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _fogColor, new Label { Text = "Fog color"} }
+                        Items = { _fogColor, new Label { Text = "Fog color", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new Label { Height = 2 },  // Separator
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _debugEnabled, new Label { Text = "Enable debug (~)"} }
+                        Items = { _debugEnabled, new Label { Text = "Enable debug (~)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _debugColor, new Label { Text = "Debug window color"} }
+                        Items = { _debugColor, new Label { Text = "Debug window color", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _fogEnabled, new Label { Text = "Enable fog"} }
+                        Items = { _fogEnabled, new Label { Text = "Enable fog", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _fogSizeMultiplier, new Label { Text = "Fog size multiplier"} }
+                        Items = { _fogSizeMultiplier, new Label { Text = "Fog size multiplier", VerticalAlignment = VerticalAlignment.Center } }
                     }
                 }
             })

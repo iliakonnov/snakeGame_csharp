@@ -77,47 +77,47 @@ namespace snake_game.Launcher.Config
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _speed, new Label { Text = "Speed (px/s)"} }
+                        Items = { _speed, new Label { Text = "Speed (px/s)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _circleSize, new Label { Text = "Circles radius (px)"} }
+                        Items = { _circleSize, new Label { Text = "Circles radius (px)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _circleOffset, new Label { Text = "Offset between circles (px)"} }
+                        Items = { _circleOffset, new Label { Text = "Offset between circles (px)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _initLen, new Label { Text = "Snake length"} }
+                        Items = { _initLen, new Label { Text = "Snake length", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _damageColor, new Label { Text = "Color when damage taken"} }
+                        Items = { _damageColor, new Label { Text = "Color when damage taken", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _headColorEnabled, new Label { Text = "Use special head color"} }
+                        Items = { _headColorEnabled, new Label { Text = "Use special head color", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _headColor, new Label { Text = "Special head color"} }
+                        Items = { _headColor, new Label { Text = "Special head color", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _rainbowSnake, new Label { Text = "Rainbow snake"} }
+                        Items = { _rainbowSnake, new Label { Text = "Rainbow snake", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _snakeColor, new Label { Text = "Snake color"} }
+                        Items = { _snakeColor, new Label { Text = "Snake color", VerticalAlignment = VerticalAlignment.Center } }
                     }
                     // TODO: Сделать настройку цветов змеи (Color[] Colors)
                 }

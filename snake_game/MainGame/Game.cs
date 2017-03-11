@@ -120,6 +120,7 @@ namespace snake_game.MainGame
 			if (control.IsExit)
 			{
 				Exit();
+				return;
 			}
 			if (control.Turn.ToTurn)
 			{

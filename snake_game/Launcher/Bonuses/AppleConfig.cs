@@ -52,37 +52,37 @@ namespace snake_game.Launcher.Bonuses
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _enabled, new Label { Text = "Bonus enabled"} }
+                        Items = { _enabled, new Label {Text = "Bonus enabled", VerticalAlignment = VerticalAlignment.Center} }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _appleCount, new Label { Text = "Apple count"} }
+                        Items = { _appleCount, new Label { Text = "Apple count", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _speed, new Label { Text = "Apple speed (px/s)"} }
+                        Items = { _speed, new Label { Text = "Apple speed (px/s)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _radius, new Label { Text = "Apple radius (px)"} }
+                        Items = { _radius, new Label { Text = "Apple radius (px)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _appleColor, new Label { Text = "Apple color"} }
+                        Items = { _appleColor, new Label { Text = "Apple color", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _thickness, new Label { Text = "Circle thickness (px)"} }
+                        Items = { _thickness, new Label { Text = "Circle thickness (px)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _sides, new Label { Text = "Circle quality"} }
+                        Items = { _sides, new Label { Text = "Circle quality", VerticalAlignment = VerticalAlignment.Center } }
                     }
                 }
             })

@@ -40,22 +40,22 @@ namespace snake_game.Launcher.Config
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _mouseVisible, new Label { Text = "Mouse visible"} }
+                        Items = { _mouseVisible, new Label { Text = "Mouse visible", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _fullScreen, new Label { Text = "Full screen"} }
+                        Items = { _fullScreen, new Label { Text = "Full screen", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _width, new Label { Text = "Screen width (px)"} }
+                        Items = { _width, new Label { Text = "Screen width (px)", VerticalAlignment = VerticalAlignment.Center } }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _height, new Label { Text = "Screen height (px)"} }
+                        Items = { _height, new Label { Text = "Screen height (px)", VerticalAlignment = VerticalAlignment.Center } }
                     }
                 }
             })

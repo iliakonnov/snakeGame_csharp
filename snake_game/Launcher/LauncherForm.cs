@@ -9,7 +9,11 @@ namespace snake_game.Launcher
 {
     public class LauncherForm : Form
     {
-        GameConfig _gameCfg;
+		const int WINDOW_WIDTH = 500;
+		const int WINDOW_HEIGHT = 300;
+		const int BUTTON_HEIGHT = 30;
+
+		GameConfig _gameCfg;
         ScreenConfig _screenCfg;
         SnakeConfig _snakeCfg;
         BonusConfig _bonusCfg;
@@ -51,6 +55,7 @@ namespace snake_game.Launcher
 
         public LauncherForm()
         {
+			ClientSize = new Eto.Drawing.Size(WINDOW_WIDTH, WINDOW_HEIGHT);
             _config = File.Exists("config.json")
                 ? ConfigLoad.Parse(File.ReadAllText("config.json"))
                 : new MainGame.Config();
@@ -64,30 +69,44 @@ namespace snake_game.Launcher
             _snakeCfg = new SnakeConfig(_config.SnakeConfig);
             _bonusCfg = new BonusConfig(_config.BonusConfig);
 
-            var saveButton = new Button {Text = "Save config"};
+            var saveButton = new Button {
+				Text = "Save config",
+				Size = new Eto.Drawing.Size(WINDOW_WIDTH / 3, BUTTON_HEIGHT)
+			};
             saveButton.Click += SaveHandler;
-            var startButton = new Button {Text = "Start!"};
+            var startButton = new Button {
+				Text = "Start!",
+				Size = new Eto.Drawing.Size(WINDOW_WIDTH / 3, BUTTON_HEIGHT)
+			};
             startButton.Click += StartHandler;
-            var resetButton = new Button {Text = "Reset to default"};
+            var resetButton = new Button {
+				Text = "Reset to default",
+				Size = new Eto.Drawing.Size(WINDOW_WIDTH / 3, BUTTON_HEIGHT)
+			};
             resetButton.Click += ResetHandler;
 
-            Content = new StackLayout
-            {
+			var tabControlSize = new Eto.Drawing.Size(WINDOW_WIDTH, WINDOW_HEIGHT - BUTTON_HEIGHT);
+
+			Content = new StackLayout
+			{
                 Items =
                 {
                     new TabControl
                     {
-                        Pages =
+						Size = tabControlSize,
+						Pages =
                         {
                             _gameCfg.GetPage(),
                             _screenCfg.GetPage(),
                             _snakeCfg.GetPage(),
-                            _bonusCfg.GetPage()
+                            _bonusCfg.GetPage(tabControlSize, BUTTON_HEIGHT)
                         }
                     },
                     new StackLayout  // Buttons
                     {
-                        Orientation = Orientation.Horizontal,
+						Size = new Eto.Drawing.Size(WINDOW_WIDTH, BUTTON_HEIGHT
+						),
+						Orientation = Orientation.Horizontal,
                         Items =
                         {
                             resetButton,
