@@ -159,17 +159,19 @@ namespace snake_game.Bonuses
                 }
 
                 var old = snakePoints[0];
+                var circle = GetCircle();
                 for (var i = 1; i < snakePoints.Length; i++)
                 {
                     var current = snakePoints[i];
-                    var seg = new Segment(
-                        new Snake.Point(old.Center.X, old.Center.Y),
-                        new Snake.Point(current.Center.X, current.Center.Y)
-                    );
-                    if (MathUtils.Distance(seg, new Snake.Point(_position.X, _position.Y)) <= _config.Radius + old.Radius)
+                    if (current.Intersects(circle))
                     {
+                        var seg = new Segment(
+                            new Snake.Point(old.Center.X, old.Center.Y),
+                            new Snake.Point(current.Center.X, current.Center.Y)
+                        );
                         bounce(MathUtils.StandardLine(seg.A, seg.B));
                     }
+                    old = current;
                 }
             }
 
