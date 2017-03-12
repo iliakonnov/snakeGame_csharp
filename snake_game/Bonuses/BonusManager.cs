@@ -13,12 +13,12 @@ namespace snake_game.Bonuses
         Config.BonusConfigClass _config;
         Random _rnd;
         readonly IBonusManager[] _bonuses;
-        public BonusManager(Config.BonusConfigClass config, MainGame.MainGame game)
+        public BonusManager(Config.BonusConfigClass config, MainGame.MainGame game, Random rnd)
         {
             if (config.BonusSettings.EnableBonuses)
             {
                 _config = config;
-                _rnd = new Random();
+                _rnd = rnd;
                 var bonuses = new List<IBonusManager>();
                 var bonusesEnabled =
                     config.BonusSettings.BonusesEnabled == null ||

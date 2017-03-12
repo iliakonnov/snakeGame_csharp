@@ -22,6 +22,7 @@ namespace snake_game.MainGame
 		Color[] _colors;
 		Fog _fog;
 	    BonusManager _bonusManager;
+	    Logger _log;
 	    int _score;
 	    int _dieTime;
 	    int _gameTime;
@@ -98,7 +99,9 @@ namespace snake_game.MainGame
 			} while (intersects);
 			_intersectStart = i;
 
-		    _bonusManager = new BonusManager(_config.BonusConfig, this);
+		    var seed = DateTime.Now.Millisecond;
+		    _log = new Logger(seed, _config);
+		    _bonusManager = new BonusManager(_config.BonusConfig, this, new Random(seed));
 		    _bonusManager.LoadContent(GraphicsDevice);
 
 			_dbg.LoadContent();
@@ -112,6 +115,7 @@ namespace snake_game.MainGame
 		    _gameTime += gameTime.ElapsedGameTime.Milliseconds;
 			_dbg.Update(gameTime);
 			var control = _ctrl.Control(Keyboard.GetState());
+		    _log.LogAction(_gameTime, control);
 
 			if (control.Debug)
 			{

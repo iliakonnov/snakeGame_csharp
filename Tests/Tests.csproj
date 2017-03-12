@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BrickBonusTests.cs" />
+    <Compile Include="LoggerTests.cs" />
     <Compile Include="SegmentTests.cs" />
     <Compile Include="SnakeModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
