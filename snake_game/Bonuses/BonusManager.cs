@@ -9,20 +9,21 @@ namespace snake_game.Bonuses
 {
     public class BonusManager
     {
+        public static readonly string[] AvailableBonuses = {"brick", "apple"};
         Config.BonusConfigClass _config;
         Random _rnd;
         readonly IBonusManager[] _bonuses;
-        public BonusManager(Config.BonusConfigClass config, MainGame.MainGame game)
+        public BonusManager(Config.BonusConfigClass config, MainGame.MainGame game, Random rnd)
         {
             if (config.BonusSettings.EnableBonuses)
             {
                 _config = config;
-                _rnd = new Random();
+                _rnd = rnd;
                 var bonuses = new List<IBonusManager>();
                 var bonusesEnabled =
                     config.BonusSettings.BonusesEnabled == null ||
                     config.BonusSettings.BonusesEnabled.Length == 0
-                        ? new[] {"brick", "apple"}
+                        ? AvailableBonuses
                         : config.BonusSettings.BonusesEnabled;
                 foreach (var bonus in bonusesEnabled)
                 {
@@ -54,11 +55,11 @@ namespace snake_game.Bonuses
             }
         }
 
-        public void Update(GameTime gameTime, CircleF snakeHead, Rectangle size)
+        public void Update(GameTime gameTime, CircleF[] snakePoints, Rectangle size)
         {
             foreach (var bonus in _bonuses)
             {
-                bonus.Update(gameTime, _bonuses, snakeHead, size);
+                bonus.Update(gameTime, _bonuses, snakePoints, size);
             }
         }
 

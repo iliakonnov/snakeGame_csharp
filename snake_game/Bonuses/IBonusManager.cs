@@ -10,7 +10,7 @@ namespace snake_game.Bonuses
     {
         string Name { get; }
         void LoadContent(GraphicsDevice graphicsDevice);
-        void Update(GameTime gameTime, IBonusManager[] bonuses, CircleF snakeHead, Rectangle size);
+        void Update(GameTime gameTime, IBonusManager[] bonuses, CircleF[] snakePoints, Rectangle size);
         void Draw(SpriteBatch sb);
     }
 }

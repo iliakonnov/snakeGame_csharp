@@ -12,7 +12,7 @@ namespace snake_game.MainGame
 		}
 		public class Turn
 		{
-			public bool ToTurn = false;
+			public bool ToTurn;
 			public bool ReplaceTurn;
 			public int TurnDegrees;
 		}

@@ -43,9 +43,9 @@ namespace snake_game.Snake
 
 		public IReadOnlyCollection<Point> Points => new ReadOnlyCollection<Point>(_nodes);
 
-		public float Direction { get { return _headDirection; } }
+		public float Direction => _headDirection;
 
-		public SnakeModel ContinueMove(float s)
+	    public SnakeModel ContinueMove(float s)
 		{
 			if (_nodes.Length == 0)
 				throw new Exception();
@@ -73,11 +73,10 @@ namespace snake_game.Snake
 			var nodes = _nodes;
 			if (_nodes.Length > 1)
 			{
-				var head = _nodes[0];
-				if (head.Equals(_nodes[1]))
-					nodes = _nodes;
-				else
-					nodes = new[] { head }.Concat(_nodes).ToArray();
+			    var head = _nodes[0];
+			    nodes = head.Equals(_nodes[1])
+			        ? _nodes
+			        : new[] { head }.Concat(_nodes).ToArray();
 			}
 
 			var dir = ((int)(_headDirection + alpha)) % 360;
@@ -119,18 +118,22 @@ namespace snake_game.Snake
 		{
 			var result = new Point[(int)(_length / pointDistance)];
 			var n = 0;
-			result[n++] = (_nodes[0]);
+			result[n++] = _nodes[0];
 			var skip = 0f;
 			for (var i = 0; i < _nodes.Length - 1; i++)
 			{
-				Tuple<Point[], float> tuple = new Segment(_nodes[i], _nodes[i + 1])
-					.AsSetOfPoints(pointDistance, skip);
+				Tuple<Point[], float> tuple = new Segment(_nodes[i], _nodes[i + 1]).AsSetOfPoints(pointDistance, skip);
 				foreach (var item in tuple.Item1)
 				{
 					if (n < result.Length) result[n++] = item;
 				}
 				skip = tuple.Item2;
 			}
+		    if (result[result.Length - 1] == null)
+		    {
+		        // TODO: Змея дёргается если расстояние между кружочками кратно 20
+		        result[result.Length - 1] = result[result.Length - 2];
+		    }
 
 			return result;
 		}
