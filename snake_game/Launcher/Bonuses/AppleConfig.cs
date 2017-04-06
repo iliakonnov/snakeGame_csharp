@@ -10,6 +10,7 @@ namespace snake_game.Launcher.Bonuses
         NumericUpDown _radius;
         NumericUpDown _sides;
         NumericUpDown _speed;
+        NumericUpDown _bounceTimeout;
         ColorPicker _appleColor;
         MainGame.Config.BonusConfigClass.AppleConfigClass _config;
 
@@ -28,7 +29,8 @@ namespace snake_game.Launcher.Bonuses
                 Radius = (int) _radius.Value,
                 Sides = (int) _sides.Value,
                 Speed = (int) _speed.Value,
-                AppleColor = ColorConverter.ToXna(_appleColor.Value)
+                AppleColor = ColorConverter.ToXna(_appleColor.Value),
+                BounceTimeout = (float) _bounceTimeout.Value * 1000
             };
         }
 
@@ -44,6 +46,7 @@ namespace snake_game.Launcher.Bonuses
             _radius = new NumericUpDown {Value = _config.Radius};
             _sides = new NumericUpDown {Value = _config.Sides};
             _speed = new NumericUpDown {Value = _config.Speed};
+            _bounceTimeout = new NumericUpDown {Value = _config.BounceTimeout / 1000};
             _appleColor = new ColorPicker {Value = ColorConverter.ToEto(_config.AppleColor)};
             return new TabPage(new StackLayout
             {
@@ -101,6 +104,15 @@ namespace snake_game.Launcher.Bonuses
                         {
                             _thickness,
                             new Label {Text = "Circle thickness (px)", VerticalAlignment = VerticalAlignment.Center}
+                        }
+                    },
+                    new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Items =
+                        {
+                            _bounceTimeout,
+                            new Label {Text = "Bounce timeout (sec)", VerticalAlignment = VerticalAlignment.Center}
                         }
                     },
                     new StackLayout

@@ -1,33 +1,25 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Shapes;
-using OpenTK.Graphics.OpenGL;
 using snake_game.MainGame;
 using snake_game.Snake;
-using Point = Microsoft.Xna.Framework.Point;
 
 namespace snake_game.Bonuses
 {
     public class AntiBrickManager : IBonusManager
     {
-        Config.BonusConfigClass.AntiBrickConfigClass _config;
-        Random _random;
-        Game _game;
+        readonly Config.BonusConfigClass.AntiBrickConfigClass _config;
+        readonly Random _random;
         Texture2D _texture;
         EquilateralTriangle _triangle;
-        Vector2 _position;
-        CircleF _snakeHead;
         bool created = false;
 
         public AntiBrickManager(Config.BonusConfigClass.AntiBrickConfigClass cfg, Random rnd, MainGame.MainGame game)
         {
             _config = cfg;
             _random = rnd;
-            _game = game;
         }
 
         public string Name => "antibrick";
@@ -79,8 +71,8 @@ namespace snake_game.Bonuses
                 AcSeg = new Segment(_aPoint, _cPoint);
 
                 _abLn = _Normalize(MathUtils.StandardLine(_aPoint, _bPoint), _cPoint);
-                _abLn = _Normalize(MathUtils.StandardLine(_bPoint, _cPoint), _aPoint);
-                _abLn = _Normalize(MathUtils.StandardLine(_aPoint, _cPoint), _bPoint);
+                _bcLn = _Normalize(MathUtils.StandardLine(_bPoint, _cPoint), _aPoint);
+                _acLn = _Normalize(MathUtils.StandardLine(_cPoint, _aPoint), _bPoint);
             }
 
             static Line _Normalize(Line ln, Snake.Point p)
@@ -166,7 +158,6 @@ namespace snake_game.Bonuses
         public void Update(GameTime gameTime, int fullTime, IBonusManager[] bonuses, CircleF[] snakePoints,
             Rectangle size)
         {
-            _snakeHead = snakePoints.First();
             var brickManagers = bonuses.Where(x => x.Name == "brick").ToArray();
             if (brickManagers.Length != 0)
             {

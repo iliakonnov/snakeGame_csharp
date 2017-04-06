@@ -15,7 +15,7 @@ namespace snake_game.Bonuses
         readonly Config.BonusConfigClass.AppleConfigClass _config;
         readonly Random _random;
         bool _first = true;
-        public readonly List<AppleBonus> _apples = new List<AppleBonus>();
+        public readonly List<AppleBonus> Apples = new List<AppleBonus>();
         MainGame.MainGame _game;
 
         public AppleManager(Config.BonusConfigClass.AppleConfigClass cfg, Random rnd, MainGame.MainGame game)
@@ -36,7 +36,7 @@ namespace snake_game.Bonuses
             {
                 for (var i = 0; i < _config.AppleCount; i++)
                 {
-                    _apples.Add(new AppleBonus(new Vector2(
+                    Apples.Add(new AppleBonus(new Vector2(
                         _random.Next(size.X, size.X + size.Width),
                         _random.Next(size.Y, size.Y + size.Height)
                     ), new Vector2(
@@ -76,11 +76,11 @@ namespace snake_game.Bonuses
             var obstacles = obstaclesL.ToArray();
 
             var remove = new List<int>();
-            for (var i = 0; i < _apples.Count; i++)
+            for (var i = 0; i < Apples.Count; i++)
             {
-                var apple = _apples[i];
+                var apple = Apples[i];
                 var appleCircle = apple.GetCircle();
-                apple.Move(gameTime.ElapsedGameTime.TotalSeconds, size, obstacles, snakePoints);
+                apple.Move(gameTime.ElapsedGameTime.TotalSeconds, fullTime, size, obstacles, snakePoints);
                 if (appleCircle.Intersects(snakePoints.First()))
                 {
                     _game.Eat(1);
@@ -89,7 +89,7 @@ namespace snake_game.Bonuses
             }
             foreach (var index in remove)
             {
-                _apples.RemoveAt(index);
+                Apples.RemoveAt(index);
                 var bigHead = snakePoints.First();
                 bigHead.Radius *= 2;
                 AppleBonus newApple;
@@ -99,7 +99,7 @@ namespace snake_game.Bonuses
                         _random.Next(size.Width - _config.Radius), _random.Next(size.Height - _config.Radius)
                     ), GetRandomDirection(), _config);
                 } while (snakePoints.First().Intersects(newApple.GetCircle()));
-                _apples.Add(newApple);
+                Apples.Add(newApple);
             }
         }
 
@@ -111,7 +111,7 @@ namespace snake_game.Bonuses
 
         public void Draw(SpriteBatch sb)
         {
-            foreach (var apple in _apples)
+            foreach (var apple in Apples)
             {
                 sb.DrawCircle(apple.GetCircle(), _config.Sides, _config.AppleColor, _config.Thickness);
             }
@@ -121,6 +121,7 @@ namespace snake_game.Bonuses
         {
             Vector2 _position;
             Vector2 _direction;
+            double _bounceTime;
             readonly Config.BonusConfigClass.AppleConfigClass _config;
 
             public AppleBonus(Vector2 pos, Vector2 direction, Config.BonusConfigClass.AppleConfigClass config)
@@ -135,7 +136,7 @@ namespace snake_game.Bonuses
                 return new CircleF(_position, _config.Radius);
             }
 
-            public void Move(double time, Rectangle size, Segment[] obstacles, CircleF[] snakePoints)
+            public void Move(double time, int fullTime, Rectangle size, Segment[] obstacles, CircleF[] snakePoints)
             {
                 _position += new Vector2(
                                  _config.Speed * _direction.X,
@@ -148,32 +149,35 @@ namespace snake_game.Bonuses
                 var MinY = _config.Radius;
 
                 // Check for bounce.
-                if (_position.X > MaxX || _position.X < MinX)
+                if (fullTime - _bounceTime > _config.BounceTimeout && (_position.X > MaxX || _position.X < MinX))
                 {
                     var newDirection = MathUtils.Bounce(
                         new Line(1, 0, 0),
                         new Snake.Point(_direction.X, _direction.Y)
                     );
                     _direction = new Vector2(newDirection.X, newDirection.Y);
+                    _bounceTime = fullTime;
                 }
-                if (_position.Y > MaxY || _position.Y < MinY)
+                if (fullTime - _bounceTime > _config.BounceTimeout && (_position.Y > MaxY || _position.Y < MinY))
                 {
                     var newDirection = MathUtils.Bounce(
                         new Line(0, 1, 0),
                         new Snake.Point(_direction.X, _direction.Y)
                     );
                     _direction = new Vector2(newDirection.X, newDirection.Y);
+                    _bounceTime = fullTime;
                 }
 
                 foreach (var o in obstacles)
                 {
-                    if (MathUtils.Distance(o, new Snake.Point(_position.X, _position.Y)) <= _config.Radius)
+                    if (fullTime - _bounceTime > _config.BounceTimeout && MathUtils.Distance(o, new Snake.Point(_position.X, _position.Y)) <= _config.Radius)
                     {
                         var newDirection = MathUtils.Bounce(
                             MathUtils.StandardLine(o.A, o.B),
                             new Snake.Point(_direction.X, _direction.Y)
                         );
                         _direction = new Vector2(newDirection.X, newDirection.Y);
+                        _bounceTime = fullTime;
                     }
                 }
 
@@ -182,7 +186,7 @@ namespace snake_game.Bonuses
                 for (var i = 1; i < snakePoints.Length; i++)
                 {
                     var current = snakePoints[i];
-                    if (current.Intersects(circle))
+                    if (fullTime - _bounceTime > _config.BounceTimeout && current.Intersects(circle))
                     {
                         var seg = new Segment(
                             new Snake.Point(old.Center.X, old.Center.Y),
@@ -193,6 +197,7 @@ namespace snake_game.Bonuses
                             new Snake.Point(_direction.X, _direction.Y)
                         );
                         _direction = new Vector2(newDirection.X, newDirection.Y);
+                        _bounceTime = fullTime;
                     }
                     old = current;
                 }

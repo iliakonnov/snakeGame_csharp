@@ -60,15 +60,16 @@ namespace snake_game.MainGame
             public class AntiBrickConfigClass
             {
                 public int StartBrickCount = 10;
-                public int ChanceTime = 10000;
-                public double NewChance = 0.80;
+                public int ChanceTime = 7000;
+                public double NewChance = 0.95;
                 public Color Color = Color.GreenYellow;
                 public int Size = 25;
-                public float Thickness = 1f;
+                public float Thickness = 10f;
             }
 
             public class AppleConfigClass
             {
+                public float BounceTimeout = 150f;
                 public int AppleCount = 1;
                 public float Thickness = 10f;
                 public int Radius = 25;
