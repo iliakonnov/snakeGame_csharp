@@ -59,8 +59,11 @@ namespace DamienG.Security.Cryptography
             return hashBuffer;
         }
 
-        public override int HashSize { get { return 32; } }
-        
+        public override int HashSize
+        {
+            get { return 32; }
+        }
+
         public static UInt32 Compute(byte[] buffer)
         {
             return Compute(DefaultSeed, buffer);
@@ -84,7 +87,7 @@ namespace DamienG.Security.Cryptography
             var createTable = new UInt32[256];
             for (var i = 0; i < 256; i++)
             {
-                var entry = (UInt32)i;
+                var entry = (UInt32) i;
                 for (var j = 0; j < 8; j++)
                     if ((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;

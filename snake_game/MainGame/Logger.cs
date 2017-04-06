@@ -53,7 +53,7 @@ namespace snake_game.MainGame
             };
             _logFile.WriteByte(bools.Data);
 
-            var turnDegrees = (short)(action.Turn.TurnDegrees % 360);
+            var turnDegrees = (short) (action.Turn.TurnDegrees % 360);
             Write(turnDegrees);
             _logFile.WriteByte(255);
         }
@@ -92,6 +92,7 @@ namespace snake_game.MainGame
     public class LogReader
     {
         readonly Stream _logFile;
+
         public LogReader(string logPath)
         {
             _logFile = File.OpenRead(logPath);
@@ -118,10 +119,10 @@ namespace snake_game.MainGame
 
         public ControlResult.Result GetResult(int n)
         {
-            var start = 8 + 8 * n + 4;  // meta + offset + time
+            var start = 8 + 8 * n + 4; // meta + offset + time
             _logFile.Seek(start, SeekOrigin.Begin);
 
-            var bools = new BoolArray((byte)_logFile.ReadByte());
+            var bools = new BoolArray((byte) _logFile.ReadByte());
             var turn = (int) ReadShort();
 
             return new ControlResult.Result
@@ -139,7 +140,7 @@ namespace snake_game.MainGame
 
         public int GetTime(int n)
         {
-            var start = 8 + 8 * n + 4;  // meta + offset
+            var start = 8 + 8 * n + 4; // meta + offset
             _logFile.Seek(start, SeekOrigin.Begin);
 
             return ReadInt();
@@ -150,7 +151,7 @@ namespace snake_game.MainGame
             var dataBytes = new byte[2];
             for (var i = 0; i < dataBytes.Length; i++)
             {
-                dataBytes[i] = (byte)_logFile.ReadByte();
+                dataBytes[i] = (byte) _logFile.ReadByte();
             }
             if (BitConverter.IsLittleEndian) Array.Reverse(dataBytes);
             return BitConverter.ToInt16(dataBytes, 0);
@@ -161,7 +162,7 @@ namespace snake_game.MainGame
             var dataBytes = new byte[4];
             for (var i = 0; i < dataBytes.Length; i++)
             {
-                dataBytes[i] = (byte)_logFile.ReadByte();
+                dataBytes[i] = (byte) _logFile.ReadByte();
             }
             if (BitConverter.IsLittleEndian) Array.Reverse(dataBytes);
             return BitConverter.ToInt32(dataBytes, 0);
@@ -172,7 +173,7 @@ namespace snake_game.MainGame
             var dataBytes = new byte[4];
             for (var i = 0; i < dataBytes.Length; i++)
             {
-                dataBytes[i] = (byte)_logFile.ReadByte();
+                dataBytes[i] = (byte) _logFile.ReadByte();
             }
             if (BitConverter.IsLittleEndian) Array.Reverse(dataBytes);
             return BitConverter.ToUInt32(dataBytes, 0);
@@ -217,9 +218,9 @@ namespace snake_game.MainGame
                     throw new ArgumentOutOfRangeException();
 
                 if (value)
-                    _data = (byte)(_data | (1 << index));
+                    _data = (byte) (_data | (1 << index));
                 else
-                    _data = (byte)(_data & ~(1 << index));
+                    _data = (byte) (_data & ~(1 << index));
             }
         }
     }

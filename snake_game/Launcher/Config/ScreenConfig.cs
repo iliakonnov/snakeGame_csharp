@@ -10,6 +10,7 @@ namespace snake_game.Launcher.Config
         NumericUpDown _height;
 
         MainGame.Config.ScreenConfigClass _config;
+
         public ScreenConfig(MainGame.Config.ScreenConfigClass config)
         {
             _config = config;
@@ -40,22 +41,38 @@ namespace snake_game.Launcher.Config
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _mouseVisible, new Label { Text = "Mouse visible", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _mouseVisible,
+                            new Label {Text = "Mouse visible", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _fullScreen, new Label { Text = "Full screen", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _fullScreen,
+                            new Label {Text = "Full screen", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _width, new Label { Text = "Screen width (px)", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _width,
+                            new Label {Text = "Screen width (px)", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _height, new Label { Text = "Screen height (px)", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _height,
+                            new Label {Text = "Screen height (px)", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     }
                 }
             })

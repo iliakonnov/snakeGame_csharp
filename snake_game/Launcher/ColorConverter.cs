@@ -53,6 +53,7 @@ namespace snake_game.Launcher
                 color.B
             );
         }
+
         public static System.Drawing.Color ToSystem(Eto.Drawing.Color color)
         {
             return System.Drawing.Color.FromArgb(

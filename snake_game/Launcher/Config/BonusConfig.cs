@@ -10,6 +10,7 @@ namespace snake_game.Launcher.Config
         CheckBox _enableBonuses;
         AppleConfig _apple;
         BrickConfig _brick;
+        AntiBrickConfig _antiBrick;
         MainGame.Config.BonusConfigClass _config;
 
         public BonusConfig(MainGame.Config.BonusConfigClass config)
@@ -22,6 +23,7 @@ namespace snake_game.Launcher.Config
             var bonusesEnabled = new List<string>();
             if (_apple.IsEnabled()) bonusesEnabled.Add("apple");
             if (_brick.IsEnabled()) bonusesEnabled.Add("brick");
+            if (_antiBrick.IsEnabled()) bonusesEnabled.Add("antibrick");
 
             return new MainGame.Config.BonusConfigClass
             {
@@ -31,25 +33,30 @@ namespace snake_game.Launcher.Config
                     BonusesEnabled = bonusesEnabled.ToArray()
                 },
                 BrickConfig = _brick.GetConfig(),
-                AppleConfig = _apple.GetConfig()
+                AppleConfig = _apple.GetConfig(),
+                AntiBrickConfig = _antiBrick.GetConfig()
             };
         }
 
         public TabPage GetPage(Eto.Drawing.Size size, int height)
         {
-            _enableBonuses = new CheckBox {
-				Height = height,
-				Checked = _config.BonusSettings.EnableBonuses
-			};
+            _enableBonuses = new CheckBox
+            {
+                Height = height,
+                Checked = _config.BonusSettings.EnableBonuses
+            };
             if (_config.BonusSettings.BonusesEnabled == null)
             {
                 _apple = new AppleConfig(_config.AppleConfig, true);
                 _brick = new BrickConfig(_config.BrickConfig, true);
+                _antiBrick = new AntiBrickConfig(_config.AntiBrickConfig, true);
             }
             else
             {
                 _apple = new AppleConfig(_config.AppleConfig, _config.BonusSettings.BonusesEnabled.Contains("apple"));
                 _brick = new BrickConfig(_config.BrickConfig, _config.BonusSettings.BonusesEnabled.Contains("brick"));
+                _antiBrick = new AntiBrickConfig(_config.AntiBrickConfig,
+                    _config.BonusSettings.BonusesEnabled.Contains("antibrick"));
             }
 
             return new TabPage(new StackLayout
@@ -59,15 +66,20 @@ namespace snake_game.Launcher.Config
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = {_enableBonuses, new Label {Text = "Enable bonuses", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _enableBonuses,
+                            new Label {Text = "Enable bonuses", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new TabControl
                     {
-						Size = new Eto.Drawing.Size(size.Width, size.Height - height),
+                        Size = new Eto.Drawing.Size(size.Width, size.Height - height),
                         Pages =
                         {
                             _brick.GetPage(),
                             _apple.GetPage(),
+                            _antiBrick.GetPage()
                         }
                     }
                 }

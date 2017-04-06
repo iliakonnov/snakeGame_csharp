@@ -1,8 +1,6 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Shapes;
-using snake_game.Snake;
 
 namespace snake_game.Bonuses
 {
@@ -10,7 +8,7 @@ namespace snake_game.Bonuses
     {
         string Name { get; }
         void LoadContent(GraphicsDevice graphicsDevice);
-        void Update(GameTime gameTime, IBonusManager[] bonuses, CircleF[] snakePoints, Rectangle size);
+        void Update(GameTime gameTime, int fullTime, IBonusManager[] bonuses, CircleF[] snakePoints, Rectangle size);
         void Draw(SpriteBatch sb);
     }
 }

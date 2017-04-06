@@ -17,6 +17,7 @@ namespace snake_game.Launcher.Config
         ColorPicker _snakeColor;
 
         MainGame.Config.SnakeConfigClass _config;
+
         public SnakeConfig(MainGame.Config.SnakeConfigClass config)
         {
             _config = config;
@@ -26,14 +27,14 @@ namespace snake_game.Launcher.Config
         {
             var result = new MainGame.Config.SnakeConfigClass
             {
-                Speed = (int)_speed.Value,
-                CircleSize = (int)_circleSize.Value,
-                CircleOffset = (int)_circleOffset.Value,
-                InitLen = (int)_initLen.Value,
+                Speed = (int) _speed.Value,
+                CircleSize = (int) _circleSize.Value,
+                CircleOffset = (int) _circleOffset.Value,
+                InitLen = (int) _initLen.Value,
                 DamageColor = ColorConverter.ToXna(_damageColor.Value),
                 Colors = (_rainbowSnake.Checked ?? false)
                     ? null
-                    : new []{ColorConverter.ToXna(_snakeColor.Value)}
+                    : new[] {ColorConverter.ToXna(_snakeColor.Value)}
             };
             if (_headColorEnabled.Checked ?? false)
             {
@@ -77,47 +78,87 @@ namespace snake_game.Launcher.Config
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _speed, new Label { Text = "Speed (px/s)", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _speed,
+                            new Label {Text = "Speed (px/s)", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _circleSize, new Label { Text = "Circles radius (px)", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _circleSize,
+                            new Label {Text = "Circles radius (px)", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _circleOffset, new Label { Text = "Offset between circles (px)", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _circleOffset,
+                            new Label
+                            {
+                                Text = "Offset between circles (px)",
+                                VerticalAlignment = VerticalAlignment.Center
+                            }
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _initLen, new Label { Text = "Snake length", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _initLen,
+                            new Label {Text = "Snake length", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _damageColor, new Label { Text = "Color when damage taken", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _damageColor,
+                            new Label {Text = "Color when damage taken", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _headColorEnabled, new Label { Text = "Use special head color", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _headColorEnabled,
+                            new Label {Text = "Use special head color", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _headColor, new Label { Text = "Special head color", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _headColor,
+                            new Label {Text = "Special head color", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _rainbowSnake, new Label { Text = "Rainbow snake", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _rainbowSnake,
+                            new Label {Text = "Rainbow snake", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _snakeColor, new Label { Text = "Snake color", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _snakeColor,
+                            new Label {Text = "Snake color", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     }
                     // TODO: Сделать настройку цветов змеи (Color[] Colors)
                 }

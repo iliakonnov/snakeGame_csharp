@@ -9,16 +9,17 @@ namespace snake_game.Launcher
 {
     public class LauncherForm : Form
     {
-		const int WindowWidth = 400;
-		const int WindowHeight = 400;
-		const int ButtonHeight = 30;
+        const int WindowWidth = 400;
+        const int WindowHeight = 400;
+        const int ButtonHeight = 30;
 
-		GameConfig _gameCfg;
+        GameConfig _gameCfg;
         ScreenConfig _screenCfg;
         SnakeConfig _snakeCfg;
         BonusConfig _bonusCfg;
 
         MainGame.Config _config;
+
         void SaveHandler(object sender, EventArgs e)
         {
             _config = GetConfig();
@@ -55,7 +56,7 @@ namespace snake_game.Launcher
 
         public LauncherForm()
         {
-			ClientSize = new Eto.Drawing.Size(WindowWidth, WindowHeight);
+            ClientSize = new Eto.Drawing.Size(WindowWidth, WindowHeight);
             _config = File.Exists("config.json")
                 ? ConfigLoad.Parse(File.ReadAllText("config.json"))
                 : new MainGame.Config();
@@ -69,32 +70,35 @@ namespace snake_game.Launcher
             _snakeCfg = new SnakeConfig(_config.SnakeConfig);
             _bonusCfg = new BonusConfig(_config.BonusConfig);
 
-            var saveButton = new Button {
-				Text = "Save config",
-				Size = new Eto.Drawing.Size(WindowWidth / 3, ButtonHeight)
-			};
+            var saveButton = new Button
+            {
+                Text = "Save config",
+                Size = new Eto.Drawing.Size(WindowWidth / 3, ButtonHeight)
+            };
             saveButton.Click += SaveHandler;
-            var startButton = new Button {
-				Text = "Start!",
-				Size = new Eto.Drawing.Size(WindowWidth / 3, ButtonHeight)
-			};
+            var startButton = new Button
+            {
+                Text = "Start!",
+                Size = new Eto.Drawing.Size(WindowWidth / 3, ButtonHeight)
+            };
             startButton.Click += StartHandler;
-            var resetButton = new Button {
-				Text = "Reset to default",
-				Size = new Eto.Drawing.Size(WindowWidth / 3, ButtonHeight)
-			};
+            var resetButton = new Button
+            {
+                Text = "Reset to default",
+                Size = new Eto.Drawing.Size(WindowWidth / 3, ButtonHeight)
+            };
             resetButton.Click += ResetHandler;
 
-			var tabControlSize = new Eto.Drawing.Size(WindowWidth, WindowHeight - ButtonHeight);
+            var tabControlSize = new Eto.Drawing.Size(WindowWidth, WindowHeight - ButtonHeight);
 
-			Content = new StackLayout
-			{
+            Content = new StackLayout
+            {
                 Items =
                 {
                     new TabControl
                     {
-						Size = tabControlSize,
-						Pages =
+                        Size = tabControlSize,
+                        Pages =
                         {
                             _gameCfg.GetPage(),
                             _screenCfg.GetPage(),
@@ -102,11 +106,11 @@ namespace snake_game.Launcher
                             _bonusCfg.GetPage(tabControlSize, ButtonHeight)
                         }
                     },
-                    new StackLayout  // Buttons
+                    new StackLayout // Buttons
                     {
-						Size = new Eto.Drawing.Size(WindowWidth, ButtonHeight
-						),
-						Orientation = Orientation.Horizontal,
+                        Size = new Eto.Drawing.Size(WindowWidth, ButtonHeight
+                        ),
+                        Orientation = Orientation.Horizontal,
                         Items =
                         {
                             resetButton,

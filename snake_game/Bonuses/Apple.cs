@@ -29,7 +29,8 @@ namespace snake_game.Bonuses
         {
         }
 
-        public void Update(GameTime gameTime, IBonusManager[] bonuses, CircleF[] snakePoints, Rectangle size)
+        public void Update(GameTime gameTime, int fullTime, IBonusManager[] bonuses, CircleF[] snakePoints,
+            Rectangle size)
         {
             if (_first)
             {
@@ -137,43 +138,43 @@ namespace snake_game.Bonuses
             public void Move(double time, Rectangle size, Segment[] obstacles, CircleF[] snakePoints)
             {
                 _position += new Vector2(
-                                _config.Speed * _direction.X,
-                                _config.Speed * _direction.Y
-                            ) * (float)time;
+                                 _config.Speed * _direction.X,
+                                 _config.Speed * _direction.Y
+                             ) * (float) time;
 
                 var MaxX = size.Width - _config.Radius;
                 var MinX = _config.Radius;
                 var MaxY = size.Height - _config.Radius;
                 var MinY = _config.Radius;
 
-				// Check for bounce.
-				if (_position.X > MaxX || _position.X < MinX)
-				{
-					var newDirection = MathUtils.Bounce(
-						new Line(1, 0, 0),
-						new Snake.Point(_direction.X, _direction.Y)
-					);
-					_direction = new Vector2(newDirection.X, newDirection.Y);
-				}
-				if (_position.Y > MaxY || _position.Y < MinY)
-				{
-					var newDirection = MathUtils.Bounce(
-						new Line(0, 1, 0),
-						new Snake.Point(_direction.X, _direction.Y)
-					);
-					_direction = new Vector2(newDirection.X, newDirection.Y);
-				}
+                // Check for bounce.
+                if (_position.X > MaxX || _position.X < MinX)
+                {
+                    var newDirection = MathUtils.Bounce(
+                        new Line(1, 0, 0),
+                        new Snake.Point(_direction.X, _direction.Y)
+                    );
+                    _direction = new Vector2(newDirection.X, newDirection.Y);
+                }
+                if (_position.Y > MaxY || _position.Y < MinY)
+                {
+                    var newDirection = MathUtils.Bounce(
+                        new Line(0, 1, 0),
+                        new Snake.Point(_direction.X, _direction.Y)
+                    );
+                    _direction = new Vector2(newDirection.X, newDirection.Y);
+                }
 
-				foreach (var o in obstacles)
+                foreach (var o in obstacles)
                 {
                     if (MathUtils.Distance(o, new Snake.Point(_position.X, _position.Y)) <= _config.Radius)
                     {
-						var newDirection = MathUtils.Bounce(
-							MathUtils.StandardLine(o.A, o.B),
-							new Snake.Point(_direction.X, _direction.Y)
-						);
-						_direction = new Vector2(newDirection.X, newDirection.Y);
-					}
+                        var newDirection = MathUtils.Bounce(
+                            MathUtils.StandardLine(o.A, o.B),
+                            new Snake.Point(_direction.X, _direction.Y)
+                        );
+                        _direction = new Vector2(newDirection.X, newDirection.Y);
+                    }
                 }
 
                 var old = snakePoints[0];
@@ -188,10 +189,10 @@ namespace snake_game.Bonuses
                             new Snake.Point(current.Center.X, current.Center.Y)
                         );
                         var newDirection = MathUtils.Bounce(
-							MathUtils.StandardLine(seg.A, seg.B),
-							new Snake.Point(_direction.X, _direction.Y)
-						);
-						_direction = new Vector2(newDirection.X, newDirection.Y);
+                            MathUtils.StandardLine(seg.A, seg.B),
+                            new Snake.Point(_direction.X, _direction.Y)
+                        );
+                        _direction = new Vector2(newDirection.X, newDirection.Y);
                     }
                     old = current;
                 }

@@ -41,5 +41,6 @@ Thumbs.db
 
 *.gif
 .idea/
-
 *.mgcontent
+*.binlog
+snake_game/config.json

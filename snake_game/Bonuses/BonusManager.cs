@@ -9,10 +9,11 @@ namespace snake_game.Bonuses
 {
     public class BonusManager
     {
-        public static readonly string[] AvailableBonuses = {"brick", "apple"};
+        public static readonly string[] AvailableBonuses = {"brick", "apple", "antibrick"};
         Config.BonusConfigClass _config;
         Random _rnd;
         readonly IBonusManager[] _bonuses;
+
         public BonusManager(Config.BonusConfigClass config, MainGame.MainGame game, Random rnd)
         {
             if (config.BonusSettings.EnableBonuses)
@@ -35,6 +36,9 @@ namespace snake_game.Bonuses
                         case "apple":
                             bonuses.Add(new AppleManager(_config.AppleConfig, _rnd, game));
                             break;
+                        case "antibrick":
+                            bonuses.Add(new AntiBrickManager(_config.AntiBrickConfig, _rnd, game));
+                            break;
                         default:
                             throw new ArgumentException($"Unknown bonus: {bonus}");
                     }
@@ -55,11 +59,11 @@ namespace snake_game.Bonuses
             }
         }
 
-        public void Update(GameTime gameTime, CircleF[] snakePoints, Rectangle size)
+        public void Update(GameTime gameTime, int fullTime, CircleF[] snakePoints, Rectangle size)
         {
             foreach (var bonus in _bonuses)
             {
-                bonus.Update(gameTime, _bonuses, snakePoints, size);
+                bonus.Update(gameTime, fullTime, _bonuses, snakePoints, size);
             }
         }
 

@@ -24,7 +24,7 @@ namespace snake_game.Launcher.Bonuses
             return new MainGame.Config.BonusConfigClass.AppleConfigClass
             {
                 AppleCount = (int) _appleCount.Value,
-                Thickness = (int) _thickness.Value,
+                Thickness = (float) _thickness.Value,
                 Radius = (int) _radius.Value,
                 Sides = (int) _sides.Value,
                 Speed = (int) _speed.Value,
@@ -52,37 +52,65 @@ namespace snake_game.Launcher.Bonuses
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _enabled, new Label {Text = "Bonus enabled", VerticalAlignment = VerticalAlignment.Center} }
+                        Items =
+                        {
+                            _enabled,
+                            new Label {Text = "Bonus enabled", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _appleCount, new Label { Text = "Apple count", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _appleCount,
+                            new Label {Text = "Apple count", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _speed, new Label { Text = "Apple speed (px/s)", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _speed,
+                            new Label {Text = "Apple speed (px/s)", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _radius, new Label { Text = "Apple radius (px)", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _radius,
+                            new Label {Text = "Apple radius (px)", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _appleColor, new Label { Text = "Apple color", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _appleColor,
+                            new Label {Text = "Apple color", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _thickness, new Label { Text = "Circle thickness (px)", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _thickness,
+                            new Label {Text = "Circle thickness (px)", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
-                        Items = { _sides, new Label { Text = "Circle quality", VerticalAlignment = VerticalAlignment.Center } }
+                        Items =
+                        {
+                            _sides,
+                            new Label {Text = "Circle quality", VerticalAlignment = VerticalAlignment.Center}
+                        }
                     }
                 }
             })
@@ -91,5 +119,4 @@ namespace snake_game.Launcher.Bonuses
             };
         }
     }
-
 }
