@@ -44,3 +44,4 @@ Thumbs.db
 *.mgcontent
 *.binlog
 snake_game/config.json
+.vs

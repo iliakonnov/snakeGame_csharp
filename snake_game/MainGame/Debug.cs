@@ -24,18 +24,18 @@ namespace snake_game.MainGame
                 _color = color;
             }
 
-            public Rectangle Size()
+            public Rectangle Size(GameWindow window)
             {
                 return new Rectangle(0, 0,
                     IsEnabled
-                        ? _game.Window.ClientBounds.Width - Width
-                        : _game.Window.ClientBounds.Width, _game.Window.ClientBounds.Height
+                        ? window.ClientBounds.Width - Width
+                        : window.ClientBounds.Width, window.ClientBounds.Height
                 );
             }
 
-            public void LoadContent()
+            public void LoadContent(GraphicsDevice gd)
             {
-                _dummyTexture = new Texture2D(_game.GraphicsDevice, 1, 1);
+                _dummyTexture = new Texture2D(gd, 1, 1);
                 _dummyTexture.SetData(new[] {Color.White});
             }
 
@@ -53,22 +53,23 @@ namespace snake_game.MainGame
                 }
             }
 
-            public void Draw(Snake.Point[] snakePoints)
+            public void Draw(Snake.Point[] snakePoints, SpriteBatch spriteBatch, GameWindow window)
             {
                 if (IsEnabled)
                 {
                     _frames++;
-                    _game._spriteBatch.Draw(_dummyTexture, new Rectangle(
-                            _game.Window.ClientBounds.Width - Width,
+                    spriteBatch.Draw(_dummyTexture, new Rectangle(
+                            window.ClientBounds.Width - Width,
                             0,
-                            _game.Window.ClientBounds.Width,
-                            _game.Window.ClientBounds.Height),
+                            window.ClientBounds.Width,
+                            window.ClientBounds.Height),
                         _color
                     );
 
+                    var size = Size(window);
                     var debugString =
                         "    DEBUG\n" +
-                        $"Game Size: ({Size().Width}; {Size().Height})\n" +
+                        $"Game Size: ({size.Width}; {size.Height})\n" +
                         $"World Size: ({_game._world.Width}; {_game._world.Height})\n" +
                         $"FPS: {_fps}\n" +
                         $"Game time: {_game._gameTime}\n" +
@@ -78,8 +79,8 @@ namespace snake_game.MainGame
                         $"Snake direction: {_game._snake.Direction}\n" +
                         $"Head point: ({snakePoints.First().X}; {snakePoints.First().Y})";
 
-                    _game._spriteBatch.DrawString(_game._font, debugString, new Vector2(
-                        _game.Window.ClientBounds.Width - Width, 0
+                    spriteBatch.DrawString(_game._font, debugString, new Vector2(
+                        window.ClientBounds.Width - Width, 0
                     ), Color.Black);
                 }
             }

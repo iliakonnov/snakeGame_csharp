@@ -51,12 +51,9 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <Target Name="CheckOS">
     <Error Condition=" '$(OS)'!='Windows_NT' And '$(OS)'!='Unix'" Text="Unknown OS: $(OS)" />
@@ -125,15 +122,7 @@
     <Compile Include="Bonuses\BonusManager.cs" />
     <Compile Include="Bonuses\Brick.cs" />
     <Compile Include="Bonuses\IBonusManager.cs" />
-    <Compile Include="Launcher\Bonuses\AppleConfig.cs" />
-    <Compile Include="Launcher\Bonuses\BrickConfig.cs" />
-    <Compile Include="Launcher\Bonuses\AntiBrickConfig.cs" />
-    <Compile Include="Launcher\ColorConverter.cs" />
-    <Compile Include="Launcher\Config\BonusConfig.cs" />
-    <Compile Include="Launcher\Config\GameConfig.cs" />
-    <Compile Include="Launcher\Config\ScreenConfig.cs" />
-    <Compile Include="Launcher\Config\SnakeConfig.cs" />
-    <Compile Include="Launcher\LauncherForm.cs" />
+    <Compile Include="IMiniGame.cs" />
     <Compile Include="MainGame\Config.cs" />
     <Compile Include="MainGame\Control.cs" />
     <Compile Include="MainGame\Crc32.cs" />
@@ -146,6 +135,12 @@
     <Compile Include="Snake\BagelWorld.cs" />
     <Compile Include="Snake\MathUtils.cs" />
     <Compile Include="Snake\SnakeModel.cs" />
+    <Compile Include="XNALauncher\Launcher.cs" />
+    <Compile Include="XNALauncher\Menu.cs" />
+    <Compile Include="XNALauncher\Menus\SnakeMenu.cs" />
+    <Compile Include="XNALauncher\Menus\BonusMenu.cs" />
+    <Compile Include="XNALauncher\Menus\ScreenMenu.cs" />
+    <Compile Include="XNALauncher\Menus\GameMenu.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\DejaVu Sans Mono.xnb">
