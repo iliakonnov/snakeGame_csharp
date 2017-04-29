@@ -2,7 +2,7 @@
 
 namespace snake_game.Launcher.Bonuses
 {
-    public class AppleConfig
+    public class AppleConfig : IBonusConfig<MainGame.Config.BonusConfigClass.AppleConfigClass>
     {
         CheckBox _enabled;
         NumericUpDown _appleCount;

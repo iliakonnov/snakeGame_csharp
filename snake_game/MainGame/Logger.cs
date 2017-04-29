@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using DamienG.Security.Cryptography;
-using OpenTK.Graphics.ES11;
 
 namespace snake_game.MainGame
 {

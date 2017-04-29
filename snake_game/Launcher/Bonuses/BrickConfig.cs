@@ -2,7 +2,7 @@
 
 namespace snake_game.Launcher.Bonuses
 {
-    public class BrickConfig
+    public class BrickConfig : IBonusConfig<MainGame.Config.BonusConfigClass.BrickConfigClass>
     {
         CheckBox _enabled;
         NumericUpDown _chanceTime;

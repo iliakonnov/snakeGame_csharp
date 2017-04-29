@@ -2,7 +2,7 @@ using Eto.Forms;
 
 namespace snake_game.Launcher.Bonuses
 {
-    public class AntiBrickConfig
+    public class AntiBrickConfig : IBonusConfig<MainGame.Config.BonusConfigClass.AntiBrickConfigClass>
     {
         CheckBox _enabled;
         NumericUpDown _startBrickCount;

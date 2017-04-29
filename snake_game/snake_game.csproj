@@ -128,6 +128,7 @@
     <Compile Include="Launcher\Bonuses\AppleConfig.cs" />
     <Compile Include="Launcher\Bonuses\BrickConfig.cs" />
     <Compile Include="Launcher\Bonuses\AntiBrickConfig.cs" />
+    <Compile Include="Launcher\Bonuses\IBonusConfig.cs" />
     <Compile Include="Launcher\ColorConverter.cs" />
     <Compile Include="Launcher\Config\BonusConfig.cs" />
     <Compile Include="Launcher\Config\GameConfig.cs" />
