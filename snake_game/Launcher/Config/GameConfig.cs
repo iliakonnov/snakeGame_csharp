@@ -18,6 +18,8 @@ namespace snake_game.Launcher.Config
         ColorPicker _debugColor;
         CheckBox _fogEnabled;
         NumericUpDown _fogSizeMultiplier;
+        ComboBox _controlType;
+        NumericUpDown _turnSize;
 
 
         public GameConfig(MainGame.Config.GameConfigClass config)
@@ -29,31 +31,38 @@ namespace snake_game.Launcher.Config
         {
             return new MainGame.Config.GameConfigClass
             {
-                Lives = (int) _lives.Value,
-                DamageTimeout = (int) (_damageTimeout.Value * 1000),
-                FoodToLive = (int) _foodToLive.Value,
+                Lives = (int)_lives.Value,
+                DamageTimeout = (int)(_damageTimeout.Value * 1000),
+                FoodToLive = (int)_foodToLive.Value,
                 TextColor = ColorConverter.ToXna(_textColor.Value),
                 DebugShow = _debugEnabled.Checked ?? false,
                 DebugColor = ColorConverter.ToXna(_debugColor.Value),
                 FogEnabled = _fogEnabled.Checked ?? false,
                 FogColor = new Tuple<Color, Color>(ColorConverter.ToXna(_fogColor.Value), Color.Transparent),
                 FogSizeMultiplier = _fogSizeMultiplier.Value,
-                BackgroundColor = ColorConverter.ToXna(_bgColor.Value)
+                BackgroundColor = ColorConverter.ToXna(_bgColor.Value),
+                ControlType = _controlType.SelectedValue.ToString(),
+                TurnSize = _turnSize.Value > 0? (int?)_turnSize.Value : null
             };
         }
 
         public TabPage GetPage()
         {
-            _lives = new NumericUpDown {Value = _config.Lives};
-            _damageTimeout = new NumericUpDown {Value = _config.DamageTimeout / 1000};
-            _foodToLive = new NumericUpDown {Value = _config.FoodToLive};
-            _textColor = new ColorPicker {Value = ColorConverter.ToEto(_config.TextColor)};
-            _bgColor = new ColorPicker {Value = ColorConverter.ToEto(_config.BackgroundColor)};
-            _fogColor = new ColorPicker {Value = ColorConverter.ToEto(_config.FogColor.Item1)};
-            _debugEnabled = new CheckBox {Checked = _config.DebugShow};
-            _debugColor = new ColorPicker {Value = ColorConverter.ToEto(_config.DebugColor)};
-            _fogEnabled = new CheckBox {Checked = _config.FogEnabled};
-            _fogSizeMultiplier = new NumericUpDown {Value = _config.FogSizeMultiplier};
+            _lives = new NumericUpDown { Value = _config.Lives };
+            _damageTimeout = new NumericUpDown { Value = _config.DamageTimeout / 1000 };
+            _foodToLive = new NumericUpDown { Value = _config.FoodToLive };
+            _textColor = new ColorPicker { Value = ColorConverter.ToEto(_config.TextColor) };
+            _bgColor = new ColorPicker { Value = ColorConverter.ToEto(_config.BackgroundColor) };
+            _fogColor = new ColorPicker { Value = ColorConverter.ToEto(_config.FogColor.Item1) };
+            _debugEnabled = new CheckBox { Checked = _config.DebugShow };
+            _debugColor = new ColorPicker { Value = ColorConverter.ToEto(_config.DebugColor) };
+            _fogEnabled = new CheckBox { Checked = _config.FogEnabled };
+            _fogSizeMultiplier = new NumericUpDown { Value = _config.FogSizeMultiplier };
+            _controlType = new ComboBox();
+            _controlType.Items.Add("traditional");
+            _controlType.Items.Add("small");
+            _controlType.Text = _config.ControlType;
+            _turnSize = new NumericUpDown { Value = _config.TurnSize.HasValue ? (int)_config.TurnSize : 0 };
 
             return new TabPage(new StackLayout
             {
@@ -144,6 +153,24 @@ namespace snake_game.Launcher.Config
                         {
                             _fogSizeMultiplier,
                             new Label {Text = "Fog size multiplier", VerticalAlignment = VerticalAlignment.Center}
+                        }
+                    },
+                    new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Items =
+                        {
+                            _controlType,
+                            new Label {Text = "Type of control", VerticalAlignment = VerticalAlignment.Center}
+                        }
+                    },
+                    new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Items =
+                        {
+                            _turnSize,
+                            new Label {Text = "Turn size (for some control types)", VerticalAlignment = VerticalAlignment.Center}
                         }
                     }
                 }

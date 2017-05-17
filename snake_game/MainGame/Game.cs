@@ -56,7 +56,17 @@ namespace snake_game.MainGame
             _snake =
                 new SnakeModel(new Snake.Point(400, 150), 0).Increase(
                     _config.SnakeConfig.InitLen * _config.SnakeConfig.CircleOffset);
-            _ctrl = new ControllerTraditional();
+            switch (_config.GameConfig.ControlType)
+            {
+                case "traditional":
+                    _ctrl = new ControllerTraditional();
+                    break;
+                case "small":
+                    _ctrl = new ControllerSmall(_config.GameConfig.TurnSize.HasValue? (int)_config.GameConfig.TurnSize : 30);
+                    break;
+                default:
+                    throw new ArgumentException("Unknown control type");
+            }
             _font = Content.Load<SpriteFont>("DejaVu Sans Mono");
 
             if (_config.SnakeConfig.Colors == null)

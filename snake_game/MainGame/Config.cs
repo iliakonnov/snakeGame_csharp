@@ -37,6 +37,8 @@ namespace snake_game.MainGame
             public Tuple<Color, Color> FogColor = new Tuple<Color, Color>(Color.DarkSlateBlue, Color.Transparent);
             public double FogSizeMultiplier = 1.5;
             public Color BackgroundColor = Color.CornflowerBlue;
+            public string ControlType = "small";
+            public int? TurnSize = 30;
         }
 
         public class BonusConfigClass
