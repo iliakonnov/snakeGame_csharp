@@ -18,7 +18,7 @@ namespace snake_game.MainGame
         SpriteBatch _spriteBatch;
         SnakeModel _snake;
         BagelWorld _world;
-        Controller _ctrl;
+        IController _ctrl;
         Color[] _colors;
         Fog _fog;
         BonusManager _bonusManager;
@@ -56,7 +56,7 @@ namespace snake_game.MainGame
             _snake =
                 new SnakeModel(new Snake.Point(400, 150), 0).Increase(
                     _config.SnakeConfig.InitLen * _config.SnakeConfig.CircleOffset);
-            _ctrl = new Controller(30);
+            _ctrl = new ControllerTraditional();
             _font = Content.Load<SpriteFont>("DejaVu Sans Mono");
 
             if (_config.SnakeConfig.Colors == null)
