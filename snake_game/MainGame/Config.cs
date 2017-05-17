@@ -78,10 +78,21 @@ namespace snake_game.MainGame
                 public Color AppleColor = Color.SpringGreen;
             }
 
+            public class AntiAppleConfigClass
+            {
+                public int StartSnakeLength = 10;
+                public int ChanceTime = 7000;
+                public double NewChance = 0.95;
+                public Color Color = Color.LightYellow;
+                public int Size = 25;
+                public float Thickness = 10f;
+            }
+
             public BonusSettingsClass BonusSettings = new BonusSettingsClass();
             public BrickConfigClass BrickConfig = new BrickConfigClass();
             public AppleConfigClass AppleConfig = new AppleConfigClass();
             public AntiBrickConfigClass AntiBrickConfig = new AntiBrickConfigClass();
+            public AntiAppleConfigClass AntiAppleConfig = new AntiAppleConfigClass();
         }
 
         public SnakeConfigClass SnakeConfig = new SnakeConfigClass();

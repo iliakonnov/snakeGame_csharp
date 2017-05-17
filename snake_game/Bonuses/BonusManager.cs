@@ -8,7 +8,7 @@ using snake_game.MainGame;
 /*
  * Для добавления бонусов нужно:
  * 1. Сделать сам бонус. Это должен быть класс, реализующий snake_game.Bonuses.IBonusManager
- * 2. Зарегистрировать бонус в этом файле. Для этого его нужно добавить в switch на строке №39
+ * 2. Зарегистрировать бонус в этом файле. Для этого его нужно добавить в switch на строке №39 и в AvailableBonuses на строке № 20
  * 3. Сделать класс настроек и добавить его в MainGame.Config.BonusConfigClass
  * 4. Сделать окно настройки. Это должен быть класс, рализующий snake_game.Launcher.Bonuses.IBonusConfig, где T -- класс настроек из пункта 3
  * 5. Зарегистрировать бонус в snake_game.Launcher.LauncherForm в Draw()/Content/Items/TabControl[0]/Pages на строке №101
@@ -17,7 +17,7 @@ namespace snake_game.Bonuses
 {
     public class BonusManager
     {
-        public static readonly string[] AvailableBonuses = {"brick", "apple", "antibrick"};
+        public static readonly string[] AvailableBonuses = {"brick", "apple", "antibrick", "antiapple"};
         Config.BonusConfigClass _config;
         Random _rnd;
         readonly IBonusManager[] _bonuses;
@@ -46,6 +46,9 @@ namespace snake_game.Bonuses
                             break;
                         case "antibrick":
                             bonuses.Add(new AntiBrickManager(_config.AntiBrickConfig, _rnd, game));
+                            break;
+                        case "antiapple":
+                            // bonuses.Add(new AntiAppleManager(_config.AntiBrickConfig, _rnd, game));
                             break;
                         default:
                             throw new ArgumentException($"Unknown bonus: {bonus}");

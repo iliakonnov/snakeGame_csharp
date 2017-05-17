@@ -120,6 +120,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bonuses\AntiApple.cs" />
     <Compile Include="Bonuses\AntiBrick.cs" />
     <Compile Include="Bonuses\Apple.cs" />
     <Compile Include="Bonuses\BonusManager.cs" />
