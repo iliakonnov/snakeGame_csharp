@@ -1,43 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Shapes;
+using Newtonsoft.Json;
 
 namespace snake_game.Bonuses
 {
-    class AntiAppleManager : IBonusManager
-    {
+    public class AntiAppleManager : IBonusManager
+    {   
         readonly MainGame.Config.BonusConfigClass.AntiAppleConfigClass _config;
-        PolygonF _hex;
+        Polygon _hex;
         public string Name => "antiapple";
 
         public void Draw(SpriteBatch sb)
         {
-            throw new NotImplementedException();
+            sb.DrawPolygon(Vector2.Zero, _hex.ToPolygonF(), Color.AliceBlue);
+            sb.DrawPoint(100, 100, Color.Aqua, 5);
         }
 
-        public AntiAppleManager(MainGame.Config.BonusConfigClass.AntiAppleConfigClass config)
+        public AntiAppleManager(MainGame.Config.BonusConfigClass.AntiAppleConfigClass config, Random rnd, Game game)
         {
             _config = config;
         }
 
         public void LoadContent(GraphicsDevice graphicsDevice)
         {
-            var halfSqrt3 = Math.Sqrt(3) / 2;
-            _hex = new PolygonF(new Vector2[] {
-                new Vector2(1 * _config.Size, 0),
-                new Vector2((float)(0.5 * _config.Size), (float)(halfSqrt3 * _config.Size)),
-                new Vector2((float)(-0.5  * _config.Size), (float)(halfSqrt3 * _config.Size)),
-                new Vector2(-1 * _config.Size, 0),
-                new Vector2((float)(-0.5 * _config.Size), (float)(-halfSqrt3 * _config.Size)),
-                new Vector2((float)(0.5 * _config.Size), (float)(-halfSqrt3 * _config.Size))
-            });
+            _hex = new Polygon(6, _config.Size, new Vector2(100, 100));
         }
 
         public void Update(GameTime gameTime, int fullTime, IBonusManager[] bonuses, CircleF[] snakePoints, Rectangle size)
         {
-            throw new NotImplementedException();
+            foreach (var vector in _hex.Vertices)
+            {
+            }
+            // throw new NotImplementedException();
         }
     }
 }

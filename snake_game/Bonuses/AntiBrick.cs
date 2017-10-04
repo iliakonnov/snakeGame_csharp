@@ -13,7 +13,8 @@ namespace snake_game.Bonuses
         readonly Config.BonusConfigClass.AntiBrickConfigClass _config;
         readonly Random _random;
         Texture2D _texture;
-        EquilateralTriangle _triangle;
+        //EquilateralTriangle _triangle;
+        private Polygon _triangle;
         bool created = false;
 
         public AntiBrickManager(Config.BonusConfigClass.AntiBrickConfigClass cfg, Random rnd, MainGame.MainGame game)
@@ -89,7 +90,7 @@ namespace snake_game.Bonuses
                 return new RectangleF(_aPoint.X, _aPoint.Y, width, height);
             }
 
-            public bool Intersects(float x, float y, float dist)
+            public bool Intersects(float x, float y, float dist = 0)
             {
                 var p = new Snake.Point(x, y);
                 return MathUtils.Distance(AbSeg, p) <= dist ||
@@ -97,14 +98,9 @@ namespace snake_game.Bonuses
                        MathUtils.Distance(AcSeg, p) <= dist;
             }
 
-            public bool Intersects(float x, float y)
-            {
-                return Intersects(x, y, 0);
-            }
-
             public bool Intersects(Vector2 point)
             {
-                return Intersects(point.X, point.Y, 0);
+                return Intersects(point.X, point.Y);
             }
 
             public bool Intersects(CircleF circle)
@@ -173,7 +169,11 @@ namespace snake_game.Bonuses
                     bigHead.Radius *= 2;
                     do
                     {
-                        _triangle = new EquilateralTriangle(_config.Size, new Vector2(
+                        //_triangle = new EquilateralTriangle(_config.Size, new Vector2(
+                        //    _random.Next(_config.Size, size.Width - _config.Size),
+                        //    _random.Next(_config.Size, size.Height - _config.Size)
+                        //));
+                        _triangle = new Polygon(3, _config.Size, new Vector2(
                             _random.Next(_config.Size, size.Width - _config.Size),
                             _random.Next(_config.Size, size.Height - _config.Size)
                         ));
@@ -198,11 +198,12 @@ namespace snake_game.Bonuses
         {
             if (created)
             {
-                foreach (var seg in new[] {_triangle.AbSeg, _triangle.BcSeg, _triangle.AcSeg})
-                {
-                    sb.DrawLine(new Vector2(seg.A.X, seg.A.Y), new Vector2(seg.B.X, seg.B.Y), _config.Color, _config.Thickness);
-                }
-                // sb.DrawCircle(_snakeHead, 10, _config.Color, 10);
+//                foreach (var seg in new[] {_triangle.AbSeg, _triangle.BcSeg, _triangle.AcSeg})
+//                {
+//                    sb.DrawLine(new Vector2(seg.A.X, seg.A.Y), new Vector2(seg.B.X, seg.B.Y), _config.Color, _config.Thickness);
+//                }
+                _triangle.PrettyDraw(sb, _config.Color, _config.Thickness);
+                // sb.DrawPolygon(Vector2.Zero, _triangle.ToPolygonF(), _config.Color, _config.Thickness);
             }
         }
     }

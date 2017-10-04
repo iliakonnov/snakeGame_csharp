@@ -11,6 +11,7 @@ namespace snake_game.Launcher.Config
         AppleConfig _apple;
         BrickConfig _brick;
         AntiBrickConfig _antiBrick;
+        AntiAppleConfig _antiApple;
         MainGame.Config.BonusConfigClass _config;
 
         public BonusConfig(MainGame.Config.BonusConfigClass config)
@@ -24,6 +25,7 @@ namespace snake_game.Launcher.Config
             if (_apple.IsEnabled()) bonusesEnabled.Add("apple");
             if (_brick.IsEnabled()) bonusesEnabled.Add("brick");
             if (_antiBrick.IsEnabled()) bonusesEnabled.Add("antibrick");
+            if (_antiApple.IsEnabled()) bonusesEnabled.Add("antiapple");
 
             return new MainGame.Config.BonusConfigClass
             {
@@ -34,7 +36,8 @@ namespace snake_game.Launcher.Config
                 },
                 BrickConfig = _brick.GetConfig(),
                 AppleConfig = _apple.GetConfig(),
-                AntiBrickConfig = _antiBrick.GetConfig()
+                AntiBrickConfig = _antiBrick.GetConfig(),
+                AntiAppleConfig = _antiApple.GetConfig()
             };
         }
 
@@ -50,6 +53,7 @@ namespace snake_game.Launcher.Config
                 _apple = new AppleConfig(_config.AppleConfig, true);
                 _brick = new BrickConfig(_config.BrickConfig, true);
                 _antiBrick = new AntiBrickConfig(_config.AntiBrickConfig, true);
+                _antiApple = new AntiAppleConfig(_config.AntiAppleConfig, true);
             }
             else
             {
@@ -57,6 +61,8 @@ namespace snake_game.Launcher.Config
                 _brick = new BrickConfig(_config.BrickConfig, _config.BonusSettings.BonusesEnabled.Contains("brick"));
                 _antiBrick = new AntiBrickConfig(_config.AntiBrickConfig,
                     _config.BonusSettings.BonusesEnabled.Contains("antibrick"));
+                _antiApple = new AntiAppleConfig(_config.AntiAppleConfig,
+                    _config.BonusSettings.BonusesEnabled.Contains("antiapple"));
             }
 
             return new TabPage(new StackLayout
@@ -79,7 +85,8 @@ namespace snake_game.Launcher.Config
                         {
                             _brick.GetPage(),
                             _apple.GetPage(),
-                            _antiBrick.GetPage()
+                            _antiBrick.GetPage(),
+                            _antiApple.GetPage()
                         }
                     }
                 }

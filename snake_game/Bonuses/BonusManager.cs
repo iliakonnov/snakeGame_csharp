@@ -48,7 +48,7 @@ namespace snake_game.Bonuses
                             bonuses.Add(new AntiBrickManager(_config.AntiBrickConfig, _rnd, game));
                             break;
                         case "antiapple":
-                            // bonuses.Add(new AntiAppleManager(_config.AntiBrickConfig, _rnd, game));
+                            bonuses.Add(new AntiAppleManager(_config.AntiAppleConfig, _rnd, game));
                             break;
                         default:
                             throw new ArgumentException($"Unknown bonus: {bonus}");
