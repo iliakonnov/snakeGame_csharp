@@ -259,7 +259,12 @@ namespace snake_game.MainGame
             {
                 _lives += 1;
             }
-            _snake = _snake.Increase(_config.SnakeConfig.CircleOffset);
+            _snake = _snake.Increase(_config.SnakeConfig.CircleOffset * food);
+        }
+
+        public void Slim(int size)
+        {
+            _snake = _snake.Decrease(_config.SnakeConfig.CircleOffset * size);
         }
     }
 }

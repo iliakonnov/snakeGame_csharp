@@ -117,8 +117,16 @@ namespace snake_game
         {
             foreach (var segment in Segments)
             {
-                var newA = segment.MoveFromAToB(thickness/2);
-                sb.DrawLine(new Vector2(newA.X, newA.Y), new Vector2(segment.B.X, segment.B.Y), color, thickness);
+                var newA = segment.MoveFromAToB(thickness / 4);
+                var newB = new Segment(segment.B, newA).MoveFromAToB(thickness / 4);
+                sb.DrawLine(new Vector2(newA.X, newA.Y), new Vector2(newB.X, newB.Y), color, thickness);
+            }
+            var prev = Lines.Last();
+            foreach (var line in Lines)
+            {
+                var p = MathUtils.Intersect(prev, line);
+                prev = line;
+                sb.DrawCircle(new Vector2(p.X, p.Y), thickness/2, 15, color, thickness);
             }
         }
         
