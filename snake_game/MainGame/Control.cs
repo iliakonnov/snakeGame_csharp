@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using System;
+using Microsoft.Xna.Framework.Input;
 
 namespace snake_game.MainGame
 {
@@ -19,13 +20,91 @@ namespace snake_game.MainGame
         }
     }
 
-    public class Controller
+    public interface IController
+    {
+        ControlResult.Result Control(KeyboardState state);
+    }
+
+    public class ControllerTraditional : IController
+    {
+        enum Direction { Up, Down, Left, Right }
+        bool _IsDebugPressed;
+        Direction _direction = Direction.Right;
+
+        public ControlResult.Result Control(KeyboardState state)
+        {
+            var result = new ControlResult.Result();
+
+            if (state.IsKeyDown(Keys.OemTilde))
+            {
+                if (!_IsDebugPressed)
+                {
+                    result.Debug = true;
+                    _IsDebugPressed = true;
+                }
+            }
+            else
+            {
+                _IsDebugPressed = false;
+            }
+
+            if (state.IsKeyDown(Keys.Escape))
+            {
+                result.IsExit = true;
+            }
+
+            if (state.IsKeyDown(Keys.Down) && _direction != Direction.Up)
+            {
+                result.Turn = new ControlResult.Turn
+                {
+                    ToTurn = true,
+                    ReplaceTurn = true,
+                    TurnDegrees = 90
+                };
+                _direction = Direction.Down;
+            }
+            else if (state.IsKeyDown(Keys.Left) && _direction != Direction.Right)
+            {
+                result.Turn = new ControlResult.Turn
+                {
+                    ToTurn = true,
+                    ReplaceTurn = true,
+                    TurnDegrees = 180
+                };
+                _direction = Direction.Left;
+            }
+            else if (state.IsKeyDown(Keys.Up) && _direction != Direction.Down)
+            {
+                result.Turn = new ControlResult.Turn
+                {
+                    ToTurn = true,
+                    ReplaceTurn = true,
+                    TurnDegrees = 270
+                };
+                _direction = Direction.Up;
+            }
+            else if (state.IsKeyDown(Keys.Right) && _direction != Direction.Left)
+            {
+                result.Turn = new ControlResult.Turn
+                {
+                    ToTurn = true,
+                    ReplaceTurn = true,
+                    TurnDegrees = 0
+                };
+                _direction = Direction.Right;
+            }
+
+            return result;
+        }
+    }
+
+    public class ControllerSmall : IController
     {
         bool _IsTurned;
         bool _IsDebugPressed;
         readonly int _step;
 
-        public Controller(int step)
+        public ControllerSmall(int step)
         {
             _step = step;
         }
@@ -51,43 +130,6 @@ namespace snake_game.MainGame
             {
                 result.IsExit = true;
             }
-
-            /*if (state.IsKeyDown(Keys.Down))
-            {
-                result.Turn = new ControlResult.Turn
-                {
-                    ToTurn = true,
-                    ReplaceTurn = true,
-                    TurnDegrees = 270
-                };
-            }
-            else if (state.IsKeyDown(Keys.Left))
-            {
-                result.Turn = new ControlResult.Turn
-                {
-                    ToTurn = true,
-                    ReplaceTurn = true,
-                    TurnDegrees = 180
-                };
-            }
-            else if (state.IsKeyDown(Keys.Up))
-            {
-                result.Turn = new ControlResult.Turn
-                {
-                    ToTurn = true,
-                    ReplaceTurn = true,
-                    TurnDegrees = 90
-                };
-            }
-            else if (state.IsKeyDown(Keys.Right))
-            {
-                result.Turn = new ControlResult.Turn
-                {
-                    ToTurn = true,
-                    ReplaceTurn = true,
-                    TurnDegrees = 0
-                };
-            }*/
 
             if (state.IsKeyDown(Keys.Right))
             {
