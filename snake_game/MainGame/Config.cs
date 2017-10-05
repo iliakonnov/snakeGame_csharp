@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using snake_game.Bonuses;
+using snake_game.Launcher.Bonuses;
 
 namespace snake_game.MainGame
 {
@@ -41,73 +44,17 @@ namespace snake_game.MainGame
             public int? TurnSize = 30;
         }
 
-        public class BonusConfigClass
-        {
-            public class BonusSettingsClass
-            {
-                public bool EnableBonuses = true;
-                public string[] BonusesEnabled = null;
-            }
-
-            public class BrickConfigClass
-            {
-                public int ChanceTime = 1500;
-                public double MoveChance = 0.25;
-                public double NewChance = 0.1;
-                public int Step = 50;
-                public Color BrickColor = Color.OrangeRed;
-                public int Size = 25;
-            }
-
-            public class AntiBrickConfigClass
-            {
-                public int StartBrickCount = 10;
-                public int ChanceTime = 7000;
-                public double NewChance = 0.95;
-                public Color Color = Color.GreenYellow;
-                public int Size = 25;
-                public float Thickness = 10f;
-            }
-
-            public class AppleConfigClass
-            {
-                public float BounceTimeout = 150f;
-                public int AppleCount = 1;
-                public float Thickness = 10f;
-                public int Radius = 25;
-                public int Sides = 30;
-                public int Speed = 100;
-                public Color AppleColor = Color.SpringGreen;
-            }
-
-            public class AntiAppleConfigClass
-            {
-                public int StartSnakeLength = 10;
-                public int ChanceTime = 7000;
-                public double NewChance = 0.95;
-                public Color Color = Color.LightYellow;
-                public int Size = 25;
-                public float Thickness = 10f;
-            }
-
-            public BonusSettingsClass BonusSettings = new BonusSettingsClass();
-            public BrickConfigClass BrickConfig = new BrickConfigClass();
-            public AppleConfigClass AppleConfig = new AppleConfigClass();
-            public AntiBrickConfigClass AntiBrickConfig = new AntiBrickConfigClass();
-            public AntiAppleConfigClass AntiAppleConfig = new AntiAppleConfigClass();
-        }
-
         public SnakeConfigClass SnakeConfig = new SnakeConfigClass();
         public ScreenConfigClass ScreenConfig = new ScreenConfigClass();
         public GameConfigClass GameConfig = new GameConfigClass();
-        public BonusConfigClass BonusConfig = new BonusConfigClass();
+        public Dictionary<string, IPluginConfig> BonusConfig = new Dictionary<string, IPluginConfig>();
     }
 
     public static class HexColorConverter
     {
         // TODO: Разобраться с json и конвертировать цвета с помощью этого класса.
         public static string ToString(Color color)
-        {
+        {   
             var r = color.R.ToString("X");
             var g = color.G.ToString("X");
             var b = color.B.ToString("X");

@@ -4,21 +4,20 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Shapes;
-using snake_game.MainGame;
+using snake_game.Bonuses;
 using snake_game.Snake;
 
-namespace snake_game.Bonuses
+namespace AppleBonus
 {
-    public class AppleManager : IBonusManager
+    public class Bonus : IBonus
     {
-        public string Name => "Apple";
-        readonly Config.BonusConfigClass.AppleConfigClass _config;
+        readonly Config _config;
         readonly Random _random;
         bool _first = true;
         public readonly List<AppleBonus> Apples = new List<AppleBonus>();
-        MainGame.MainGame _game;
+        snake_game.MainGame.MainGame _game;
 
-        public AppleManager(Config.BonusConfigClass.AppleConfigClass cfg, Random rnd, MainGame.MainGame game)
+        public Bonus(Config cfg, Random rnd, snake_game.MainGame.MainGame game)
         {
             _config = cfg;
             _random = rnd;
@@ -29,7 +28,7 @@ namespace snake_game.Bonuses
         {
         }
 
-        public void Update(GameTime gameTime, int fullTime, IBonusManager[] bonuses, CircleF[] snakePoints,
+        public void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
             Rectangle size)
         {
             if (_first)
@@ -47,29 +46,29 @@ namespace snake_game.Bonuses
                 _first = false;
             }
 
-            var brickManagers = bonuses.Where(x => x.Name == "brick").ToArray();
             var obstaclesL = new List<Segment>();
-            if (brickManagers.Length != 0)
+            if (plugins.ContainsKey("brick"))
             {
-                var brickManager = (BrickManager) brickManagers[0];
+                var brickManager = plugins["brick"];
+                // TODO: Каким-то образом кастовать в BrickBonus
                 foreach (var brick in brickManager.Bricks)
                 {
                     var rect = brick.GetRectangle();
                     obstaclesL.Add(new Segment(
-                        new Snake.Point(rect.X, rect.Y),
-                        new Snake.Point(rect.X + rect.Height, rect.Y)
+                        new snake_game.Snake.Point(rect.X, rect.Y),
+                        new snake_game.Snake.Point(rect.X + rect.Height, rect.Y)
                     ));
                     obstaclesL.Add(new Segment(
-                        new Snake.Point(rect.X, rect.Y),
-                        new Snake.Point(rect.X, rect.Y + rect.Width)
+                        new snake_game.Snake.Point(rect.X, rect.Y),
+                        new snake_game.Snake.Point(rect.X, rect.Y + rect.Width)
                     ));
                     obstaclesL.Add(new Segment(
-                        new Snake.Point(rect.X, rect.Y + rect.Width),
-                        new Snake.Point(rect.X + rect.Height, rect.Y + rect.Width)
+                        new snake_game.Snake.Point(rect.X, rect.Y + rect.Width),
+                        new snake_game.Snake.Point(rect.X + rect.Height, rect.Y + rect.Width)
                     ));
                     obstaclesL.Add(new Segment(
-                        new Snake.Point(rect.X + rect.Height, rect.Y),
-                        new Snake.Point(rect.X + rect.Height, rect.Y + rect.Width)
+                        new snake_game.Snake.Point(rect.X + rect.Height, rect.Y),
+                        new snake_game.Snake.Point(rect.X + rect.Height, rect.Y + rect.Width)
                     ));
                 }
             }
@@ -122,9 +121,9 @@ namespace snake_game.Bonuses
             Vector2 _position;
             Vector2 _direction;
             double _bounceTime;
-            readonly Config.BonusConfigClass.AppleConfigClass _config;
+            readonly Config _config;
 
-            public AppleBonus(Vector2 pos, Vector2 direction, Config.BonusConfigClass.AppleConfigClass config)
+            public AppleBonus(Vector2 pos, Vector2 direction, Config config)
             {
                 _position = pos;
                 _direction = direction;
@@ -153,7 +152,7 @@ namespace snake_game.Bonuses
                 {
                     var newDirection = MathUtils.Bounce(
                         new Line(1, 0, 0),
-                        new Snake.Point(_direction.X, _direction.Y)
+                        new snake_game.Snake.Point(_direction.X, _direction.Y)
                     );
                     _direction = new Vector2(newDirection.X, newDirection.Y);
                     _bounceTime = fullTime;
@@ -162,7 +161,7 @@ namespace snake_game.Bonuses
                 {
                     var newDirection = MathUtils.Bounce(
                         new Line(0, 1, 0),
-                        new Snake.Point(_direction.X, _direction.Y)
+                        new snake_game.Snake.Point(_direction.X, _direction.Y)
                     );
                     _direction = new Vector2(newDirection.X, newDirection.Y);
                     _bounceTime = fullTime;
@@ -170,11 +169,11 @@ namespace snake_game.Bonuses
 
                 foreach (var o in obstacles)
                 {
-                    if (fullTime - _bounceTime > _config.BounceTimeout && MathUtils.Distance(o, new Snake.Point(_position.X, _position.Y)) <= _config.Radius)
+                    if (fullTime - _bounceTime > _config.BounceTimeout && MathUtils.Distance(o, new snake_game.Snake.Point(_position.X, _position.Y)) <= _config.Radius)
                     {
                         var newDirection = MathUtils.Bounce(
                             MathUtils.StandardLine(o.A, o.B),
-                            new Snake.Point(_direction.X, _direction.Y)
+                            new snake_game.Snake.Point(_direction.X, _direction.Y)
                         );
                         _direction = new Vector2(newDirection.X, newDirection.Y);
                         _bounceTime = fullTime;
@@ -189,12 +188,12 @@ namespace snake_game.Bonuses
                     if (fullTime - _bounceTime > _config.BounceTimeout && current.Intersects(circle))
                     {
                         var seg = new Segment(
-                            new Snake.Point(old.Center.X, old.Center.Y),
-                            new Snake.Point(current.Center.X, current.Center.Y)
+                            new snake_game.Snake.Point(old.Center.X, old.Center.Y),
+                            new snake_game.Snake.Point(current.Center.X, current.Center.Y)
                         );
                         var newDirection = MathUtils.Bounce(
                             MathUtils.StandardLine(seg.A, seg.B),
-                            new Snake.Point(_direction.X, _direction.Y)
+                            new snake_game.Snake.Point(_direction.X, _direction.Y)
                         );
                         _direction = new Vector2(newDirection.X, newDirection.Y);
                         _bounceTime = fullTime;

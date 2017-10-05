@@ -1,35 +1,36 @@
-﻿using Eto.Forms;
+using Eto.Forms;
+using snake_game.Bonuses;
+using snake_game.Launcher;
 
-namespace snake_game.Launcher.Bonuses
+namespace AntiBrick
 {
-    public class BrickConfig : IBonusConfig<MainGame.Config.BonusConfigClass.BrickConfigClass>
+    public class ConfigPage : IConfigPage
     {
         CheckBox _enabled;
+        NumericUpDown _startBrickCount;
         NumericUpDown _chanceTime;
-        NumericUpDown _moveChance;
-        NumericUpDown _newChance;
-        NumericUpDown _step;
         NumericUpDown _size;
-        ColorPicker _brickColor;
+        NumericUpDown _newChance;
+        NumericUpDown _thickness;
+        ColorPicker _color;
+        Config _config;
 
-        MainGame.Config.BonusConfigClass.BrickConfigClass _config;
-
-        public BrickConfig(MainGame.Config.BonusConfigClass.BrickConfigClass config, bool enabled)
+        public ConfigPage(Config config, bool enabled)
         {
             _enabled = new CheckBox {Checked = enabled};
             _config = config;
         }
 
-        public MainGame.Config.BonusConfigClass.BrickConfigClass GetConfig()
+        public object GetConfig()
         {
-            return new MainGame.Config.BonusConfigClass.BrickConfigClass
+            return new Config()
             {
+                StartBrickCount = (int) _startBrickCount.Value,
                 ChanceTime = (int) _chanceTime.Value * 1000,
-                MoveChance = _moveChance.Value / 100,
-                NewChance = _newChance.Value / 100,
-                Step = (int) _step.Value * 2,
-                BrickColor = ColorConverter.ToXna(_brickColor.Value),
-                Size = (int) _size.Value
+                Size = (int) _size.Value,
+                NewChance = (int) _newChance.Value / 100,
+                Thickness = (float) _thickness.Value,
+                Color = ColorConverter.ToXna(_color.Value)
             };
         }
 
@@ -40,13 +41,12 @@ namespace snake_game.Launcher.Bonuses
 
         public TabPage GetPage()
         {
+            _startBrickCount = new NumericUpDown {Value = _config.StartBrickCount};
             _chanceTime = new NumericUpDown {Value = _config.ChanceTime / 1000};
-            _moveChance = new NumericUpDown {Value = _config.MoveChance * 100};
-            _newChance = new NumericUpDown {Value = _config.NewChance * 100};
-            _step = new NumericUpDown {Value = _config.Step / 2};
             _size = new NumericUpDown {Value = _config.Size};
-            _brickColor = new ColorPicker {Value = ColorConverter.ToEto(_config.BrickColor)};
-
+            _newChance = new NumericUpDown {Value = _config.NewChance * 100};
+            _thickness = new NumericUpDown {Value = _config.Thickness};
+            _color = new ColorPicker {Value = ColorConverter.ToEto(_config.Color)};
             return new TabPage(new StackLayout
             {
                 Items =
@@ -65,8 +65,8 @@ namespace snake_game.Launcher.Bonuses
                         Orientation = Orientation.Horizontal,
                         Items =
                         {
-                            _chanceTime,
-                            new Label {Text = "Random events time (sec)", VerticalAlignment = VerticalAlignment.Center}
+                            _startBrickCount,
+                            new Label {Text = "Minimum brick count", VerticalAlignment = VerticalAlignment.Center}
                         }
                     },
                     new StackLayout
@@ -74,8 +74,35 @@ namespace snake_game.Launcher.Bonuses
                         Orientation = Orientation.Horizontal,
                         Items =
                         {
-                            _moveChance,
-                            new Label {Text = "Chance for brick move (%)", VerticalAlignment = VerticalAlignment.Center}
+                            _thickness,
+                            new Label {Text = "Triangle thickness (px)", VerticalAlignment = VerticalAlignment.Center}
+                        }
+                    },
+                    new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Items =
+                        {
+                            _size,
+                            new Label {Text = "Size (px)", VerticalAlignment = VerticalAlignment.Center}
+                        }
+                    },
+                    new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Items =
+                        {
+                            _color,
+                            new Label {Text = "Color", VerticalAlignment = VerticalAlignment.Center}
+                        }
+                    },
+                    new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Items =
+                        {
+                            _chanceTime,
+                            new Label {Text = "Chance time (sec)", VerticalAlignment = VerticalAlignment.Center}
                         }
                     },
                     new StackLayout
@@ -86,42 +113,15 @@ namespace snake_game.Launcher.Bonuses
                             _newChance,
                             new Label
                             {
-                                Text = "Chance for new brick spawn (%)",
+                                Text = "Chance for bonus spawn (%)",
                                 VerticalAlignment = VerticalAlignment.Center
                             }
-                        }
-                    },
-                    new StackLayout
-                    {
-                        Orientation = Orientation.Horizontal,
-                        Items =
-                        {
-                            _step,
-                            new Label {Text = "Move step (px)", VerticalAlignment = VerticalAlignment.Center}
-                        }
-                    },
-                    new StackLayout
-                    {
-                        Orientation = Orientation.Horizontal,
-                        Items =
-                        {
-                            _size,
-                            new Label {Text = "Brick size (px)", VerticalAlignment = VerticalAlignment.Center}
-                        }
-                    },
-                    new StackLayout
-                    {
-                        Orientation = Orientation.Horizontal,
-                        Items =
-                        {
-                            _brickColor,
-                            new Label {Text = "Brick color", VerticalAlignment = VerticalAlignment.Center}
                         }
                     }
                 }
             })
             {
-                Text = "Brick"
+                Text = "AntiBrick"
             };
         }
     }

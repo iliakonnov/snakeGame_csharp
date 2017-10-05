@@ -1,8 +1,10 @@
 ﻿using Eto.Forms;
+using snake_game.Bonuses;
+using snake_game.Launcher;
 
-namespace snake_game.Launcher.Bonuses
+namespace AppleBonus
 {
-    public class AppleConfig : IBonusConfig<MainGame.Config.BonusConfigClass.AppleConfigClass>
+    public class ConfigPage : IConfigPage
     {
         CheckBox _enabled;
         NumericUpDown _appleCount;
@@ -12,18 +14,18 @@ namespace snake_game.Launcher.Bonuses
         NumericUpDown _speed;
         NumericUpDown _bounceTimeout;
         ColorPicker _appleColor;
-        MainGame.Config.BonusConfigClass.AppleConfigClass _config;
+        Config _config;
 
-        public AppleConfig(MainGame.Config.BonusConfigClass.AppleConfigClass config, bool enabled)
+        public ConfigPage(Config config)
         {
-            _enabled = new CheckBox {Checked = enabled};
             _config = config;
         }
 
-        public MainGame.Config.BonusConfigClass.AppleConfigClass GetConfig()
+        public object GetConfig()
         {
-            return new MainGame.Config.BonusConfigClass.AppleConfigClass
+            return new Config
             {
+                IsEnabled = _enabled.Checked ?? false,
                 AppleCount = (int) _appleCount.Value,
                 Thickness = (float) _thickness.Value,
                 Radius = (int) _radius.Value,
@@ -32,11 +34,6 @@ namespace snake_game.Launcher.Bonuses
                 AppleColor = ColorConverter.ToXna(_appleColor.Value),
                 BounceTimeout = (float) _bounceTimeout.Value * 1000
             };
-        }
-
-        public bool IsEnabled()
-        {
-            return _enabled.Checked ?? false;
         }
 
         public TabPage GetPage()
@@ -48,6 +45,8 @@ namespace snake_game.Launcher.Bonuses
             _speed = new NumericUpDown {Value = _config.Speed};
             _bounceTimeout = new NumericUpDown {Value = _config.BounceTimeout / 1000};
             _appleColor = new ColorPicker {Value = ColorConverter.ToEto(_config.AppleColor)};
+            _enabled = new CheckBox {Checked = _config.IsEnabled};
+            
             return new TabPage(new StackLayout
             {
                 Items =

@@ -4,17 +4,18 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Shapes;
-using Newtonsoft.Json;
+using snake_game;
+using snake_game.Bonuses;
 
-namespace snake_game.Bonuses
+namespace AntiAppleBonus
 {
-    public class AntiAppleManager : IBonusManager
+    public class Bonus : IBonus
     {   
-        readonly MainGame.Config.BonusConfigClass.AntiAppleConfigClass _config;
+        readonly Config _config;
         private Polygon _hex;
         public string Name => "antiapple";
         private bool _created;
-        private readonly MainGame.MainGame _game;
+        private readonly snake_game.MainGame.MainGame _game;
         private Random _random;
 
         public void Draw(SpriteBatch sb)
@@ -25,7 +26,7 @@ namespace snake_game.Bonuses
             }
         }
 
-        public AntiAppleManager(MainGame.Config.BonusConfigClass.AntiAppleConfigClass config, Random rnd, MainGame.MainGame game)
+        public Bonus(Config config, Random rnd, snake_game.MainGame.MainGame game)
         {
             _game = game;
             _config = config;
@@ -37,7 +38,7 @@ namespace snake_game.Bonuses
             _hex = new Polygon(6, _config.Size, new Vector2(100, 100));
         }
 
-        public void Update(GameTime gameTime, int fullTime, IBonusManager[] bonuses, CircleF[] snakePoints, Rectangle size)
+        public void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints, Rectangle size)
         {
             if (_created)
             {

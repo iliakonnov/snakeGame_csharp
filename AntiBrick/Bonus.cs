@@ -1,22 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Shapes;
-using snake_game.MainGame;
-using snake_game.Snake;
+using snake_game;
+using snake_game.Bonuses;
 
-namespace snake_game.Bonuses
+namespace AntiBrick
 {
-    public class AntiBrickManager : IBonusManager
+    public class AntiBrickManager : IBonus
     {
-        readonly Config.BonusConfigClass.AntiBrickConfigClass _config;
+        readonly Config _config;
         readonly Random _random;
         Texture2D _texture;
         private Polygon _triangle;
         bool _created = false;
 
-        public AntiBrickManager(Config.BonusConfigClass.AntiBrickConfigClass cfg, Random rnd, MainGame.MainGame game)
+        public AntiBrickManager(snake_game.MainGame.Config cfg, Random rnd, snake_game.MainGame.MainGame game)
         {
             _config = cfg;
             _random = rnd;
@@ -30,13 +31,13 @@ namespace snake_game.Bonuses
             _texture.SetData(new[] {Color.White});
         }
 
-        public void Update(GameTime gameTime, int fullTime, IBonusManager[] bonuses, CircleF[] snakePoints,
+        public void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
             Rectangle size)
         {
-            var brickManagers = bonuses.Where(x => x.Name == "brick").ToArray();
-            if (brickManagers.Length != 0)
+            if (plugins.ContainsKey("brick"))
             {
-                var brickManager = (BrickManager) brickManagers.First();
+                var brickManager = plugins["brick"];
+                // TODO: Каким-то образом кастовать в BrickBonus
                 if (
                     brickManager.Bricks.Count >= _config.StartBrickCount &&
                     fullTime % _config.ChanceTime == 0 &&

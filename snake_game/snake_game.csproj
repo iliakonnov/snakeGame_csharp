@@ -120,16 +120,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bonuses\AntiApple.cs" />
-    <Compile Include="Bonuses\AntiBrick.cs" />
-    <Compile Include="Bonuses\Apple.cs" />
+    <Compile Include="Bonuses\BonusLoader.cs" />
     <Compile Include="Bonuses\BonusManager.cs" />
-    <Compile Include="Bonuses\Brick.cs" />
     <Compile Include="Bonuses\IBonusManager.cs" />
-    <Compile Include="Launcher\Bonuses\AntiAppleConfig.cs" />
-    <Compile Include="Launcher\Bonuses\AppleConfig.cs" />
-    <Compile Include="Launcher\Bonuses\BrickConfig.cs" />
-    <Compile Include="Launcher\Bonuses\AntiBrickConfig.cs" />
+    <Compile Include="Bonuses\test\BonusTemplate.cs" />
     <Compile Include="Launcher\Bonuses\IBonusConfig.cs" />
     <Compile Include="Launcher\ColorConverter.cs" />
     <Compile Include="Launcher\Config\BonusConfig.cs" />

@@ -30,8 +30,9 @@ namespace snake_game.MainGame
         int _intersectStart;
         readonly Debug _dbg;
         readonly Config _config;
+        readonly Dictionary<string, IPlugin> _plugins;
 
-        public MainGame(Config config)
+        public MainGame(Config config, Dictionary<string, IPlugin> plugins)
         {
             _graphics = new GraphicsDeviceManager(this);
 
@@ -40,6 +41,7 @@ namespace snake_game.MainGame
             _graphics.PreferredBackBufferHeight = config.ScreenConfig.ScreenHeight;
             _graphics.PreferredBackBufferWidth = config.ScreenConfig.ScreenWidth;
 
+            _plugins = plugins;
             _config = config;
             _lives = _config.GameConfig.Lives;
             _dieTime = -_config.GameConfig.DamageTimeout;
@@ -114,7 +116,7 @@ namespace snake_game.MainGame
 
             var seed = DateTime.Now.Millisecond;
             _log = new Logger(seed, _config);
-            _bonusManager = new BonusManager(_config.BonusConfig, this, new Random(seed));
+            _bonusManager = new BonusManager(_config.BonusConfig, _plugins, this, new Random(seed));
             _bonusManager.LoadContent(GraphicsDevice);
 
             _dbg.LoadContent();

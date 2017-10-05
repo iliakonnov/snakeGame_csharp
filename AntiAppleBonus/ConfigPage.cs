@@ -1,8 +1,10 @@
 using Eto.Forms;
+using snake_game.Bonuses;
+using snake_game.Launcher;
 
-namespace snake_game.Launcher.Bonuses
+namespace AntiAppleBonus
 {
-    public class AntiAppleConfig : IBonusConfig<MainGame.Config.BonusConfigClass.AntiAppleConfigClass>
+    public class ConfigPage: IConfigPage
     {
         CheckBox _enabled;
         NumericUpDown _startSnakeLength;
@@ -11,40 +13,35 @@ namespace snake_game.Launcher.Bonuses
         NumericUpDown _newChance;
         NumericUpDown _thickness;
         ColorPicker _color;
-        MainGame.Config.BonusConfigClass.AntiAppleConfigClass _config;
+        Config _config;
 
-        public AntiAppleConfig(MainGame.Config.BonusConfigClass.AntiAppleConfigClass config, bool enabled)
+        public ConfigPage(Config config)
         {
-            _enabled = new CheckBox {Checked = enabled};
             _config = config;
         }
 
-        public MainGame.Config.BonusConfigClass.AntiAppleConfigClass GetConfig()
+        public object GetConfig()
         {
-            return new MainGame.Config.BonusConfigClass.AntiAppleConfigClass
+            return new Config
             {
                 StartSnakeLength = 10,
                 ChanceTime = (int) _chanceTime.Value * 1000,
                 Size = (int) _size.Value,
-                NewChance = (int) _newChance.Value / 100,
+                NewChance = (int) _newChance.Value / 100.0,
                 Thickness = (float) _thickness.Value,
                 Color = ColorConverter.ToXna(_color.Value)
             };
         }
 
-        public bool IsEnabled()
-        {
-            return _enabled.Checked ?? false;
-        }
-
         public TabPage GetPage()
         {
             _startSnakeLength = new NumericUpDown {Value = _config.StartSnakeLength};
-            _chanceTime = new NumericUpDown {Value = _config.ChanceTime / 1000};
+            _chanceTime = new NumericUpDown {Value = _config.ChanceTime / 1000.0};
             _size = new NumericUpDown {Value = _config.Size};
             _newChance = new NumericUpDown {Value = _config.NewChance * 100};
             _thickness = new NumericUpDown {Value = _config.Thickness};
             _color = new ColorPicker {Value = ColorConverter.ToEto(_config.Color)};
+            _enabled = new CheckBox {Checked = _config.IsEnabled};
             return new TabPage(new StackLayout
             {
                 Items =
