@@ -2,7 +2,7 @@
 using snake_game.Bonuses;
 using snake_game.Launcher;
 
-namespace BrickBonus
+namespace snake_plugins.BrickBonus
 {
     public class ConfigPage : IConfigPage
     {
@@ -21,10 +21,11 @@ namespace BrickBonus
             _config = config;
         }
 
-        public object GetConfig()
+        public IPluginConfig GetConfig()
         {
             return new Config
             {
+                IsEnabled = _enabled.Checked ?? false,
                 ChanceTime = (int) _chanceTime.Value * 1000,
                 MoveChance = _moveChance.Value / 100,
                 NewChance = _newChance.Value / 100,

@@ -2,7 +2,7 @@
 using snake_game.Bonuses;
 using snake_game.Launcher;
 
-namespace AppleBonus
+namespace snake_plugins.AppleBonus
 {
     public class ConfigPage : IConfigPage
     {
@@ -21,7 +21,7 @@ namespace AppleBonus
             _config = config;
         }
 
-        public object GetConfig()
+        public IPluginConfig GetConfig()
         {
             return new Config
             {

@@ -7,18 +7,17 @@ using MonoGame.Extended.Shapes;
 using snake_game;
 using snake_game.Bonuses;
 
-namespace AntiAppleBonus
+namespace snake_plugins.AntiAppleBonus
 {
     public class Bonus : IBonus
     {   
         readonly Config _config;
         private Polygon _hex;
-        public string Name => "antiapple";
         private bool _created;
         private readonly snake_game.MainGame.MainGame _game;
         private Random _random;
 
-        public void Draw(SpriteBatch sb)
+        public override void Draw(SpriteBatch sb)
         {
             if (_created)
             {
@@ -33,12 +32,12 @@ namespace AntiAppleBonus
             _random = rnd;
         }
 
-        public void LoadContent(GraphicsDevice graphicsDevice)
+        public override void LoadContent(GraphicsDevice graphicsDevice)
         {
             _hex = new Polygon(6, _config.Size, new Vector2(100, 100));
         }
 
-        public void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints, Rectangle size)
+        public override void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints, Rectangle size)
         {
             if (_created)
             {

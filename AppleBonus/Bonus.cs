@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.Remoting.Messaging;
+using Eto.CustomControls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Shapes;
 using snake_game.Bonuses;
 using snake_game.Snake;
 
-namespace AppleBonus
+namespace snake_plugins.AppleBonus
 {
     public class Bonus : IBonus
     {
@@ -24,11 +28,11 @@ namespace AppleBonus
             _game = game;
         }
 
-        public void LoadContent(GraphicsDevice graphicsDevice)
+        public override void LoadContent(GraphicsDevice graphicsDevice)
         {
         }
 
-        public void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
+        public override void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
             Rectangle size)
         {
             if (_first)
@@ -50,10 +54,9 @@ namespace AppleBonus
             if (plugins.ContainsKey("brick"))
             {
                 var brickManager = plugins["brick"];
-                // TODO: Каким-то образом кастовать в BrickBonus
-                foreach (var brick in brickManager.Bricks)
+                foreach (var brick in brickManager.GetProperty<IEnumerable<Gettable>>("Bricks"))
                 {
-                    var rect = brick.GetRectangle();
+                    var rect = brick.GetMethodResult<Rectangle>("GetRectangle");
                     obstaclesL.Add(new Segment(
                         new snake_game.Snake.Point(rect.X, rect.Y),
                         new snake_game.Snake.Point(rect.X + rect.Height, rect.Y)
@@ -108,7 +111,7 @@ namespace AppleBonus
             return new Vector2((float) Math.Cos(degrees), (float) Math.Sin(degrees));
         }
 
-        public void Draw(SpriteBatch sb)
+        public override void Draw(SpriteBatch sb)
         {
             foreach (var apple in Apples)
             {
@@ -116,7 +119,7 @@ namespace AppleBonus
             }
         }
 
-        public class AppleBonus
+        public class AppleBonus : Gettable
         {
             Vector2 _position;
             Vector2 _direction;
@@ -169,7 +172,8 @@ namespace AppleBonus
 
                 foreach (var o in obstacles)
                 {
-                    if (fullTime - _bounceTime > _config.BounceTimeout && MathUtils.Distance(o, new snake_game.Snake.Point(_position.X, _position.Y)) <= _config.Radius)
+                    if (fullTime - _bounceTime > _config.BounceTimeout &&
+                        MathUtils.Distance(o, new snake_game.Snake.Point(_position.X, _position.Y)) <= _config.Radius)
                     {
                         var newDirection = MathUtils.Bounce(
                             MathUtils.StandardLine(o.A, o.B),
@@ -200,6 +204,28 @@ namespace AppleBonus
                     }
                     old = current;
                 }
+            }
+
+            public override TResult GetMethodResult<TResult>(string methodName)
+            {
+                switch (methodName)
+                {
+                    case nameof(GetCircle):
+                        return (TResult) (object) GetCircle();
+                    default:
+                        return base.GetMethodResult<TResult>(methodName);
+                }
+            }
+        }
+
+        public override TResult GetProperty<TResult>(string propertyName)
+        {
+            switch (propertyName)
+            {
+                case nameof(Apples):
+                    return (TResult) (object) Apples;
+                default:
+                    return base.GetProperty<TResult>(propertyName);
             }
         }
     }

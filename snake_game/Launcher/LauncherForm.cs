@@ -63,7 +63,7 @@ namespace snake_game.Launcher
             _config = File.Exists("config.json")
                 ? ConfigLoad.Parse(File.ReadAllText("config.json"))
                 : new MainGame.Config();
-            _plugins = BonusLoader.LoadPlugins("plugins");
+            _plugins = BonusLoader.LoadPlugins(".");
             Draw();
         }
 

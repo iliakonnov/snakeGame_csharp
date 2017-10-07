@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using snake_game.Bonuses;
+using snake_game.MainGame;
 
-namespace BrickBonus
+namespace snake_plugins.BrickBonus
 {
     public class Config : IPluginConfig
     {
@@ -10,7 +12,7 @@ namespace BrickBonus
         public double MoveChance = 0.25;
         public double NewChance = 0.1;
         public int Step = 50;
-        public Color BrickColor = Color.OrangeRed;
+        [JsonConverter(typeof(HexColorConverter))] public Color BrickColor = Color.OrangeRed;
         public int Size = 25;
     }
 }

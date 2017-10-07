@@ -2,7 +2,7 @@ using Eto.Forms;
 using snake_game.Bonuses;
 using snake_game.Launcher;
 
-namespace AntiAppleBonus
+namespace snake_plugins.AntiAppleBonus
 {
     public class ConfigPage: IConfigPage
     {
@@ -20,10 +20,11 @@ namespace AntiAppleBonus
             _config = config;
         }
 
-        public object GetConfig()
+        public IPluginConfig GetConfig()
         {
             return new Config
             {
+                IsEnabled = _enabled.Checked ?? false,
                 StartSnakeLength = 10,
                 ChanceTime = (int) _chanceTime.Value * 1000,
                 Size = (int) _size.Value,

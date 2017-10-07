@@ -7,9 +7,9 @@ using MonoGame.Extended.Shapes;
 using snake_game;
 using snake_game.Bonuses;
 
-namespace AntiBrick
+namespace snake_plugins.AntiBrick
 {
-    public class AntiBrickManager : IBonus
+    public class Bonus : IBonus
     {
         readonly Config _config;
         readonly Random _random;
@@ -17,29 +17,27 @@ namespace AntiBrick
         private Polygon _triangle;
         bool _created = false;
 
-        public AntiBrickManager(snake_game.MainGame.Config cfg, Random rnd, snake_game.MainGame.MainGame game)
+        public Bonus(Config cfg, Random rnd, snake_game.MainGame.MainGame game)
         {
             _config = cfg;
             _random = rnd;
         }
 
-        public string Name => "antibrick";
-
-        public void LoadContent(GraphicsDevice graphicsDevice)
+        public override void LoadContent(GraphicsDevice graphicsDevice)
         {
             _texture = new Texture2D(graphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _texture.SetData(new[] {Color.White});
         }
 
-        public void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
+        public override void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
             Rectangle size)
         {
             if (plugins.ContainsKey("brick"))
             {
                 var brickManager = plugins["brick"];
-                // TODO: Каким-то образом кастовать в BrickBonus
+                var bricks = brickManager.GetMethodResult<List<object>>("Bricks");
                 if (
-                    brickManager.Bricks.Count >= _config.StartBrickCount &&
+                    bricks.Count >= _config.StartBrickCount &&
                     fullTime % _config.ChanceTime == 0 &&
                     _random.NextDouble() <= _config.NewChance &&
                     !_created
@@ -60,26 +58,22 @@ namespace AntiBrick
                 {
                     if (_triangle.Intersects(snakePoints.First()))
                     {
-                        for (var i = 0; i < brickManager.Bricks.Count - 1; i += 2)
+                        for (var i = 0; i < bricks.Count - 1; i += 2)
                         {
-                            brickManager.Bricks.RemoveAt(i);
+                            bricks.RemoveAt(i);
                         }
+                        brickManager.SetProperty("Bricks", bricks);
                         _created = false;
                     }
                 }
             }
         }
 
-        public void Draw(SpriteBatch sb)
+        public override void Draw(SpriteBatch sb)
         {
             if (_created)
             {
-//                foreach (var seg in new[] {_triangle.AbSeg, _triangle.BcSeg, _triangle.AcSeg})
-//                {
-//                    sb.DrawLine(new Vector2(seg.A.X, seg.A.Y), new Vector2(seg.B.X, seg.B.Y), _config.Color, _config.Thickness);
-//                }
                 _triangle.PrettyDraw(sb, _config.Color, _config.Thickness);
-                // sb.DrawPolygon(Vector2.Zero, _triangle.ToPolygonF(), _config.Color, _config.Thickness);
             }
         }
     }

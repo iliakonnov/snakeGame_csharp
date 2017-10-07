@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using snake_game.Bonuses;
+using snake_game.MainGame;
 
-namespace AppleBonus
+namespace snake_plugins.AppleBonus
 {
     public class Config : IPluginConfig
     {
@@ -12,6 +14,6 @@ namespace AppleBonus
         public int Radius = 25;
         public int Sides = 30;
         public int Speed = 100;
-        public Color AppleColor = Color.SpringGreen;
+        [JsonConverter(typeof(HexColorConverter))] public Color AppleColor = Color.SpringGreen;
     }
 }

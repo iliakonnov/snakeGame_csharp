@@ -8,17 +8,17 @@ using snake_game.Bonuses;
 using snake_game.MainGame;
 using snake_game.Snake;
 
-namespace BrickBonus
+namespace snake_plugins.BrickBonus
 {
-    public class Bonus: IBonus
+    public class Bonus : IBonus
     {
         readonly Random _random;
         readonly Config _config;
         MainGame _game;
         Texture2D _texture;
-        public List<BrickBonus> Bricks = new List<BrickBonus>();
 
-        public string Name => "brick";
+
+        public List<BrickBonus> Bricks { get; } = new List<BrickBonus>();
 
         public Bonus(Config cfg, Random rnd, MainGame game)
         {
@@ -27,13 +27,13 @@ namespace BrickBonus
             _game = game;
         }
 
-        public void LoadContent(GraphicsDevice graphicsDevice)
+        public override void LoadContent(GraphicsDevice graphicsDevice)
         {
             _texture = new Texture2D(graphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _texture.SetData(new[] {Color.White});
         }
 
-        public void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
+        public override void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
             Rectangle size)
         {
             if (fullTime % _config.ChanceTime == 0)
@@ -77,7 +77,7 @@ namespace BrickBonus
             }
         }
 
-        public void Draw(SpriteBatch sb)
+        public override void Draw(SpriteBatch sb)
         {
             foreach (var brick in Bricks)
             {
@@ -85,7 +85,7 @@ namespace BrickBonus
             }
         }
 
-        public class BrickBonus
+        public class BrickBonus : Gettable
         {
             Vector2 _position; // Left upper corner
             Config _config;
@@ -108,6 +108,28 @@ namespace BrickBonus
                 _position += move;
                 var newPos = world.Normalize(new snake_game.Snake.Point(_position.X, _position.Y));
                 _position = new Vector2(newPos.X, newPos.Y);
+            }
+
+            public override TResult GetMethodResult<TResult>(string methodName)
+            {
+                switch (methodName)
+                {
+                    case nameof(GetRectangle):
+                        return (TResult) (object) GetRectangle();
+                    default:
+                        return base.GetMethodResult<TResult>(methodName);
+                }
+            }
+        }
+
+        public override TResult GetProperty<TResult>(string propertyName)
+        {
+            switch (propertyName)
+            {
+                case nameof(Bricks):
+                    return (TResult) (object) Bricks;
+                default:
+                    return base.GetProperty<TResult>(propertyName);
             }
         }
     }

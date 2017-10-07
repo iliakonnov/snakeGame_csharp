@@ -1,13 +1,14 @@
 ﻿using System;
-using Eto.Forms;
 using snake_game.Bonuses;
 using snake_game.MainGame;
+using snake_plugins.AntiBrick;
 
-namespace snake_plugins.BrickBonus
+namespace snake_plugins.AntiBrick
 {
     public class Plugin : IPlugin
     {
-        public string Name => "Brick";
+        public string Name => "AntiBrick";
+        
         public IPluginConfig Config { get; set; } = new Config();
 
         public IBonus GetBonus(object config, Random random, MainGame game)

@@ -2,7 +2,7 @@ using Eto.Forms;
 using snake_game.Bonuses;
 using snake_game.Launcher;
 
-namespace AntiBrick
+namespace snake_plugins.AntiBrick
 {
     public class ConfigPage : IConfigPage
     {
@@ -15,16 +15,16 @@ namespace AntiBrick
         ColorPicker _color;
         Config _config;
 
-        public ConfigPage(Config config, bool enabled)
+        public ConfigPage(Config config)
         {
-            _enabled = new CheckBox {Checked = enabled};
             _config = config;
         }
 
-        public object GetConfig()
+        public IPluginConfig GetConfig()
         {
-            return new Config()
+            return new Config
             {
+                IsEnabled = _enabled.Checked ?? false,
                 StartBrickCount = (int) _startBrickCount.Value,
                 ChanceTime = (int) _chanceTime.Value * 1000,
                 Size = (int) _size.Value,
@@ -32,11 +32,6 @@ namespace AntiBrick
                 Thickness = (float) _thickness.Value,
                 Color = ColorConverter.ToXna(_color.Value)
             };
-        }
-
-        public bool IsEnabled()
-        {
-            return _enabled.Checked ?? false;
         }
 
         public TabPage GetPage()
@@ -47,6 +42,7 @@ namespace AntiBrick
             _newChance = new NumericUpDown {Value = _config.NewChance * 100};
             _thickness = new NumericUpDown {Value = _config.Thickness};
             _color = new ColorPicker {Value = ColorConverter.ToEto(_config.Color)};
+            _enabled = new CheckBox {Checked = _config.IsEnabled};
             return new TabPage(new StackLayout
             {
                 Items =

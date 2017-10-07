@@ -3,7 +3,7 @@ using Eto.Forms;
 using snake_game.Bonuses;
 using snake_game.MainGame;
 
-namespace AppleBonus
+namespace snake_plugins.AppleBonus
 {
     public class Plugin : IPlugin
     {
@@ -15,9 +15,9 @@ namespace AppleBonus
             return new Bonus((Config)config, random, game);
         }
 
-        public TabPage GetPage(object config)
+        public IConfigPage GetPage(object config)
         {
-            return new ConfigPage((Config) config).GetPage();
+            return new ConfigPage((Config) config);
         }
     }
 }

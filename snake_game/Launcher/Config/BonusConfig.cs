@@ -2,7 +2,6 @@
 using System.Linq;
 using Eto.Forms;
 using snake_game.Bonuses;
-using snake_game.Launcher.Bonuses;
 
 namespace snake_game.Launcher.Config
 {
@@ -10,6 +9,7 @@ namespace snake_game.Launcher.Config
     {
         Dictionary<string, IPluginConfig> _config;
         Dictionary<string, IPlugin> _plugins;
+        Dictionary<string, IConfigPage> _pluginPages = new Dictionary<string, IConfigPage>();
 
         public BonusConfig(Dictionary<string, IPluginConfig> config, Dictionary<string, IPlugin> plugins)
         {
@@ -17,10 +17,8 @@ namespace snake_game.Launcher.Config
             _plugins = plugins;
         }
 
-        public Dictionary<string, IPluginConfig> GetConfig()
-        {
-            return _config;
-        }
+        public Dictionary<string, IPluginConfig> GetConfig() =>
+            _pluginPages.ToDictionary(x => x.Key, x => x.Value.GetConfig());
 
         public TabPage GetPage(Eto.Drawing.Size size, int height)
         {
@@ -29,7 +27,13 @@ namespace snake_game.Launcher.Config
                 Size = new Eto.Drawing.Size(size.Width, size.Height - height)
             };
             foreach (var pluginPair in _plugins)
-                tabControl.Pages.Add(pluginPair.Value.GetPage(_config[pluginPair.Key]));
+            {
+                IPluginConfig config;
+                config = _config.ContainsKey(pluginPair.Key) ? _config[pluginPair.Key] : pluginPair.Value.Config;
+                var page = pluginPair.Value.GetPage(config);
+                _pluginPages[pluginPair.Key] = page;
+                tabControl.Pages.Add(page.GetPage());   
+            }                
 
             return new TabPage(tabControl)
             {
