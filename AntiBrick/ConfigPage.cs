@@ -2,7 +2,7 @@ using Eto.Forms;
 using snake_game.Bonuses;
 using snake_game.Launcher;
 
-namespace snake_plugins.AntiBrick
+namespace AntiBrick
 {
     public class ConfigPage : IConfigPage
     {

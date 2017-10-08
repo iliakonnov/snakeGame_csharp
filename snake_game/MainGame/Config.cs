@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -185,19 +186,20 @@ namespace snake_game.MainGame
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var typeSerializer = JsonSerializer.Create(new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.All
-            });
             var values = (Dictionary<string, IPluginConfig>) value;
             var result = new Dictionary<string, JObject>();
-            foreach (var pair in values)
-            {
-                result[pair.Key] = JObject.FromObject(pair.Value, typeSerializer);
-            }
             foreach (var pair in ConfigLoad.NotLoadedConfigs)
             {
                 result[pair.Key] = pair.Value;
+            }
+            foreach (var pair in values)
+            {
+                var newValue = JObject.FromObject(pair.Value, serializer);
+                var type = pair.Value.GetType();
+                var name = type.FullName;
+                var assemblyName = type.Assembly.GetName().Name;
+                newValue["_type"] = $"{name}, {assemblyName}";
+                result[pair.Key] = newValue; 
             }
             serializer.Serialize(writer, result);
         }
@@ -209,10 +211,10 @@ namespace snake_game.MainGame
             var dict = serializer.Deserialize<Dictionary<string, JObject>>(reader);
             foreach (var pair in dict)
             {
-                var type = Type.GetType($"snake_plugins.{pair.Key}.Plugin");
+                var type = SearchType((string) pair.Value["_type"]);
                 if (type != null && typeof(IPluginConfig).IsAssignableFrom(type))
                 {
-                    result[pair.Key] = (IPluginConfig)pair.Value.ToObject(type, serializer);
+                    result[pair.Key] = (IPluginConfig) pair.Value.ToObject(type, serializer);
                 }
                 else
                 {
@@ -221,6 +223,16 @@ namespace snake_game.MainGame
                 }
             }
             return result;
+        }
+
+        [return: AllowNull]
+        static Type SearchType(string typeName)
+        {
+            var type = ConfigLoad.LoadedPluginAssemblies
+                .SelectMany(a => a.GetExportedTypes())
+                .FirstOrDefault(t => { return t.AssemblyQualifiedName != null 
+                                              && t.AssemblyQualifiedName.StartsWith(typeName); });
+            return type;
         }
 
         public override bool CanConvert(Type objectType)
@@ -232,7 +244,8 @@ namespace snake_game.MainGame
     public static class ConfigLoad
     {
         public static Dictionary<string, JObject> NotLoadedConfigs = new Dictionary<string, JObject>();
-        
+        public static Assembly[] LoadedPluginAssemblies { get; private set; }
+
         private static JsonSerializerSettings GetSettings()
         {
             return new JsonSerializerSettings
@@ -241,8 +254,9 @@ namespace snake_game.MainGame
             };
         }
 
-        public static Config Parse(string json)
+        public static Config Parse(string json, Assembly[] loadedPluginAssemblies)
         {
+            LoadedPluginAssemblies = loadedPluginAssemblies;
             return JsonConvert.DeserializeObject<Config>(json, GetSettings());
         }
 

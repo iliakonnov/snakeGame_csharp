@@ -3,7 +3,7 @@ using Eto.Forms;
 using snake_game.Bonuses;
 using snake_game.MainGame;
 
-namespace snake_plugins.AppleBonus
+namespace AppleBonus
 {
     public class Plugin : IPlugin
     {

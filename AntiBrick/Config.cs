@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using snake_game.Bonuses;
 using snake_game.MainGame;
 
-namespace snake_plugins.AntiBrick
+namespace AntiBrick
 {
     public class Config : IPluginConfig
     {

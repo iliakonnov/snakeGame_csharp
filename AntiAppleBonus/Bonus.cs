@@ -7,7 +7,7 @@ using MonoGame.Extended.Shapes;
 using snake_game;
 using snake_game.Bonuses;
 
-namespace snake_plugins.AntiAppleBonus
+namespace AntiAppleBonus
 {
     public class Bonus : IBonus
     {   

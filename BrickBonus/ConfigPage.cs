@@ -2,7 +2,7 @@
 using snake_game.Bonuses;
 using snake_game.Launcher;
 
-namespace snake_plugins.BrickBonus
+namespace BrickBonus
 {
     public class ConfigPage : IConfigPage
     {

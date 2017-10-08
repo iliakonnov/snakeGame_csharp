@@ -1,9 +1,8 @@
 ﻿using System;
 using snake_game.Bonuses;
 using snake_game.MainGame;
-using snake_plugins.AntiBrick;
 
-namespace snake_plugins.AntiBrick
+namespace AntiBrick
 {
     public class Plugin : IPlugin
     {

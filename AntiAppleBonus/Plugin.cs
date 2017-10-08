@@ -2,7 +2,7 @@
 using snake_game.Bonuses;
 using snake_game.MainGame;
 
-namespace snake_plugins.AntiAppleBonus
+namespace AntiAppleBonus
 {
     public class Plugin : IPlugin
     {

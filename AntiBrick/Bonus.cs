@@ -7,7 +7,7 @@ using MonoGame.Extended.Shapes;
 using snake_game;
 using snake_game.Bonuses;
 
-namespace snake_plugins.AntiBrick
+namespace AntiBrick
 {
     public class Bonus : IBonus
     {
@@ -32,10 +32,10 @@ namespace snake_plugins.AntiBrick
         public override void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
             Rectangle size)
         {
-            if (plugins.ContainsKey("brick"))
+            if (plugins.ContainsKey("Brick"))
             {
-                var brickManager = plugins["brick"];
-                var bricks = brickManager.GetMethodResult<List<object>>("Bricks");
+                var brickManager = plugins["Brick"];
+                var bricks = brickManager.GetListProperty<object>("Bricks");
                 if (
                     bricks.Count >= _config.StartBrickCount &&
                     fullTime % _config.ChanceTime == 0 &&
@@ -62,7 +62,7 @@ namespace snake_plugins.AntiBrick
                         {
                             bricks.RemoveAt(i);
                         }
-                        brickManager.SetProperty("Bricks", bricks);
+                        brickManager.SetListProperty("Bricks", bricks);
                         _created = false;
                     }
                 }

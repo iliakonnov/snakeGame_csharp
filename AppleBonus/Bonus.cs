@@ -11,7 +11,7 @@ using MonoGame.Extended.Shapes;
 using snake_game.Bonuses;
 using snake_game.Snake;
 
-namespace snake_plugins.AppleBonus
+namespace AppleBonus
 {
     public class Bonus : IBonus
     {
@@ -51,10 +51,10 @@ namespace snake_plugins.AppleBonus
             }
 
             var obstaclesL = new List<Segment>();
-            if (plugins.ContainsKey("brick"))
+            if (plugins.ContainsKey("Brick"))
             {
-                var brickManager = plugins["brick"];
-                foreach (var brick in brickManager.GetProperty<IEnumerable<Gettable>>("Bricks"))
+                var brickManager = plugins["Brick"];
+                foreach (var brick in brickManager.GetListProperty<Gettable>("Bricks"))
                 {
                     var rect = brick.GetMethodResult<Rectangle>("GetRectangle");
                     obstaclesL.Add(new Segment(

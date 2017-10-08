@@ -2,7 +2,7 @@
 using snake_game.Bonuses;
 using snake_game.Launcher;
 
-namespace snake_plugins.AppleBonus
+namespace AppleBonus
 {
     public class ConfigPage : IConfigPage
     {

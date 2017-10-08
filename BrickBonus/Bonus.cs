@@ -7,8 +7,9 @@ using MonoGame.Extended.Shapes;
 using snake_game.Bonuses;
 using snake_game.MainGame;
 using snake_game.Snake;
+using SharpDX.XAudio2;
 
-namespace snake_plugins.BrickBonus
+namespace BrickBonus
 {
     public class Bonus : IBonus
     {
@@ -18,7 +19,7 @@ namespace snake_plugins.BrickBonus
         Texture2D _texture;
 
 
-        public List<BrickBonus> Bricks { get; } = new List<BrickBonus>();
+        public List<BrickBonus> Bricks { get; set; } = new List<BrickBonus>();
 
         public Bonus(Config cfg, Random rnd, MainGame game)
         {
@@ -122,14 +123,27 @@ namespace snake_plugins.BrickBonus
             }
         }
 
-        public override TResult GetProperty<TResult>(string propertyName)
+        public override List<TResult> GetListProperty<TResult>(string propertyName)
         {
             switch (propertyName)
             {
                 case nameof(Bricks):
-                    return (TResult) (object) Bricks;
+                    return Bricks.Cast<TResult>().ToList();
                 default:
-                    return base.GetProperty<TResult>(propertyName);
+                    return base.GetListProperty<TResult>(propertyName);
+            }
+        }
+
+        public override void SetListProperty(string propertyName, IEnumerable<object> newValue)
+        {
+            switch (propertyName)
+            {
+                case nameof(Bricks):
+                    Bricks = newValue.Cast<BrickBonus>().ToList();
+                    break;
+                default:
+                    base.SetListProperty(propertyName, newValue);
+                    break;
             }
         }
     }

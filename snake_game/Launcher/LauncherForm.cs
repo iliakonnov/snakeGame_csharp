@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Eto.Forms;
 using System.Threading;
 using snake_game.Bonuses;
@@ -60,10 +61,10 @@ namespace snake_game.Launcher
         public LauncherForm()
         {
             ClientSize = new Eto.Drawing.Size(WindowWidth, WindowHeight);
-            _config = File.Exists("config.json")
-                ? ConfigLoad.Parse(File.ReadAllText("config.json"))
-                : new MainGame.Config();
             _plugins = BonusLoader.LoadPlugins(".");
+            _config = File.Exists("config.json")
+                ? ConfigLoad.Parse(File.ReadAllText("config.json"), _plugins.Values.Select(p=>p.GetType().Assembly).ToArray())
+                : new MainGame.Config();
             Draw();
         }
 
@@ -107,7 +108,7 @@ namespace snake_game.Launcher
                             _gameCfg.GetPage(),
                             _screenCfg.GetPage(),
                             _snakeCfg.GetPage(),
-                            _bonusCfg.GetPage(tabControlSize, ButtonHeight)
+                            _bonusCfg.GetPage(tabControlSize)
                         }
                     },
                     new StackLayout // Buttons

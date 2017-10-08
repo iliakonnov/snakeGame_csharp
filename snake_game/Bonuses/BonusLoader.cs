@@ -13,17 +13,27 @@ namespace snake_game.Bonuses
 {
     public abstract class Gettable
     {
-        public virtual TResult GetProperty<TResult>(string propertyName)
-        {
-            throw new ArgumentException($"Cannot get property '{propertyName}'");
-        }
-
         public virtual TResult GetMethodResult<TResult>(string methodName)
         {
             throw new ArgumentException($"Cannot execute method '{methodName}'");
         }
+        
+        public virtual TResult GetProperty<TResult>(string propertyName)
+        {
+            throw new ArgumentException($"Cannot get property '{propertyName}'");
+        }
+        
+        public virtual List<TResult> GetListProperty<TResult>(string propertyName)
+        {
+            throw new ArgumentException($"Cannot get property '{propertyName}'");
+        }
 
         public virtual void SetProperty(string propertyName, object newValue)
+        {
+            throw new ArgumentException($"Cannot set property '{propertyName}'");
+        }
+        
+        public virtual void SetListProperty(string propertyName, IEnumerable<object> newValue)
         {
             throw new ArgumentException($"Cannot set property '{propertyName}'");
         }
@@ -69,25 +79,10 @@ namespace snake_game.Bonuses
                 foreach (var type in dll.GetExportedTypes().Where(t => t.GetInterfaces().Contains(typeof(IPlugin))))
                 {
                     var plugin = (IPlugin) Activator.CreateInstance(type);
-                    if (type.Namespace == null ||
-                        !type.Namespace.StartsWith("snake_plugins.") ||
-                        type.Namespace.LastIndexOf('.') != type.Namespace.IndexOf('.'))
-                    {
-                        throw new Exception(
-                            $"Error occured while loading '{file}': Plugin must be in 'snake_plugins.<name>' namespace!"
-                        );
-                    }
-                    var name = type.Namespace.Substring("snake_plugins.".Length);
-                    if (result.ContainsKey(name))
+                    if (result.ContainsKey(plugin.Name))
                     {
                         throw new Exception(
                             $"Error occured while loading '{file}': Plugin with name '{plugin.Name}' already loaded!"
-                        );
-                    }
-                    if (type.Name != "Plugin")
-                    {
-                        throw new Exception(
-                            $"Error occured while loading '{file}': Plugin class must be named 'Plugin'!"
                         );
                     }
                     result[plugin.Name] = plugin;
