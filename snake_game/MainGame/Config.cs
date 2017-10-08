@@ -17,7 +17,7 @@ namespace snake_game.MainGame
     {
         public class SnakeConfigClass
         {
-            public int Speed = 150; // Pixels per second
+            public int Speed = 275; // Pixels per second
             public int CircleSize = 40; // Radius
             public int CircleOffset = 5;
             public int InitLen = 30;
@@ -30,15 +30,17 @@ namespace snake_game.MainGame
         {
             public bool IsMouseVisible = true;
             public bool IsFullScreen = false;
-            public int ScreenWidth = 800;
-            public int ScreenHeight = 600;
+            
+            // Most popular screen resolution minus Win10 taskbar and window borders
+            public int ScreenWidth = 1366 - 2;
+            public int ScreenHeight = 768 - 70;
         }
 
         public class GameConfigClass
         {
             public int Lives = 3;
-            public int DamageTimeout = 1500;
-            public int FoodToLive = 10;
+            public int DamageTimeout = 1000;
+            public int FoodToLive = 7;
             [JsonConverter(typeof(HexColorConverter))] public Color TextColor = Color.Black;
             public bool DebugShow = false;
             [JsonConverter(typeof(HexColorConverter))] public Color DebugColor = Color.LightGray;

@@ -7,10 +7,10 @@ namespace AntiAppleBonus
 {
     public class Config : IPluginConfig
     {
-        public bool IsEnabled { get; set; }
-        public int StartSnakeLength = 10;
+        public bool IsEnabled { get; set; } = true;
+        public int StartSnakeLength = 20;
         public int ChanceTime = 7000;
-        public double NewChance = 0.95;
+        public double NewChance = 0.2;
         [JsonConverter(typeof(HexColorConverter))] public Color Color = Color.LightYellow;
         public int Size = 25;
         public float Thickness = 10f;

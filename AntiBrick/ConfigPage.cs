@@ -28,7 +28,7 @@ namespace AntiBrick
                 StartBrickCount = (int) _startBrickCount.Value,
                 ChanceTime = (int) _chanceTime.Value * 1000,
                 Size = (int) _size.Value,
-                NewChance = (int) _newChance.Value / 100,
+                NewChance = _newChance.Value / 100,
                 Thickness = (float) _thickness.Value,
                 Color = ColorConverter.ToXna(_color.Value)
             };

@@ -7,13 +7,13 @@ namespace AppleBonus
 {
     public class Config : IPluginConfig
     {
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled { get; set; } = true;
         public float BounceTimeout = 150f;
-        public int AppleCount = 1;
+        public int AppleCount = 2;
         public float Thickness = 10f;
         public int Radius = 25;
         public int Sides = 30;
-        public int Speed = 100;
+        public int Speed = 300;
         [JsonConverter(typeof(HexColorConverter))] public Color AppleColor = Color.SpringGreen;
     }
 }
