@@ -135,7 +135,6 @@
     <Compile Include="MainGame\Debug.cs" />
     <Compile Include="MainGame\Fog.cs" />
     <Compile Include="MainGame\Game.cs" />
-    <Compile Include="MainGame\Logger.cs" />
     <Compile Include="Polygon.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
