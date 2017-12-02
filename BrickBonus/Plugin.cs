@@ -10,7 +10,7 @@ namespace BrickBonus
         public string Name => "Brick";
         public IPluginConfig Config { get; set; } = new Config();
 
-        public IBonus GetBonus(object config, Random random, MainGame game)
+        public BonusBase GetBonus(object config, Random random, MainGame game)
         {
             return new Bonus((Config)config, random, game);
         }

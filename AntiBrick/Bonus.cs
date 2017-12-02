@@ -9,7 +9,7 @@ using snake_game.Bonuses;
 
 namespace AntiBrick
 {
-    public class Bonus : IBonus
+    public class Bonus : BonusBase
     {
         readonly Config _config;
         readonly Random _random;
@@ -29,8 +29,9 @@ namespace AntiBrick
             _texture.SetData(new[] {Color.White});
         }
 
-        public override void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
-            Rectangle size)
+        public override IReadOnlyDictionary<string, Gettable> Update(GameTime gameTime, int fullTime,
+            IReadOnlyDictionary<string, BonusBase> plugins, CircleF[] snakePoints,
+            Rectangle size, IReadOnlyDictionary<string, IReadOnlyDictionary<string, Gettable>> events)
         {
             if (plugins.ContainsKey("Brick"))
             {
@@ -67,6 +68,8 @@ namespace AntiBrick
                     }
                 }
             }
+
+            return null;
         }
 
         public override void Draw(SpriteBatch sb)

@@ -9,8 +9,8 @@ using snake_game.Bonuses;
 
 namespace AntiAppleBonus
 {
-    public class Bonus : IBonus
-    {   
+    public class Bonus : BonusBase
+    {
         readonly Config _config;
         private Polygon _hex;
         private bool _created;
@@ -37,7 +37,9 @@ namespace AntiAppleBonus
             _hex = new Polygon(6, _config.Size, new Vector2(100, 100));
         }
 
-        public override void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints, Rectangle size)
+        public override IReadOnlyDictionary<string, Gettable> Update(GameTime gameTime, int fullTime,
+            IReadOnlyDictionary<string, BonusBase> plugins, CircleF[] snakePoints, Rectangle size,
+            IReadOnlyDictionary<string, IReadOnlyDictionary<string, Gettable>> events)
         {
             if (_created)
             {
@@ -64,6 +66,8 @@ namespace AntiAppleBonus
                     _created = true;
                 }
             }
+
+            return null;
         }
     }
 }

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Eto.Forms;
 using System.Threading;
+using Eto.Forms;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using snake_game.Bonuses;
 using snake_game.Launcher.Config;
 using snake_game.MainGame;
@@ -16,38 +18,34 @@ namespace snake_game.Launcher
         const int WindowHeight = 400;
         const int ButtonHeight = 30;
 
-        GameConfig _gameCfg;
-        ScreenConfig _screenCfg;
-        SnakeConfig _snakeCfg;
-        BonusConfig _bonusCfg;
+        private GameConfig _gameCfg;
+        private ScreenConfig _screenCfg;
+        private SnakeConfig _snakeCfg;
+        private BonusConfig _bonusCfg;
 
-        MainGame.Config _config;
-        Dictionary<string, IPlugin> _plugins;
+        private MainGame.Config _config;
+        readonly Dictionary<string, IPlugin> _plugins;
 
-        void SaveHandler(object sender, EventArgs e)
+        private void SaveHandler(object sender, EventArgs e)
         {
             _config = GetConfig();
             File.WriteAllText("config.json", ConfigLoad.Save(_config));
         }
 
-        void StartHandler(object sender, EventArgs e)
+        private void StartHandler(object sender, EventArgs e)
         {
             _config = GetConfig();
-            new Thread(() =>
-            {
-                var game = new MainGame.MainGame(_config, _plugins);
-                game.Run();
-            }).Start();
-            Close();
+            new Thread(() => new MainGame.MainGame(_config, _plugins).Run()).Start();;
+            // Close();
         }
 
-        void ResetHandler(object sender, EventArgs e)
+        private void ResetHandler(object sender, EventArgs e)
         {
             _config = new MainGame.Config();
             Draw();
         }
 
-        MainGame.Config GetConfig()
+        private MainGame.Config GetConfig()
         {
             return new MainGame.Config
             {
@@ -68,7 +66,7 @@ namespace snake_game.Launcher
             Draw();
         }
 
-        void Draw()
+        private void Draw()
         {
             _gameCfg = new GameConfig(_config.GameConfig);
             _screenCfg = new ScreenConfig(_config.ScreenConfig);

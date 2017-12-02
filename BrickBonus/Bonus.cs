@@ -7,11 +7,10 @@ using MonoGame.Extended.Shapes;
 using snake_game.Bonuses;
 using snake_game.MainGame;
 using snake_game.Snake;
-using SharpDX.XAudio2;
 
 namespace BrickBonus
 {
-    public class Bonus : IBonus
+    public class Bonus : BonusBase
     {
         readonly Random _random;
         readonly Config _config;
@@ -34,8 +33,9 @@ namespace BrickBonus
             _texture.SetData(new[] {Color.White});
         }
 
-        public override void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
-            Rectangle size)
+        public override IReadOnlyDictionary<string, Gettable> Update(GameTime gameTime, int fullTime,
+            IReadOnlyDictionary<string, BonusBase> plugins, CircleF[] snakePoints,
+            Rectangle size, IReadOnlyDictionary<string, IReadOnlyDictionary<string, Gettable>> events)
         {
             if (fullTime % _config.ChanceTime == 0)
             {
@@ -76,6 +76,8 @@ namespace BrickBonus
                     _game.Die(1);
                 }
             }
+
+            return null;
         }
 
         public override void Draw(SpriteBatch sb)

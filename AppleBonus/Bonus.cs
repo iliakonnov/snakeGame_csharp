@@ -13,7 +13,7 @@ using snake_game.Snake;
 
 namespace AppleBonus
 {
-    public class Bonus : IBonus
+    public class Bonus : BonusBase
     {
         readonly Config _config;
         readonly Random _random;
@@ -32,8 +32,9 @@ namespace AppleBonus
         {
         }
 
-        public override void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
-            Rectangle size)
+        public override IReadOnlyDictionary<string, Gettable> Update(GameTime gameTime, int fullTime,
+            IReadOnlyDictionary<string, BonusBase> plugins, CircleF[] snakePoints,
+            Rectangle size, IReadOnlyDictionary<string, IReadOnlyDictionary<string, Gettable>> events)
         {
             if (_first)
             {
@@ -103,6 +104,8 @@ namespace AppleBonus
                 } while (snakePoints.First().Intersects(newApple.GetCircle()));
                 Apples.Add(newApple);
             }
+
+            return null;
         }
 
         Vector2 GetRandomDirection()
