@@ -1,14 +1,11 @@
-﻿using System;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 
-namespace snake_game.MainGame
+namespace Snake
 {
     public static class ControlResult
     {
         public class Result
         {
-            public bool Debug;
-            public bool IsExit;
             public Turn Turn = new Turn();
         }
 
@@ -28,30 +25,11 @@ namespace snake_game.MainGame
     public class ControllerTraditional : IController
     {
         enum Direction { Up, Down, Left, Right }
-        bool _IsDebugPressed;
         Direction _direction = Direction.Right;
 
         public ControlResult.Result Control(KeyboardState state)
         {
             var result = new ControlResult.Result();
-
-            if (state.IsKeyDown(Keys.OemTilde))
-            {
-                if (!_IsDebugPressed)
-                {
-                    result.Debug = true;
-                    _IsDebugPressed = true;
-                }
-            }
-            else
-            {
-                _IsDebugPressed = false;
-            }
-
-            if (state.IsKeyDown(Keys.Escape))
-            {
-                result.IsExit = true;
-            }
 
             if (state.IsKeyDown(Keys.Down) && _direction != Direction.Up)
             {
@@ -101,7 +79,6 @@ namespace snake_game.MainGame
     public class ControllerSmall : IController
     {
         bool _IsTurned;
-        bool _IsDebugPressed;
         readonly int _step;
 
         public ControllerSmall(int step)
@@ -112,24 +89,6 @@ namespace snake_game.MainGame
         public ControlResult.Result Control(KeyboardState state)
         {
             var result = new ControlResult.Result();
-
-            if (state.IsKeyDown(Keys.OemTilde))
-            {
-                if (!_IsDebugPressed)
-                {
-                    result.Debug = true;
-                    _IsDebugPressed = true;
-                }
-            }
-            else
-            {
-                _IsDebugPressed = false;
-            }
-
-            if (state.IsKeyDown(Keys.Escape))
-            {
-                result.IsExit = true;
-            }
 
             if (state.IsKeyDown(Keys.Right))
             {

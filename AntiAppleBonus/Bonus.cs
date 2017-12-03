@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Shapes;
 using snake_game;
 using snake_game.Bonuses;
+using snake_game.Utils;
+using Void = snake_game.Utils.Void;
 
 namespace AntiAppleBonus
 {
@@ -32,20 +35,29 @@ namespace AntiAppleBonus
             _random = rnd;
         }
 
+        public override IEnumerable<string> CheckDependincies(IReadOnlyDictionary<string, BonusBase> plugins)
+        {
+            return !plugins.ContainsKey("Snake")
+                ? new[] {"Snake"}
+                : new string[] { };
+        }
+
         public override void LoadContent(GraphicsDevice graphicsDevice)
         {
             _hex = new Polygon(6, _config.Size, new Vector2(100, 100));
         }
 
-        public override IReadOnlyDictionary<string, Gettable> Update(GameTime gameTime, int fullTime,
-            IReadOnlyDictionary<string, BonusBase> plugins, CircleF[] snakePoints, Rectangle size,
-            IReadOnlyDictionary<string, IReadOnlyDictionary<string, Gettable>> events)
+        public override Accessable Update(GameTime gameTime, int fullTime, KeyboardState keyboardState,
+            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
+            IReadOnlyDictionary<string, Accessable> events)
         {
+            var snakePoints = plugins["Snake"].GetListProperty<CircleF>("SnakeCircles").ToArray();
+
             if (_created)
             {
                 if (_hex.Intersects(snakePoints.First()))
                 {
-                    _game.Slim(snakePoints.Length / 2);
+                    plugins["Snake"].GetMethodResult<Void>("Decrease", new object[] {snakePoints.Length / 2});
                     _created = false;
                 }
             }

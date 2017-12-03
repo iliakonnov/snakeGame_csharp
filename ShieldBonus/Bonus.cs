@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Shapes;
 using snake_game.Bonuses;
 using snake_game.MainGame;
-using Point = snake_game.Utils.Point;
-using Void = snake_game.Utils.Void;
+using snake_game.Snake;
 
 namespace BrickBonus
 {
@@ -29,25 +27,16 @@ namespace BrickBonus
             _game = game;
         }
 
-        public override IEnumerable<string> CheckDependincies(IReadOnlyDictionary<string, BonusBase> plugins)
-        {
-            return !plugins.ContainsKey("Snake")
-                ? new[] {"Snake"}
-                : new string[] { };
-        }
-
         public override void LoadContent(GraphicsDevice graphicsDevice)
         {
             _texture = new Texture2D(graphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _texture.SetData(new[] {Color.White});
         }
 
-        public override Accessable Update(GameTime gameTime, int fullTime, KeyboardState keyboardState,
-            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
-            IReadOnlyDictionary<string, Accessable> events)
+        public override Gettable Update(GameTime gameTime, int fullTime,
+            IReadOnlyDictionary<string, BonusBase> plugins, CircleF[] snakePoints,
+            Rectangle size, IReadOnlyDictionary<string, Gettable> events)
         {
-            var snakePoints = plugins["Snake"].GetListProperty<CircleF>("SnakeCircles");
-
             if (fullTime % _config.ChanceTime == 0)
             {
                 foreach (var brick in Bricks)
@@ -84,7 +73,7 @@ namespace BrickBonus
                 rect.Y += rect.Height / 2;
                 if (snakePoints.First().Intersects(rect))
                 {
-                    plugins["Snake"].GetMethodResult<Void>("Damage");
+                    _game.Die(1);
                 }
             }
 
@@ -99,7 +88,7 @@ namespace BrickBonus
             }
         }
 
-        public class BrickBonus : Accessable
+        public class BrickBonus : Gettable
         {
             Vector2 _position; // Left upper corner
             Config _config;
@@ -120,18 +109,18 @@ namespace BrickBonus
             public void Move(Vector2 move, BagelWorld world)
             {
                 _position += move;
-                var newPos = world.Normalize(new Point(_position.X, _position.Y));
+                var newPos = world.Normalize(new snake_game.Snake.Point(_position.X, _position.Y));
                 _position = new Vector2(newPos.X, newPos.Y);
             }
 
-            public override TResult GetMethodResult<TResult>(string methodName, object[] arguments = null)
+            public override TResult GetMethodResult<TResult>(string methodName)
             {
                 switch (methodName)
                 {
                     case nameof(GetRectangle):
                         return (TResult) (object) GetRectangle();
                     default:
-                        return base.GetMethodResult<TResult>(methodName, arguments);
+                        return base.GetMethodResult<TResult>(methodName);
                 }
             }
         }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using snake_game.MainGame;
+using snake_game.Utils;
 
 namespace snake_game.Snake
 {
@@ -140,6 +142,11 @@ namespace snake_game.Snake
             }
 
             return result;
+        }
+        
+        public Segment[] Normalize(BagelWorld world)
+        {
+            return world.Normalize(Points.ToArray());
         }
 
         internal static SnakeModel SetLength(float length, Point[] nodes, float headDirection)

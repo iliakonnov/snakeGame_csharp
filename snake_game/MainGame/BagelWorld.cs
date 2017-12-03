@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using snake_game.Utils;
 
-namespace snake_game.Snake
+namespace snake_game.MainGame
 {
     public class BagelWorld
     {
@@ -77,13 +78,12 @@ namespace snake_game.Snake
             return NormalizeFromInternal(bpA, bpB);
         }
 
-        public Segment[] Normalize(SnakeModel s)
+        public Segment[] Normalize(Point[] points)
         {
-            var pts = s.Points.ToArray();
-            var segs = new Segment[pts.Length - 1];
-            for (var i = 0; i < pts.Length - 1; i++)
+            var segs = new Segment[points.Length - 1];
+            for (var i = 0; i < points.Length - 1; i++)
             {
-                segs[i] = new Segment(pts[i], pts[i + 1]);
+                segs[i] = new Segment(points[i], points[i + 1]);
             }
 
             var result = new List<Segment>(segs.Length);

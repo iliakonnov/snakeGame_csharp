@@ -20,7 +20,6 @@ namespace snake_game.Launcher
 
         private GameConfig _gameCfg;
         private ScreenConfig _screenCfg;
-        private SnakeConfig _snakeCfg;
         private BonusConfig _bonusCfg;
 
         private MainGame.Config _config;
@@ -35,8 +34,8 @@ namespace snake_game.Launcher
         private void StartHandler(object sender, EventArgs e)
         {
             _config = GetConfig();
-            new Thread(() => new MainGame.MainGame(_config, _plugins).Run()).Start();;
-            // Close();
+            new MainGame.MainGame(_config, _plugins).Run();
+            Close();
         }
 
         private void ResetHandler(object sender, EventArgs e)
@@ -49,7 +48,6 @@ namespace snake_game.Launcher
         {
             return new MainGame.Config
             {
-                SnakeConfig = _snakeCfg.GetConfig(),
                 ScreenConfig = _screenCfg.GetConfig(),
                 GameConfig = _gameCfg.GetConfig(),
                 BonusConfig = _bonusCfg.GetConfig()
@@ -70,7 +68,6 @@ namespace snake_game.Launcher
         {
             _gameCfg = new GameConfig(_config.GameConfig);
             _screenCfg = new ScreenConfig(_config.ScreenConfig);
-            _snakeCfg = new SnakeConfig(_config.SnakeConfig);
             _bonusCfg = new BonusConfig(_config.BonusConfig, _plugins);
 
             var saveButton = new Button
@@ -105,7 +102,6 @@ namespace snake_game.Launcher
                         {
                             _gameCfg.GetPage(),
                             _screenCfg.GetPage(),
-                            _snakeCfg.GetPage(),
                             _bonusCfg.GetPage(tabControlSize)
                         }
                     },

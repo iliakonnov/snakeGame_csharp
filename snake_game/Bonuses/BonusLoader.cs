@@ -11,64 +11,6 @@ using MonoGame.Extended.Shapes;
 
 namespace snake_game.Bonuses
 {
-    public abstract class Gettable
-    {
-        public virtual TResult GetMethodResult<TResult>(string methodName)
-        {
-            throw new ArgumentException($"Cannot execute method '{methodName}'");
-        }
-
-        public virtual TResult GetProperty<TResult>(string propertyName)
-        {
-            throw new ArgumentException($"Cannot get property '{propertyName}'");
-        }
-
-        public virtual List<TResult> GetListProperty<TResult>(string propertyName)
-        {
-            throw new ArgumentException($"Cannot get property '{propertyName}'");
-        }
-
-        public virtual void SetProperty(string propertyName, object newValue)
-        {
-            throw new ArgumentException($"Cannot set property '{propertyName}'");
-        }
-
-        public virtual void SetListProperty(string propertyName, IEnumerable<object> newValue)
-        {
-            throw new ArgumentException($"Cannot set property '{propertyName}'");
-        }
-    }
-
-    public abstract class BonusBase : Gettable
-    {
-        public abstract void LoadContent(GraphicsDevice graphicsDevice);
-
-        public abstract IReadOnlyDictionary<string, Gettable> Update(GameTime gameTime, int fullTime,
-            IReadOnlyDictionary<string, BonusBase> plugins, CircleF[] snakePoints, Rectangle size,
-            IReadOnlyDictionary<string, IReadOnlyDictionary<string, Gettable>> events);
-
-        public abstract void Draw(SpriteBatch sb);
-    }
-
-    public interface IPluginConfig
-    {
-        bool IsEnabled { get; set; }
-    }
-
-    public interface IPlugin
-    {
-        string Name { get; }
-        IPluginConfig Config { get; }
-        BonusBase GetBonus(object config, Random random, MainGame.MainGame game);
-        IConfigPage GetPage(object config);
-    }
-
-    public interface IConfigPage
-    {
-        IPluginConfig GetConfig();
-        TabPage GetPage();
-    }
-
     public static class BonusLoader
     {
         public static Dictionary<string, IPlugin> LoadPlugins(string path)

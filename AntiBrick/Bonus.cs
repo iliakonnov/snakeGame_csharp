@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Shapes;
 using snake_game;
 using snake_game.Bonuses;
+using snake_game.Utils;
+using SharpDX;
+using Color = Microsoft.Xna.Framework.Color;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace AntiBrick
 {
@@ -23,16 +29,32 @@ namespace AntiBrick
             _random = rnd;
         }
 
+        public override IEnumerable<string> CheckDependincies(IReadOnlyDictionary<string, BonusBase> plugins)
+        {
+            var result = new List<string>();
+            if (!plugins.ContainsKey("Snake"))
+            {
+                result.Add("Snake");
+            }
+            if (!plugins.ContainsKey("Brick"))
+            {
+                result.Add("Brick");
+            }
+            return result;
+        }
+
         public override void LoadContent(GraphicsDevice graphicsDevice)
         {
             _texture = new Texture2D(graphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _texture.SetData(new[] {Color.White});
         }
 
-        public override IReadOnlyDictionary<string, Gettable> Update(GameTime gameTime, int fullTime,
-            IReadOnlyDictionary<string, BonusBase> plugins, CircleF[] snakePoints,
-            Rectangle size, IReadOnlyDictionary<string, IReadOnlyDictionary<string, Gettable>> events)
+        public override Accessable Update(GameTime gameTime, int fullTime, KeyboardState keyboardState,
+            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
+            IReadOnlyDictionary<string, Accessable> events)
         {
+            var snakePoints = plugins["Snake"].GetListProperty<CircleF>("SnakeCircles");
+
             if (plugins.ContainsKey("Brick"))
             {
                 var brickManager = plugins["Brick"];
