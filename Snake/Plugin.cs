@@ -1,18 +1,17 @@
 ﻿using System;
-using Eto.Forms;
 using snake_game.Bonuses;
 using snake_game.MainGame;
 
-namespace AppleBonus
+namespace Snake
 {
     public class Plugin : IPlugin
     {
-        public string Name => "Apple";
-        public IPluginConfig Config { get; set; } = new Config();
-
+        public string Name { get; } = "Snake";
+        public IPluginConfig Config { get; } = new Config();
+        
         public BonusBase GetBonus(object config, Random random, MainGame game)
         {
-            return new Bonus((Config)config, random, game);
+            return new Bonus((Config) config, game);
         }
 
         public IConfigPage GetPage(object config)

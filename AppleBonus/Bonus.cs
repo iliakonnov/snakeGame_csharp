@@ -7,13 +7,16 @@ using System.Runtime.Remoting.Messaging;
 using Eto.CustomControls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Shapes;
 using snake_game.Bonuses;
-using snake_game.Snake;
+using snake_game.Utils;
+using Point = snake_game.Utils.Point;
+using Void = snake_game.Utils.Void;
 
 namespace AppleBonus
 {
-    public class Bonus : IBonus
+    public class Bonus : BonusBase
     {
         readonly Config _config;
         readonly Random _random;
@@ -28,13 +31,23 @@ namespace AppleBonus
             _game = game;
         }
 
+        public override IEnumerable<string> CheckDependincies(IReadOnlyDictionary<string, BonusBase> plugins)
+        {
+            return !plugins.ContainsKey("Snake")
+                ? new[] {"Snake"}
+                : new string[] { };
+        }
+
         public override void LoadContent(GraphicsDevice graphicsDevice)
         {
         }
 
-        public override void Update(GameTime gameTime, int fullTime, Dictionary<string, IBonus> plugins, CircleF[] snakePoints,
-            Rectangle size)
+        public override Accessable Update(GameTime gameTime, int fullTime, KeyboardState keyboardState,
+            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
+            IReadOnlyDictionary<string, Accessable> events)
         {
+            var snakePoints = plugins["Snake"].GetListProperty<CircleF>("SnakeCircles").ToArray();
+
             if (_first)
             {
                 for (var i = 0; i < _config.AppleCount; i++)
@@ -54,24 +67,24 @@ namespace AppleBonus
             if (plugins.ContainsKey("Brick"))
             {
                 var brickManager = plugins["Brick"];
-                foreach (var brick in brickManager.GetListProperty<Gettable>("Bricks"))
+                foreach (var brick in brickManager.GetListProperty<Accessable>("Bricks"))
                 {
                     var rect = brick.GetMethodResult<Rectangle>("GetRectangle");
                     obstaclesL.Add(new Segment(
-                        new snake_game.Snake.Point(rect.X, rect.Y),
-                        new snake_game.Snake.Point(rect.X + rect.Height, rect.Y)
+                        new Point(rect.X, rect.Y),
+                        new Point(rect.X + rect.Height, rect.Y)
                     ));
                     obstaclesL.Add(new Segment(
-                        new snake_game.Snake.Point(rect.X, rect.Y),
-                        new snake_game.Snake.Point(rect.X, rect.Y + rect.Width)
+                        new Point(rect.X, rect.Y),
+                        new Point(rect.X, rect.Y + rect.Width)
                     ));
                     obstaclesL.Add(new Segment(
-                        new snake_game.Snake.Point(rect.X, rect.Y + rect.Width),
-                        new snake_game.Snake.Point(rect.X + rect.Height, rect.Y + rect.Width)
+                        new Point(rect.X, rect.Y + rect.Width),
+                        new Point(rect.X + rect.Height, rect.Y + rect.Width)
                     ));
                     obstaclesL.Add(new Segment(
-                        new snake_game.Snake.Point(rect.X + rect.Height, rect.Y),
-                        new snake_game.Snake.Point(rect.X + rect.Height, rect.Y + rect.Width)
+                        new Point(rect.X + rect.Height, rect.Y),
+                        new Point(rect.X + rect.Height, rect.Y + rect.Width)
                     ));
                 }
             }
@@ -85,7 +98,8 @@ namespace AppleBonus
                 apple.Move(gameTime.ElapsedGameTime.TotalSeconds, fullTime, size, obstacles, snakePoints);
                 if (appleCircle.Intersects(snakePoints.First()))
                 {
-                    _game.Eat(1);
+                    _game.Score(1);
+                    plugins["Snake"].GetMethodResult<Void>("Increase", new object[] {1});
                     remove.Add(i);
                 }
             }
@@ -103,6 +117,8 @@ namespace AppleBonus
                 } while (snakePoints.First().Intersects(newApple.GetCircle()));
                 Apples.Add(newApple);
             }
+
+            return null;
         }
 
         Vector2 GetRandomDirection()
@@ -119,7 +135,7 @@ namespace AppleBonus
             }
         }
 
-        public class AppleBonus : Gettable
+        public class AppleBonus : Accessable
         {
             Vector2 _position;
             Vector2 _direction;
@@ -145,26 +161,26 @@ namespace AppleBonus
                                  _config.Speed * _direction.Y
                              ) * (float) time;
 
-                var MaxX = size.Width - _config.Radius;
-                var MinX = _config.Radius;
-                var MaxY = size.Height - _config.Radius;
-                var MinY = _config.Radius;
+                var maxX = size.Width - _config.Radius;
+                var minX = _config.Radius;
+                var maxY = size.Height - _config.Radius;
+                var minY = _config.Radius;
 
                 // Check for bounce.
-                if (fullTime - _bounceTime > _config.BounceTimeout && (_position.X > MaxX || _position.X < MinX))
+                if (fullTime - _bounceTime > _config.BounceTimeout && (_position.X > maxX || _position.X < minX))
                 {
                     var newDirection = MathUtils.Bounce(
                         new Line(1, 0, 0),
-                        new snake_game.Snake.Point(_direction.X, _direction.Y)
+                        new Point(_direction.X, _direction.Y)
                     );
                     _direction = new Vector2(newDirection.X, newDirection.Y);
                     _bounceTime = fullTime;
                 }
-                if (fullTime - _bounceTime > _config.BounceTimeout && (_position.Y > MaxY || _position.Y < MinY))
+                if (fullTime - _bounceTime > _config.BounceTimeout && (_position.Y > maxY || _position.Y < minY))
                 {
                     var newDirection = MathUtils.Bounce(
                         new Line(0, 1, 0),
-                        new snake_game.Snake.Point(_direction.X, _direction.Y)
+                        new Point(_direction.X, _direction.Y)
                     );
                     _direction = new Vector2(newDirection.X, newDirection.Y);
                     _bounceTime = fullTime;
@@ -173,11 +189,11 @@ namespace AppleBonus
                 foreach (var o in obstacles)
                 {
                     if (fullTime - _bounceTime > _config.BounceTimeout &&
-                        MathUtils.Distance(o, new snake_game.Snake.Point(_position.X, _position.Y)) <= _config.Radius)
+                        MathUtils.Distance(o, new Point(_position.X, _position.Y)) <= _config.Radius)
                     {
                         var newDirection = MathUtils.Bounce(
                             MathUtils.StandardLine(o.A, o.B),
-                            new snake_game.Snake.Point(_direction.X, _direction.Y)
+                            new Point(_direction.X, _direction.Y)
                         );
                         _direction = new Vector2(newDirection.X, newDirection.Y);
                         _bounceTime = fullTime;
@@ -192,12 +208,12 @@ namespace AppleBonus
                     if (fullTime - _bounceTime > _config.BounceTimeout && current.Intersects(circle))
                     {
                         var seg = new Segment(
-                            new snake_game.Snake.Point(old.Center.X, old.Center.Y),
-                            new snake_game.Snake.Point(current.Center.X, current.Center.Y)
+                            new Point(old.Center.X, old.Center.Y),
+                            new Point(current.Center.X, current.Center.Y)
                         );
                         var newDirection = MathUtils.Bounce(
                             MathUtils.StandardLine(seg.A, seg.B),
-                            new snake_game.Snake.Point(_direction.X, _direction.Y)
+                            new Point(_direction.X, _direction.Y)
                         );
                         _direction = new Vector2(newDirection.X, newDirection.Y);
                         _bounceTime = fullTime;
@@ -206,14 +222,14 @@ namespace AppleBonus
                 }
             }
 
-            public override TResult GetMethodResult<TResult>(string methodName)
+            public override TResult GetMethodResult<TResult>(string methodName, object[] arguments = null)
             {
                 switch (methodName)
                 {
                     case nameof(GetCircle):
                         return (TResult) (object) GetCircle();
                     default:
-                        return base.GetMethodResult<TResult>(methodName);
+                        return base.GetMethodResult<TResult>(methodName, arguments);
                 }
             }
         }

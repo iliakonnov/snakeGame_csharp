@@ -1,13 +1,16 @@
-﻿using System;
-using System.Drawing;
-using Eto.Forms;
+﻿using Eto.Forms;
+using Microsoft.Xna.Framework;
+using snake_game.Bonuses;
+using snake_game.Launcher;
 
-namespace snake_game.Launcher.Config
+namespace Snake
 {
-    public class SnakeConfig
+    public class ConfigPage : IConfigPage
     {
+        CheckBox _enabled;
         NumericUpDown _speed;
         NumericUpDown _circleSize;
+        NumericUpDown _damageTimeout;
         NumericUpDown _circleOffset;
         NumericUpDown _initLen;
         ColorPicker _damageColor;
@@ -15,26 +18,32 @@ namespace snake_game.Launcher.Config
         ColorPicker _headColor;
         CheckBox _rainbowSnake;
         ColorPicker _snakeColor;
+        ComboBox _controlType;
+        NumericUpDown _turnSize;
 
-        MainGame.Config.SnakeConfigClass _config;
+        Config _config;
 
-        public SnakeConfig(MainGame.Config.SnakeConfigClass config)
+        public ConfigPage(Config config)
         {
             _config = config;
         }
 
-        public MainGame.Config.SnakeConfigClass GetConfig()
+        public IPluginConfig GetConfig()
         {
-            var result = new MainGame.Config.SnakeConfigClass
+            var result = new Config
             {
                 Speed = (int) _speed.Value,
+                DamageTimeout = (int) (_damageTimeout.Value * 1000),
                 CircleSize = (int) _circleSize.Value,
                 CircleOffset = (int) _circleOffset.Value,
                 InitLen = (int) _initLen.Value,
                 DamageColor = ColorConverter.ToXna(_damageColor.Value),
                 Colors = (_rainbowSnake.Checked ?? false)
                     ? null
-                    : new[] {ColorConverter.ToXna(_snakeColor.Value)}
+                    : new[] {ColorConverter.ToXna(_snakeColor.Value)},
+                IsEnabled = _enabled.Checked ?? false,
+                ControlType = _controlType.SelectedKey,
+                TurnSize = (int) _turnSize.Value
             };
             if (_headColorEnabled.Checked ?? false)
             {
@@ -49,8 +58,12 @@ namespace snake_game.Launcher.Config
 
         public TabPage GetPage()
         {
+            _turnSize = _config.TurnSize != null
+                ? new NumericUpDown {Value = (double) _config.TurnSize}
+                : new NumericUpDown {Value = 0};
             _speed = new NumericUpDown {Value = _config.Speed};
             _circleSize = new NumericUpDown {Value = _config.CircleSize};
+            _damageTimeout = new NumericUpDown {Value = _config.DamageTimeout / 1000};
             _circleOffset = new NumericUpDown {Value = _config.CircleOffset};
             _initLen = new NumericUpDown {Value = _config.InitLen};
             _damageColor = new ColorPicker {Value = ColorConverter.ToEto(_config.DamageColor)};
@@ -70,6 +83,11 @@ namespace snake_game.Launcher.Config
                         ? ColorConverter.ToEto(Color.Transparent)
                         : ColorConverter.ToEto(_config.Colors[0])
             };
+            _enabled = new CheckBox {Checked = _config.IsEnabled};
+            _controlType = new ComboBox();
+            _controlType.Items.Add("traditional");
+            _controlType.Items.Add("small");
+            _controlType.SelectedKey = _config.ControlType;
 
             return new TabPage(new StackLayout
             {
@@ -80,8 +98,26 @@ namespace snake_game.Launcher.Config
                         Orientation = Orientation.Horizontal,
                         Items =
                         {
+                            _enabled,
+                            new Label {Text = "Bonus enabled", VerticalAlignment = VerticalAlignment.Center}
+                        }
+                    },
+                    new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Items =
+                        {
                             _speed,
                             new Label {Text = "Speed (px/s)", VerticalAlignment = VerticalAlignment.Center}
+                        }
+                    },
+                    new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Items =
+                        {
+                            _damageTimeout,
+                            new Label {Text = "Damage timeout (sec)", VerticalAlignment = VerticalAlignment.Center}
                         }
                     },
                     new StackLayout
@@ -158,6 +194,28 @@ namespace snake_game.Launcher.Config
                         {
                             _snakeColor,
                             new Label {Text = "Snake color", VerticalAlignment = VerticalAlignment.Center}
+                        }
+                    },
+                    new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Items =
+                        {
+                            _controlType,
+                            new Label {Text = "Type of control", VerticalAlignment = VerticalAlignment.Center}
+                        }
+                    },
+                    new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Items =
+                        {
+                            _turnSize,
+                            new Label
+                            {
+                                Text = "Turn size (for some control types)",
+                                VerticalAlignment = VerticalAlignment.Center
+                            }
                         }
                     }
                     // TODO: Сделать настройку цветов змеи (Color[] Colors)

@@ -40,7 +40,7 @@ namespace snake_game.MainGame
         {
             public int Lives = 3;
             public int DamageTimeout = 1000;
-            public int FoodToLive = 7;
+            public int ScoreToLive = 7;
             [JsonConverter(typeof(HexColorConverter))] public Color TextColor = Color.Black;
             public bool DebugShow = false;
             [JsonConverter(typeof(HexColorConverter))] public Color DebugColor = Color.LightGray;
@@ -49,13 +49,11 @@ namespace snake_game.MainGame
             [JsonConverter(typeof(HexColorConverter))]
             public Tuple<Color, Color> FogColor = new Tuple<Color, Color>(Color.DarkSlateBlue, Color.Transparent);
 
-            public double FogSizeMultiplier = 1.5;
+            public double FogSize = 60;
             [JsonConverter(typeof(HexColorConverter))] public Color BackgroundColor = Color.CornflowerBlue;
-            public string ControlType = "small";
-            public int? TurnSize = 30;
+            public int TurnSize { get; set; }
         }
 
-        public SnakeConfigClass SnakeConfig = new SnakeConfigClass();
         public ScreenConfigClass ScreenConfig = new ScreenConfigClass();
         public GameConfigClass GameConfig = new GameConfigClass();
 

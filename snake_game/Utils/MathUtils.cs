@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NullGuard;
 
-namespace snake_game.Snake
+namespace snake_game.Utils
 {
     /// <summary>
     /// Точка/вектор внутри плоскости

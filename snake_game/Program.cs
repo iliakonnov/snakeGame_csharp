@@ -8,11 +8,13 @@ namespace snake_game
     public static class Program
     {
         [STAThread]
-        public static void Main(string[] args)
+        public static void Main()
         {
             var application = new Eto.Forms.Application();
             var form = new LauncherForm();
-            application.Run(form);
+            application.Initialized += (args, sender) => form.Show();
+            application.Run();
+            // application.Run(form);
         }
     }
 }

@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.Particles;
 using MonoGame.Extended.Shapes;
-using snake_game.Snake;
-using Point = snake_game.Snake.Point;
+using Point = snake_game.Utils.Point;
 
-namespace snake_game
+namespace snake_game.Utils
 {
     public class Polygon : IShapeF
     {
