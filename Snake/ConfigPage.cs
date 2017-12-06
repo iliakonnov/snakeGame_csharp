@@ -1,7 +1,7 @@
 ﻿using Eto.Forms;
 using Microsoft.Xna.Framework;
 using snake_game.Bonuses;
-using snake_game.Launcher;
+using snake_game.Utils;
 
 namespace Snake
 {

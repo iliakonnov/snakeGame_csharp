@@ -27,7 +27,7 @@ namespace Snake
         private int _damagedTime;
         private IController _ctrl;
         private Point[] _snakePoints;
-        
+
         public bool Invulnerable;
         public CircleF[] SnakeCircles = {};
 
@@ -80,7 +80,7 @@ namespace Snake
             var head = new CircleF(
                 new Vector2(headCenter.X, headCenter.Y), _config.CircleSize
             );
-            
+
             var halfSize = _config.CircleSize / 2;
             SnakeCircles = _snakePoints.Select(p => new CircleF(new Vector2(p.X, p.Y), halfSize)).ToArray();
 
@@ -95,7 +95,7 @@ namespace Snake
                 intersects = head.Intersects(current);
             } while (intersects);
             _intersectStart = i;
-            
+
             switch (_config.ControlType)
             {
                 case "traditional":
@@ -145,7 +145,6 @@ namespace Snake
                     Damage();
                 }
             }
-
             return null;
         }
 
@@ -167,7 +166,7 @@ namespace Snake
                 );
             }
         }
-        
+
         private Texture2D CreateCircleTexture(int radius, GraphicsDevice gd)
         {
             var texture = new Texture2D(gd, radius, radius);
@@ -196,7 +195,7 @@ namespace Snake
             texture.SetData(colorData);
             return texture;
         }
-        
+
 
         public override List<TResult> GetListProperty<TResult>(string propertyName)
         {
@@ -237,17 +236,24 @@ namespace Snake
                     return base.GetMethodResult<TResult>(methodName, arguments);
             }
         }
-        
+
         public void Decrease(int size)
         {
-            Increase(-size);
+            _snake = _snake.Decrease(size * _config.CircleOffset);
         }
 
         public void Increase(int size)
         {
-            _snake.Increase(size * _config.CircleSize);
+            if (size < 0)
+            {
+                Decrease(-size);
+            }
+            else
+            {
+                _snake = _snake.Increase(size * _config.CircleOffset);
+            }
         }
-        
+
         public void Damage()
         {
             if (!Invulnerable)

@@ -30,13 +30,13 @@ namespace snake_game.Launcher.Config
             {
                 Lives = (int)_lives.Value,
                 ScoreToLive = (int)_foodToLive.Value,
-                TextColor = ColorConverter.ToXna(_textColor.Value),
+                TextColor = Utils.ColorConverter.ToXna(_textColor.Value),
                 DebugShow = _debugEnabled.Checked ?? false,
-                DebugColor = ColorConverter.ToXna(_debugColor.Value),
+                DebugColor = Utils.ColorConverter.ToXna(_debugColor.Value),
                 FogEnabled = _fogEnabled.Checked ?? false,
-                FogColor = new Tuple<Color, Color>(ColorConverter.ToXna(_fogColor.Value), Color.Transparent),
+                FogColor = new Tuple<Color, Color>(Utils.ColorConverter.ToXna(_fogColor.Value), Color.Transparent),
                 FogSize = _fogSize.Value,
-                BackgroundColor = ColorConverter.ToXna(_bgColor.Value),
+                BackgroundColor = Utils.ColorConverter.ToXna(_bgColor.Value),
             };
         }
 
@@ -44,11 +44,11 @@ namespace snake_game.Launcher.Config
         {
             _lives = new NumericUpDown { Value = _config.Lives };
             _foodToLive = new NumericUpDown { Value = _config.ScoreToLive };
-            _textColor = new ColorPicker { Value = ColorConverter.ToEto(_config.TextColor) };
-            _bgColor = new ColorPicker { Value = ColorConverter.ToEto(_config.BackgroundColor) };
-            _fogColor = new ColorPicker { Value = ColorConverter.ToEto(_config.FogColor.Item1) };
+            _textColor = new ColorPicker { Value = Utils.ColorConverter.ToEto(_config.TextColor) };
+            _bgColor = new ColorPicker { Value = Utils.ColorConverter.ToEto(_config.BackgroundColor) };
+            _fogColor = new ColorPicker { Value = Utils.ColorConverter.ToEto(_config.FogColor.Item1) };
             _debugEnabled = new CheckBox { Checked = _config.DebugShow };
-            _debugColor = new ColorPicker { Value = ColorConverter.ToEto(_config.DebugColor) };
+            _debugColor = new ColorPicker { Value = Utils.ColorConverter.ToEto(_config.DebugColor) };
             _fogEnabled = new CheckBox { Checked = _config.FogEnabled };
             _fogSize = new NumericUpDown { Value = _config.FogSize };
 

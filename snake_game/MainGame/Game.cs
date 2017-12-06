@@ -86,7 +86,7 @@ namespace snake_game.MainGame
                 Invulnerable = _gameTime - _damagedTime <= _config.GameConfig.DamageTimeout,
                 Damage = _damage
             };
-            _bonusManager.Update(gameTime, _gameTime, keyState, Window.ClientBounds, gameEvents);
+            _bonusManager.Update(gameTime, _gameTime, keyState, new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height), gameEvents);
 
             base.Update(gameTime);
         }

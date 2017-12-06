@@ -1,20 +1,20 @@
-﻿using System;
-using System.IO;
-using snake_game.Launcher;
+﻿using System.IO;
+using System.Linq;
+using Microsoft.Xna.Framework;
+using snake_game.Bonuses;
 using snake_game.MainGame;
 
 namespace snake_game
 {
     public static class Program
     {
-        [STAThread]
         public static void Main()
         {
-            var application = new Eto.Forms.Application();
-            var form = new LauncherForm();
-            application.Initialized += (args, sender) => form.Show();
-            application.Run();
-            // application.Run(form);
+            var plugins = BonusLoader.LoadPlugins(".");
+            var config = File.Exists("config.json")
+                ? ConfigLoad.Parse(File.ReadAllText("config.json"), plugins.Values.Select(p=>p.GetType().Assembly).ToArray())
+                : new Config();
+            new MainGame.MainGame(config, plugins).Run(GameRunBehavior.Synchronous);
         }
     }
 }

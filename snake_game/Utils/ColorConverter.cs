@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace snake_game.Launcher
+namespace snake_game.Utils
 {
     public static class ColorConverter
     {

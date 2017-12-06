@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Eto.Forms;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+using Launcher.Config;
 using snake_game.Bonuses;
 using snake_game.Launcher.Config;
 using snake_game.MainGame;
 
-namespace snake_game.Launcher
+namespace Launcher
 {
     public class LauncherForm : Form
     {
@@ -22,7 +21,7 @@ namespace snake_game.Launcher
         private ScreenConfig _screenCfg;
         private BonusConfig _bonusCfg;
 
-        private MainGame.Config _config;
+        private snake_game.MainGame.Config _config;
         readonly Dictionary<string, IPlugin> _plugins;
 
         private void SaveHandler(object sender, EventArgs e)
@@ -33,20 +32,20 @@ namespace snake_game.Launcher
 
         private void StartHandler(object sender, EventArgs e)
         {
-            _config = GetConfig();
-            new MainGame.MainGame(_config, _plugins).Run();
+            SaveHandler(sender, e);
+            Process.Start("snake_game.exe");
             Close();
         }
 
         private void ResetHandler(object sender, EventArgs e)
         {
-            _config = new MainGame.Config();
+            _config = new snake_game.MainGame.Config();
             Draw();
         }
 
-        private MainGame.Config GetConfig()
+        private snake_game.MainGame.Config GetConfig()
         {
-            return new MainGame.Config
+            return new snake_game.MainGame.Config
             {
                 ScreenConfig = _screenCfg.GetConfig(),
                 GameConfig = _gameCfg.GetConfig(),
@@ -60,7 +59,7 @@ namespace snake_game.Launcher
             _plugins = BonusLoader.LoadPlugins(".");
             _config = File.Exists("config.json")
                 ? ConfigLoad.Parse(File.ReadAllText("config.json"), _plugins.Values.Select(p=>p.GetType().Assembly).ToArray())
-                : new MainGame.Config();
+                : new snake_game.MainGame.Config();
             Draw();
         }
 
@@ -102,7 +101,7 @@ namespace snake_game.Launcher
                         {
                             _gameCfg.GetPage(),
                             _screenCfg.GetPage(),
-                            _bonusCfg.GetPage(tabControlSize)
+                            _bonusCfg.GetPage()
                         }
                     },
                     new StackLayout // Buttons

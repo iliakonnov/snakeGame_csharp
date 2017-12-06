@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 using snake_game.Bonuses;
 
-namespace snake_game.Launcher.Config
+namespace Launcher.Config
 {
     public class BonusConfig
     {
@@ -22,7 +21,7 @@ namespace snake_game.Launcher.Config
         public Dictionary<string, IPluginConfig> GetConfig() =>
             _pluginPages.ToDictionary(x => x.Key, x => x.Value.GetConfig());
 
-        public TabPage GetPage(Size tabControlSize)
+        public TabPage GetPage()
         {
             var tabControl = new TabControl();
             foreach (var pluginPair in _plugins)
