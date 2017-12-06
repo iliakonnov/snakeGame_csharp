@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
 using MonoGame.Extended.Shapes;
 using snake_game.Bonuses;
 using snake_game.MainGame;
@@ -72,7 +73,7 @@ namespace BrickBonus
                         newBrick = new BrickBonus(new Vector2(
                             _random.Next(size.Width), _random.Next(size.Height)
                         ), _config);
-                    } while (bigHead.Intersects(newBrick.GetRectangle()));
+                    } while (bigHead.Intersects((BoundingRectangle) newBrick.GetRectangle()));
                     Bricks.Add(newBrick);
                 }
             }
@@ -82,7 +83,7 @@ namespace BrickBonus
                 var rect = brick.GetRectangle();
                 rect.X += rect.Width / 2;
                 rect.Y += rect.Height / 2;
-                if (snakePoints.First().Intersects(rect))
+                if (snakePoints.First().Intersects((BoundingRectangle) rect))
                 {
                     plugins["Snake"].GetMethodResult<Void>("Damage");
                 }

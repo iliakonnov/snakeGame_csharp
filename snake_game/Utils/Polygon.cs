@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using MonoGame.Extended.Shapes;
-using Point = snake_game.Utils.Point;
 
 namespace snake_game.Utils
 {
-    public class Polygon : IShapeF
-    {
+    public class Polygon
+    {   
         public Vector2[] Vertices;
         public Segment[] Segments;
         public Line[] Lines;
@@ -49,7 +49,13 @@ namespace snake_game.Utils
             Segments = segments.ToArray();
             Lines = lines.ToArray();
         }
-        
+
+        public Polygon(IEnumerable<Microsoft.Xna.Framework.Point> points, Vector2? position = null) : this(
+            points.Select(p => new Vector2(p.X, p.Y)), position
+        )
+        {
+        }
+
         public Polygon(int n, int size, Vector2? position=null) : this(
             Enumerable.Range(0, n).Select(i =>
                 new Vector2(
@@ -72,11 +78,11 @@ namespace snake_game.Utils
             */
         }
 
-        public Polygon(PolygonF poly, Vector2? position=null) : this(poly.Vertices, position)
+        public Polygon(MonoGame.Extended.Shapes.Polygon poly, Vector2? position=null) : this(poly.Vertices, position)
         {
         }
 
-        public Polygon(RectangleF rect, Vector2? position=null) : this(rect.GetCorners(), position)
+        public Polygon(Rectangle rect, Vector2? position=null) : this(rect.GetCorners(), position)
         {
         }
         
@@ -106,9 +112,9 @@ namespace snake_game.Utils
             return Contains(point.X, point.Y);
         }
 
-        public PolygonF ToPolygonF()
+        public MonoGame.Extended.Shapes.Polygon ToPolygonF()
         {
-            return new PolygonF(Vertices);
+            return new MonoGame.Extended.Shapes.Polygon(Vertices);
         }
 
         public void PrettyDraw(SpriteBatch sb, Color color, float thickness)

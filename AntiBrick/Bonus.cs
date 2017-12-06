@@ -4,12 +4,14 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
 using MonoGame.Extended.Shapes;
 using snake_game;
 using snake_game.Bonuses;
 using snake_game.Utils;
 using SharpDX;
 using Color = Microsoft.Xna.Framework.Color;
+using Polygon = snake_game.Utils.Polygon;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 

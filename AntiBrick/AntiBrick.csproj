@@ -46,8 +46,8 @@
     <Reference Include="Eto, Version=2.3.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Eto.Forms.2.3.0\lib\net45\Eto.dll</HintPath>
     </Reference>
-    <Reference Include="MonoGame.Extended, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\MonoGame.Extended.0.5.149\lib\MonoGame.Extended.dll</HintPath>
+    <Reference Include="MonoGame.Extended, Version=0.6.602.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\MonoGame.Extended.0.6.602\lib\portable-net45+win8+wpa81\MonoGame.Extended.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>

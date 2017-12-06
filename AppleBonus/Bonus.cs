@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.Remoting.Messaging;
-using Eto.CustomControls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Shapes;
+using MonoGame.Extended;
 using snake_game.Bonuses;
 using snake_game.Utils;
 using Point = snake_game.Utils.Point;
