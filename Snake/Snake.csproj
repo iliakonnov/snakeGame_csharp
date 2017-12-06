@@ -54,35 +54,35 @@
         <Reference Include="Eto.WinForms">
           <HintPath>..\packages\Eto.Platform.Windows.2.3.0\lib\net45\Eto.WinForms.dll</HintPath>
         </Reference>
-        <Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, processorArchitecture=MSIL">
-          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
+        <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
+          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
         </Reference>
         <Reference Include="SharpDX.Direct2D1">
-          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\SharpDX.Direct2D1.dll</HintPath>
+          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\SharpDX.Direct2D1.dll</HintPath>
         </Reference>
         <Reference Include="SharpDX.Direct3D9">
-          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\SharpDX.Direct3D9.dll</HintPath>
+          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\SharpDX.Direct3D9.dll</HintPath>
         </Reference>
         <Reference Include="SharpDX.Direct3D11">
-          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\SharpDX.Direct3D11.dll</HintPath>
+          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\SharpDX.Direct3D11.dll</HintPath>
         </Reference>
         <Reference Include="SharpDX">
-          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\SharpDX.dll</HintPath>
+          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\SharpDX.dll</HintPath>
         </Reference>
         <Reference Include="SharpDX.DXGI">
-          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\SharpDX.DXGI.dll</HintPath>
+          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\SharpDX.DXGI.dll</HintPath>
         </Reference>
         <Reference Include="SharpDX.MediaFoundation">
-          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\SharpDX.MediaFoundation.dll</HintPath>
+          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\SharpDX.MediaFoundation.dll</HintPath>
         </Reference>
         <Reference Include="SharpDX.RawInput">
-          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\SharpDX.RawInput.dll</HintPath>
+          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\SharpDX.RawInput.dll</HintPath>
         </Reference>
         <Reference Include="SharpDX.XAudio2">
-          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\SharpDX.XAudio2.dll</HintPath>
+          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\SharpDX.XAudio2.dll</HintPath>
         </Reference>
         <Reference Include="SharpDX.XInput">
-          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\SharpDX.XInput.dll</HintPath>
+          <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\SharpDX.XInput.dll</HintPath>
         </Reference>
       </ItemGroup>
     </When>
@@ -91,14 +91,14 @@
         <Reference Include="Eto.Gtk2, Version=2.3.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\packages\Eto.Platform.Gtk.2.3.0\lib\net45\Eto.Gtk2.dll</HintPath>
         </Reference>
-        <Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
+        <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
         </Reference>
         <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\NVorbis.dll</HintPath>
+          <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.6.0.1625\lib\net40\NVorbis.dll</HintPath>
         </Reference>
         <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4">
-          <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\OpenTK.dll</HintPath>
+          <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.6.0.1625\lib\net40\OpenTK.dll</HintPath>
         </Reference>
       </ItemGroup>
     </When>

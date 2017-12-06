@@ -36,15 +36,13 @@
     <Reference Include="Eto, Version=2.3.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Eto.Forms.2.3.0\lib\net45\Eto.dll</HintPath>
     </Reference>
-    <Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+    <Import Project="..\crossplatform.targets" Condition="Exists('..\packages\Fody.1.29.2\build\dotnet\Fody.targets')" />
   <ItemGroup>
     <Compile Include="Config\BonusConfig.cs" />
     <Compile Include="Config\GameConfig.cs" />
