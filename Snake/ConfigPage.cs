@@ -1,4 +1,5 @@
-﻿using Eto.Forms;
+﻿using System;
+using Eto.Forms;
 using Microsoft.Xna.Framework;
 using snake_game.Bonuses;
 using snake_game.Utils;
@@ -41,6 +42,9 @@ namespace Snake
                 Colors = (_rainbowSnake.Checked ?? false)
                     ? null
                     : new[] {ColorConverter.ToXna(_snakeColor.Value)},
+                HeadColor = (_headColorEnabled.Checked ?? false)
+                    ? null
+                    : new Color?(ColorConverter.ToXna(_headColor.Value)),
                 IsEnabled = _enabled.Checked ?? false,
                 ControlType = _controlType.SelectedKey,
                 TurnSize = (int) _turnSize.Value

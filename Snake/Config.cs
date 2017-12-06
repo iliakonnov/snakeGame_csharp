@@ -7,7 +7,7 @@ namespace Snake
 {
     public class Config : IPluginConfig
     {
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled { get; set; } = true;
         public int DamageTimeout = 1000;
         public string ControlType = "small";
         public int? TurnSize = 30;

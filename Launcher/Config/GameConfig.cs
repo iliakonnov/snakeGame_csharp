@@ -13,8 +13,6 @@ namespace snake_game.Launcher.Config
         ColorPicker _textColor;
         ColorPicker _bgColor;
         ColorPicker _fogColor;
-        CheckBox _debugEnabled;
-        ColorPicker _debugColor;
         CheckBox _fogEnabled;
         NumericUpDown _fogSize;
 
@@ -31,8 +29,6 @@ namespace snake_game.Launcher.Config
                 Lives = (int)_lives.Value,
                 ScoreToLive = (int)_foodToLive.Value,
                 TextColor = Utils.ColorConverter.ToXna(_textColor.Value),
-                DebugShow = _debugEnabled.Checked ?? false,
-                DebugColor = Utils.ColorConverter.ToXna(_debugColor.Value),
                 FogEnabled = _fogEnabled.Checked ?? false,
                 FogColor = new Tuple<Color, Color>(Utils.ColorConverter.ToXna(_fogColor.Value), Color.Transparent),
                 FogSize = _fogSize.Value,
@@ -47,8 +43,6 @@ namespace snake_game.Launcher.Config
             _textColor = new ColorPicker { Value = Utils.ColorConverter.ToEto(_config.TextColor) };
             _bgColor = new ColorPicker { Value = Utils.ColorConverter.ToEto(_config.BackgroundColor) };
             _fogColor = new ColorPicker { Value = Utils.ColorConverter.ToEto(_config.FogColor.Item1) };
-            _debugEnabled = new CheckBox { Checked = _config.DebugShow };
-            _debugColor = new ColorPicker { Value = Utils.ColorConverter.ToEto(_config.DebugColor) };
             _fogEnabled = new CheckBox { Checked = _config.FogEnabled };
             _fogSize = new NumericUpDown { Value = _config.FogSize };
 
@@ -99,24 +93,6 @@ namespace snake_game.Launcher.Config
                         }
                     },
                     new Label {Height = 2}, // Separator
-                    new StackLayout
-                    {
-                        Orientation = Orientation.Horizontal,
-                        Items =
-                        {
-                            _debugEnabled,
-                            new Label {Text = "Enable debug (~)", VerticalAlignment = VerticalAlignment.Center}
-                        }
-                    },
-                    new StackLayout
-                    {
-                        Orientation = Orientation.Horizontal,
-                        Items =
-                        {
-                            _debugColor,
-                            new Label {Text = "Debug window color", VerticalAlignment = VerticalAlignment.Center}
-                        }
-                    },
                     new StackLayout
                     {
                         Orientation = Orientation.Horizontal,

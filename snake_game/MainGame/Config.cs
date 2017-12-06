@@ -42,8 +42,6 @@ namespace snake_game.MainGame
             public int DamageTimeout = 1000;
             public int ScoreToLive = 7;
             [JsonConverter(typeof(HexColorConverter))] public Color TextColor = Color.Black;
-            public bool DebugShow = false;
-            [JsonConverter(typeof(HexColorConverter))] public Color DebugColor = Color.LightGray;
             public bool FogEnabled = true;
 
             [JsonConverter(typeof(HexColorConverter))]
@@ -95,16 +93,17 @@ namespace snake_game.MainGame
             switch (color.Length)
             {
                 case 3: // rgb
-                    r = int.Parse(color.Substring(0, 1), System.Globalization.NumberStyles.HexNumber);
-                    g = int.Parse(color.Substring(1, 1), System.Globalization.NumberStyles.HexNumber);
-                    b = int.Parse(color.Substring(2, 1), System.Globalization.NumberStyles.HexNumber);
+                    // Multilple by 17, beacuse 0xF*17 = 15*17 = 255
+                    r = int.Parse(color.Substring(0, 1), System.Globalization.NumberStyles.HexNumber) * 17;
+                    g = int.Parse(color.Substring(1, 1), System.Globalization.NumberStyles.HexNumber) * 17;
+                    b = int.Parse(color.Substring(2, 1), System.Globalization.NumberStyles.HexNumber) * 17;
                     a = 255;
                     break;
                 case 4: // rgba
-                    r = int.Parse(color.Substring(0, 1), System.Globalization.NumberStyles.HexNumber);
-                    g = int.Parse(color.Substring(1, 1), System.Globalization.NumberStyles.HexNumber);
-                    b = int.Parse(color.Substring(2, 1), System.Globalization.NumberStyles.HexNumber);
-                    a = int.Parse(color.Substring(3, 1), System.Globalization.NumberStyles.HexNumber);
+                    r = int.Parse(color.Substring(0, 1), System.Globalization.NumberStyles.HexNumber) * 17;
+                    g = int.Parse(color.Substring(1, 1), System.Globalization.NumberStyles.HexNumber) * 17;
+                    b = int.Parse(color.Substring(2, 1), System.Globalization.NumberStyles.HexNumber) * 17;
+                    a = int.Parse(color.Substring(3, 1), System.Globalization.NumberStyles.HexNumber) * 17;
                     break;
                 case 6: // rrggbb
                     r = int.Parse(color.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
@@ -147,6 +146,10 @@ namespace snake_game.MainGame
         public override object ReadJson(JsonReader reader, Type objectType, [AllowNull] object existingValue,
             JsonSerializer serializer)
         {
+            if (existingValue == null)
+            {
+                return null;
+            }
             if (objectType.IsAssignableFrom(typeof(Color)))
             {
                 var val = serializer.Deserialize<string>(reader);
@@ -156,11 +159,16 @@ namespace snake_game.MainGame
                 }
                 return FromString(val);
             }
-            if (objectType.IsAssignableFrom(typeof(IEnumerable<Color>)))
+            if (objectType.IsAssignableFrom(typeof(IEnumerable<Color>)) || objectType.IsAssignableFrom(typeof(Color[])))
             {
                 var list = new List<Color>();
-                foreach (var color in serializer.Deserialize<IEnumerable<string>>(reader).Select(FromString))
-                    list.Add(color);
+                foreach (var colorString in serializer.Deserialize<IEnumerable<string>>(reader))
+                {
+                    if (colorString != null)
+                    {
+                        list.Add(FromString(colorString));
+                    }
+                }
                 return list.ToArray();
             }
             if (objectType.IsAssignableFrom(typeof(Tuple<Color, Color>)))

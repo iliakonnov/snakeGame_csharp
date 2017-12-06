@@ -60,7 +60,7 @@ namespace snake_game.MainGame
 
         protected override void Update(GameTime gameTime)
         {
-            if (_exited)
+            if (_exited || Window.ClientBounds.Width == 0 || Window.ClientBounds.Height == 0)
             {
                 base.Update(gameTime);
                 return;
@@ -93,16 +93,21 @@ namespace snake_game.MainGame
 
         protected override void Draw(GameTime gameTime)
         {
-            if (_exited)
+            if (_exited || Window.ClientBounds.Width == 0 || Window.ClientBounds.Height == 0)
             {
                 base.Draw(gameTime);
                 return;
             }
             lock (_exitLock)
             {
+                if (Window.ClientBounds.Width == 0 || Window.ClientBounds.Height == 0)
+                {
+                    return;
+                }
+                
                 var fogDistance = _config.GameConfig.FogSize;
 
-                _graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+                _graphics.GraphicsDevice.Clear(_config.GameConfig.BackgroundColor);
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
                 _spriteBatch.DrawString(

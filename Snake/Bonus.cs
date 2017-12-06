@@ -30,7 +30,7 @@ namespace Snake
         private Point[] _snakePoints;
 
         public bool Invulnerable;
-        public CircleF[] SnakeCircles = {};
+        public CircleF[] SnakeCircles = { };
 
         public Bonus(Config cfg, MainGame game)
         {
@@ -53,20 +53,12 @@ namespace Snake
             {
                 var properties = typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static);
 
-                var colors = new List<Color>();
-                if (_config.HeadColor != null) colors.Add((Color) _config.HeadColor);
-                foreach (var propertyInfo in properties)
-                {
-                    if (propertyInfo.GetGetMethod() != null && propertyInfo.PropertyType == typeof(Color))
-                    {
-                        var col = (Color) propertyInfo.GetValue(null, null);
-                        if (col != _config.HeadColor && col.A == 255)
-                        {
-                            colors.Add(col);
-                        }
-                    }
-                }
-                _colors = colors.ToArray();
+                _colors = (from propertyInfo in properties
+                    where propertyInfo.GetGetMethod() != null && propertyInfo.PropertyType == typeof(Color)
+                    select (Color) propertyInfo.GetValue(null, null)
+                    into col
+                    where col != _config.HeadColor && col.A == 255
+                    select col).ToArray();
             }
             else
             {
@@ -153,7 +145,7 @@ namespace Snake
         {
             var halfSize = _config.CircleSize / 2;
 
-            for (var i = 0; i < _snakePoints.Length; i++)
+            for (var i = _snakePoints.Length - 1; i >= 0; i--)
             {
                 sb.Draw(
                     _circle,
@@ -163,7 +155,9 @@ namespace Snake
                     ),
                     Invulnerable
                         ? _config.DamageColor
-                        : _colors[i % _colors.Length]
+                        : i == 0
+                            ? _config.HeadColor ?? _colors[i % _colors.Length]
+                            : _colors[i % _colors.Length]
                 );
             }
         }

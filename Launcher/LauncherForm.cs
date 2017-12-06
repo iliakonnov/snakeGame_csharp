@@ -55,6 +55,7 @@ namespace Launcher
 
         public LauncherForm()
         {
+            Title = "Snake Game Launcher";
             ClientSize = new Eto.Drawing.Size(WindowWidth, WindowHeight);
             _plugins = BonusLoader.LoadPlugins(".");
             _config = File.Exists("config.json")

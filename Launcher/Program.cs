@@ -9,12 +9,10 @@ namespace Launcher
         [STAThread]
         public static void Main()
         {
-            var application = new Eto.Forms.Application();
-            var form = new LauncherForm();
             try
             {
-                //application.Initialized += (args, sender) => form.Show();
-                //application.Run();
+                var application = new Eto.Forms.Application();
+                var form = new LauncherForm();
                 application.Run(form);
             }
             catch (Exception e)

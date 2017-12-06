@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "snake_game", "snake_game\snake_game.csproj", "{476DA80F-DC9E-431D-81C5-5B6EE9C5201A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{931B82E9-484A-4458-B69C-E51A26FFA1D7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bonuses", "Bonuses", "{6AFC3D68-21FD-4385-957E-41861E72BFCA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppleBonus", "AppleBonus\AppleBonus.csproj", "{A4BC97F9-EA94-4D53-B6C0-C7D3EC3EAE5D}"
@@ -29,10 +27,6 @@ Global
 		{476DA80F-DC9E-431D-81C5-5B6EE9C5201A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{476DA80F-DC9E-431D-81C5-5B6EE9C5201A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{476DA80F-DC9E-431D-81C5-5B6EE9C5201A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{931B82E9-484A-4458-B69C-E51A26FFA1D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{931B82E9-484A-4458-B69C-E51A26FFA1D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{931B82E9-484A-4458-B69C-E51A26FFA1D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{931B82E9-484A-4458-B69C-E51A26FFA1D7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A4BC97F9-EA94-4D53-B6C0-C7D3EC3EAE5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A4BC97F9-EA94-4D53-B6C0-C7D3EC3EAE5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4BC97F9-EA94-4D53-B6C0-C7D3EC3EAE5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
