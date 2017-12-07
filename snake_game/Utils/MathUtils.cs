@@ -21,22 +21,21 @@ namespace snake_game.Utils
         public static Point FromPolar(float alpha, float r)
         {
             alpha = (float) (alpha / 180 * Math.PI);
-            return new Point(r * (float) Math.Cos(alpha), r * (float) Math.Sin(alpha));
+            return FromRadians(alpha, r);
+        }
+
+        public static Point FromRadians(float degree, float r)
+        {
+            return new Point(r * (float) Math.Cos(degree), r * (float) Math.Sin(degree));
         }
 
         readonly float _x;
 
-        public float X
-        {
-            get { return _x; }
-        }
+        public float X => _x;
 
         readonly float _y;
 
-        public float Y
-        {
-            get { return _y; }
-        }
+        public float Y => _y;
 
         public Point Add(Point pt)
         {

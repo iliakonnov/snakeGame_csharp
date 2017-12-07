@@ -112,7 +112,7 @@ namespace snake_game.Utils
             return Contains(point.X, point.Y);
         }
 
-        public MonoGame.Extended.Shapes.Polygon ToPolygonF()
+        public MonoGame.Extended.Shapes.Polygon ToPolygon()
         {
             return new MonoGame.Extended.Shapes.Polygon(Vertices);
         }
