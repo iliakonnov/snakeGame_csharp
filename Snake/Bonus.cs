@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
-using MonoGame.Extended.Shapes;
 using snake_game.Bonuses;
 using snake_game.MainGame;
 using snake_game.Snake;
@@ -28,8 +26,9 @@ namespace Snake
         private int _damagedTime;
         private IController _ctrl;
         private Point[] _snakePoints;
+        private int _damage;
 
-        public bool Invulnerable;
+        public bool Invulnerable => _gameTime - _damagedTime < _config.DamageTimeout;
         public CircleF[] SnakeCircles = { };
 
         public Bonus(Config cfg, MainGame game)
@@ -115,7 +114,6 @@ namespace Snake
             }
 
             _gameTime = fullTime;
-            Invulnerable = _gameTime - _damagedTime < _config.DamageTimeout;
 
             _snake = _snake.ContinueMove(_config.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
 
@@ -138,7 +136,33 @@ namespace Snake
                     Damage();
                 }
             }
-            return null;
+
+            var snakeEvents = new SnakeEvents();
+            if (events.ContainsKey("Snake"))
+            {
+                var oldEvents = (SnakeEvents) events["Snake"];
+                if (_damage != 0) // Был нанесен ещё урон
+                {
+                    snakeEvents.DamageInfo.Damage = _damage;
+                    snakeEvents.DamageInfo.FirstTime = true;
+                }
+                else if (oldEvents.DamageInfo.FirstTime) // Один тик назад был нанесен урон
+                {
+                    snakeEvents.DamageInfo.Damage = oldEvents.DamageInfo.Damage;
+                    snakeEvents.DamageInfo.FirstTime = false; // Помечает, что первый тик пройден
+                }
+                else if (!oldEvents.DamageInfo.FirstTime && // Два тика назад был нанесен урон 
+                         oldEvents.DamageInfo.Damage != 0 && // Урон всё-таки был
+                         !oldEvents.DamageInfo.Prevented) // И его никто не отменил
+                {
+                    _game.Damage(oldEvents.DamageInfo.Damage);
+                    snakeEvents.DamageInfo.Damage = 0;
+                    snakeEvents.DamageInfo.FirstTime = false;
+                }
+            }
+            _damage = 0;
+
+            return snakeEvents;
         }
 
         public override void Draw(SpriteBatch sb)
@@ -191,6 +215,51 @@ namespace Snake
             return texture;
         }
 
+        private class SnakeEvents : Accessable
+        {
+            public class Damaged : Accessable
+            {
+                public bool FirstTime = true;
+                public int Damage;
+                public bool Prevented;
+
+                public override TResult GetProperty<TResult>(string propertyName)
+                {
+                    switch (propertyName)
+                    {
+                        case "Damage":
+                            return (TResult) (object) Damage;
+                        default:
+                            return base.GetProperty<TResult>(propertyName);
+                    }
+                }
+
+                public override TResult GetMethodResult<TResult>(string methodName, object[] arguments = null)
+                {
+                    switch (methodName)
+                    {
+                        case "Prevent":
+                            Prevented = true;
+                            return (TResult) (object) new Void();
+                        default:
+                            return base.GetMethodResult<TResult>(methodName, arguments);
+                    }
+                }
+            }
+
+            public Damaged DamageInfo = new Damaged();
+            
+            public override TResult GetProperty<TResult>(string propertyName)
+            {
+                switch (propertyName)
+                {
+                    case "DamageInfo":
+                        return (TResult) (object) DamageInfo;
+                    default:
+                        return base.GetProperty<TResult>(propertyName);
+                }
+            }
+        }
 
         public override List<TResult> GetListProperty<TResult>(string propertyName)
         {
@@ -249,13 +318,12 @@ namespace Snake
             }
         }
 
-        public void Damage()
+        public void Damage(int damage = 1)
         {
             if (!Invulnerable)
             {
+                _damage = damage;
                 _damagedTime = _gameTime;
-                Invulnerable = true;
-                _game.Damage(1);
             }
         }
     }
