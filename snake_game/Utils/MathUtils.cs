@@ -315,9 +315,58 @@ namespace snake_game.Utils
         }
     }
 
+    /// <summary>
+    /// Треугольник
+    /// </summary>
+    public class Triangle
+    {
+        public Triangle(Point a, Point b, Point c)
+        {
+            A = a;
+            B = b;
+            C = c;
+        }
+
+        public Point A { get; }
+        public Point B { get; }
+        public Point C { get; }
+
+        public bool Contains(Point point)
+        {
+            var t1 = Math.Sign((A.X - point.X) * (B.Y - A.Y) - (B.X - A.X) * (A.Y - point.Y));
+            var t2 = Math.Sign((B.X - point.X) * (C.Y - B.Y) - (C.X - B.X) * (B.Y - point.Y));
+            var t3 = Math.Sign((C.X - point.X) * (A.Y - C.Y) - (A.X - C.X) * (C.Y - point.Y));
+            return t1 == 0 ||
+                   t2 == 0 ||
+                   t3 == 0 ||
+                   t1 == t2 && t2 == t3;
+        }
+
+        public bool OnBound(Point point)
+        {
+            var t1 = Math.Sign((A.X - point.X) * (B.Y - A.Y) - (B.X - A.X) * (A.Y - point.Y));
+            var t2 = Math.Sign((B.X - point.X) * (C.Y - B.Y) - (C.X - B.X) * (B.Y - point.Y));
+            var t3 = Math.Sign((C.X - point.X) * (A.Y - C.Y) - (A.X - C.X) * (C.Y - point.Y));
+            return t1 == 0 ||
+                   t2 == 0 ||
+                   t3 == 0;
+        }
+
+        public Tuple<Segment, Segment, Segment> ToSegments()
+        {
+            return new Tuple<Segment, Segment, Segment>(
+                new Segment(A, B),
+                new Segment(B, C),
+                new Segment(C, A)
+            );
+        }
+
+        public Triangle Move(Point shift) => new Triangle(A.Add(shift), B.Add(shift), C.Add(shift));
+    }
+
     public static class MathUtils
     {
-        const float EPSILON = 1e-16f;
+        public const float EPSILON = 1e-16f;
 
         /// <summary>
         /// Получить стандартную форму прямой, проходящей через заданные точки

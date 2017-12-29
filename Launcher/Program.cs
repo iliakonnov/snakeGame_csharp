@@ -19,6 +19,7 @@ namespace Launcher
             {
                 using (var writer = new StreamWriter(@"log.log", true))
                 {
+                    writer.WriteLine(e);
                     writer.WriteLine(e.Message);
                     writer.WriteLine(Environment.StackTrace);
                 }

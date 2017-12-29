@@ -6,7 +6,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Shapes;
 using System;
+using MonoGame.Extended;
 using snake_game.Bonuses;
+using snake_game.Utils;
 
 namespace snake_game.MainGame
 {
@@ -44,6 +46,11 @@ namespace snake_game.MainGame
             Content.RootDirectory = "Content";
         }
 
+        private Star _starABorder;
+        private Star _starAFill;
+        private Star _starBBorder;
+        private Star _starBFill;
+
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -54,6 +61,16 @@ namespace snake_game.MainGame
             var seed = DateTime.Now.Millisecond;
             _bonusManager = new BonusManager(_config.BonusConfig, _plugins, this, new Random(seed));
             _bonusManager.LoadContent(GraphicsDevice);
+
+            var starFactory = new StarFactory(8, 3, 25, GraphicsDevice);
+            _starABorder = starFactory.GetStar(new Utils.Point(200, 100));
+            _starAFill = starFactory.GetStar(new Utils.Point(200, 300));
+            
+            starFactory = new StarFactory(5, 2, 300, GraphicsDevice);
+            _starBBorder = starFactory.GetStar(new Utils.Point(650, 315));
+            _starBFill = starFactory.GetStar(new Utils.Point(650, 315));
+
+            starFactory.Check();
 
             base.LoadContent();
         }
@@ -124,6 +141,14 @@ namespace snake_game.MainGame
                     _fog.CreateFog(_spriteBatch,
                         new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height),
                         (int) Math.Round(fogDistance));
+                
+                var mouse = Mouse.GetState();
+                var pos = new Utils.Point(mouse.X, mouse.Y);
+                _starAFill.FillDraw(_spriteBatch, _starAFill.Contains(pos)? Color.Yellow: Color.Red);
+                _starABorder.BorderDraw(_spriteBatch, _starABorder.Contains(pos)? Color.Yellow: Color.Green, 2);
+                
+                _starBFill.FillDraw(_spriteBatch, _starBFill.Contains(pos)? Color.Yellow: Color.Red);
+                _starBBorder.PrettyDraw(_spriteBatch, _starBBorder.Contains(pos)? Color.Yellow: Color.Green, 3);
 
                 _spriteBatch.End();
                 base.Draw(gameTime);
