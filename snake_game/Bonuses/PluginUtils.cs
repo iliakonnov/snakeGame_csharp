@@ -53,6 +53,12 @@ namespace snake_game.Bonuses
         bool IsEnabled { get; set; }
     }
 
+    public interface IPythonPluginConfig
+    {
+        Dictionary<string, string> Serialize();
+        void Deserialize(Dictionary<string, string> data);
+    }
+
     public interface IPlugin
     {
         string Name { get; }

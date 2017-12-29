@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -202,12 +203,21 @@ namespace snake_game.MainGame
             }
             foreach (var pair in values)
             {
-                var newValue = JObject.FromObject(pair.Value, serializer);
+                object val;
                 var type = pair.Value.GetType();
+                if (type.Namespace.StartsWith("IronPython"))
+                {
+                    val = ((IPythonPluginConfig) pair.Value).Serialize();
+                }
+                else
+                {
+                    val = pair.Value;
+                }
+                var newValue = JObject.FromObject(val, serializer);
                 var name = type.FullName;
                 var assemblyName = type.Assembly.GetName().Name;
                 newValue["_type"] = $"{name}, {assemblyName}";
-                result[pair.Key] = newValue; 
+                result[pair.Key] = newValue;
             }
             serializer.Serialize(writer, result);
         }

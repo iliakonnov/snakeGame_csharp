@@ -11,8 +11,10 @@ namespace snake_game
     {
         public static void Main()
         {
+            #if RELEASE
             try
             {
+            #endif
                 var plugins = BonusLoader.LoadPlugins(".");
                 var config = File.Exists("config.json")
                     ? ConfigLoad.Parse(File.ReadAllText("config.json"), plugins.Values.Select(p=>p.GetType().Assembly).ToArray())
@@ -21,6 +23,7 @@ namespace snake_game
                         BonusConfig = plugins.ToDictionary(kv => kv.Key, kv => kv.Value.Config)
                     };
                 new MainGame.MainGame(config, plugins).Run(GameRunBehavior.Synchronous);
+            #if RELEASE
             }
             catch (Exception e)
             {
@@ -32,6 +35,7 @@ namespace snake_game
                 }
                 throw;
             }
+            #endif
         }
     }
 }

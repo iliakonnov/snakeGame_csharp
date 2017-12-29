@@ -1,16 +1,10 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Shapes;
 using System;
-using System.Runtime.InteropServices;
-using MonoGame.Extended;
 using QuakeConsole;
 using snake_game.Bonuses;
-using snake_game.Utils;
 
 namespace snake_game.MainGame
 {

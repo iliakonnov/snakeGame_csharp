@@ -9,11 +9,14 @@ namespace Launcher
         [STAThread]
         public static void Main()
         {
+            #if RELEASE
             try
             {
+            #endif
                 var application = new Eto.Forms.Application();
                 var form = new LauncherForm();
                 application.Run(form);
+            #if RELEASE
             }
             catch (Exception e)
             {
@@ -25,6 +28,7 @@ namespace Launcher
                 }
                 throw;
             }
+            #endif
         }
     }
 }
