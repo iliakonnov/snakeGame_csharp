@@ -18,14 +18,15 @@ namespace Snake
 {
     public class Bonus : BonusBase
     {
-        private Config _config;
-        private SnakeModel _snake;
+        public SnakeModel Snake;
+        public int DamagedTime;
+        public Config Config;
+        
         private Color[] _colors;
         private int _intersectStart;
         private MainGame _game;
         private Texture2D _circle;
         private int _gameTime;
-        private int _damagedTime;
         private IController _ctrl;
         private Point[] _snakePoints;
 
@@ -34,7 +35,7 @@ namespace Snake
 
         public Bonus(Config cfg, MainGame game)
         {
-            _config = cfg;
+            Config = cfg;
             _game = game;
         }
 
@@ -45,11 +46,11 @@ namespace Snake
 
         public override void LoadContent(GraphicsDevice graphicsDevice)
         {
-            _snake =
+            Snake =
                 new SnakeModel(new Point(400, 150), 0).Increase(
-                    _config.InitLen * _config.CircleOffset);
+                    Config.InitLen * Config.CircleOffset);
 
-            if (_config.Colors == null)
+            if (Config.Colors == null)
             {
                 var properties = typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static);
 
@@ -57,24 +58,24 @@ namespace Snake
                     where propertyInfo.GetGetMethod() != null && propertyInfo.PropertyType == typeof(Color)
                     select (Color) propertyInfo.GetValue(null, null)
                     into col
-                    where col != _config.HeadColor && col.A == 255
+                    where col != Config.HeadColor && col.A == 255
                     select col).ToArray();
             }
             else
             {
-                _colors = _config.Colors;
+                _colors = Config.Colors;
             }
 
-            _damagedTime = -_config.DamageTimeout;
-            _circle = CreateCircleTexture(_config.CircleSize, graphicsDevice);
+            DamagedTime = -Config.DamageTimeout;
+            _circle = CreateCircleTexture(Config.CircleSize, graphicsDevice);
 
-            _snakePoints = _snake.GetSnakeAsPoints(_config.CircleOffset);
+            _snakePoints = Snake.GetSnakeAsPoints(Config.CircleOffset);
             var headCenter = _snakePoints.First();
             var head = new CircleF(
-                new Vector2(headCenter.X, headCenter.Y), _config.CircleSize
+                new Vector2(headCenter.X, headCenter.Y), Config.CircleSize
             );
 
-            var halfSize = _config.CircleSize / 2;
+            var halfSize = Config.CircleSize / 2;
             SnakeCircles = _snakePoints.Select(p => new CircleF(new Vector2(p.X, p.Y), halfSize)).ToArray();
 
             var i = 1;
@@ -82,20 +83,20 @@ namespace Snake
             do
             {
                 var current = new CircleF(
-                    new Vector2(_snakePoints[i].X, _snakePoints[i].Y), _config.CircleSize
+                    new Vector2(_snakePoints[i].X, _snakePoints[i].Y), Config.CircleSize
                 );
                 i++;
                 intersects = head.Intersects(current);
             } while (intersects);
             _intersectStart = i;
 
-            switch (_config.ControlType)
+            switch (Config.ControlType)
             {
                 case "traditional":
                     _ctrl = new ControllerTraditional();
                     break;
                 case "small":
-                    _ctrl = new ControllerSmall(_config.TurnSize ?? 30);
+                    _ctrl = new ControllerSmall(Config.TurnSize ?? 30);
                     break;
                 default:
                     throw new ArgumentException("Unknown control type");
@@ -109,18 +110,18 @@ namespace Snake
             var control = _ctrl.Control(keyboardState);
             if (control.Turn.ToTurn)
             {
-                _snake = control.Turn.ReplaceTurn
-                    ? _snake.TurnAt(control.Turn.TurnDegrees)
-                    : _snake.Turn(control.Turn.TurnDegrees);
+                Snake = control.Turn.ReplaceTurn
+                    ? Snake.TurnAt(control.Turn.TurnDegrees)
+                    : Snake.Turn(control.Turn.TurnDegrees);
             }
 
             _gameTime = fullTime;
-            Invulnerable = _gameTime - _damagedTime < _config.DamageTimeout;
+            Invulnerable = _gameTime - DamagedTime < Config.DamageTimeout;
 
-            _snake = _snake.ContinueMove(_config.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
+            Snake = Snake.ContinueMove(Config.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
 
-            var halfSize = _config.CircleSize / 2;
-            var points = _snake.GetSnakeAsPoints(_config.CircleOffset);
+            var halfSize = Config.CircleSize / 2;
+            var points = Snake.GetSnakeAsPoints(Config.CircleOffset);
             SnakeCircles = new CircleF[points.Length];
             _snakePoints = new Point[points.Length];
             for (var i = 0; i < points.Length; i++)
@@ -143,7 +144,7 @@ namespace Snake
 
         public override void Draw(SpriteBatch sb)
         {
-            var halfSize = _config.CircleSize / 2;
+            var halfSize = Config.CircleSize / 2;
 
             for (var i = _snakePoints.Length - 1; i >= 0; i--)
             {
@@ -154,9 +155,9 @@ namespace Snake
                         _snakePoints[i].Y - halfSize
                     ),
                     Invulnerable
-                        ? _config.DamageColor
+                        ? Config.DamageColor
                         : i == 0
-                            ? _config.HeadColor ?? _colors[i % _colors.Length]
+                            ? Config.HeadColor ?? _colors[i % _colors.Length]
                             : _colors[i % _colors.Length]
                 );
             }
@@ -234,7 +235,7 @@ namespace Snake
 
         public void Decrease(int size)
         {
-            _snake = _snake.Decrease(size * _config.CircleOffset);
+            Snake = Snake.Decrease(size * Config.CircleOffset);
         }
 
         public void Increase(int size)
@@ -245,7 +246,7 @@ namespace Snake
             }
             else
             {
-                _snake = _snake.Increase(size * _config.CircleOffset);
+                Snake = Snake.Increase(size * Config.CircleOffset);
             }
         }
 
@@ -253,7 +254,7 @@ namespace Snake
         {
             if (!Invulnerable)
             {
-                _damagedTime = _gameTime;
+                DamagedTime = _gameTime;
                 Invulnerable = true;
                 _game.Damage(1);
             }

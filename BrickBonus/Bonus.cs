@@ -15,17 +15,17 @@ namespace BrickBonus
 {
     public class Bonus : BonusBase
     {
+        public readonly Config Config;
+
         readonly Random _random;
-        readonly Config _config;
         MainGame _game;
         Texture2D _texture;
-
 
         public List<BrickBonus> Bricks { get; set; } = new List<BrickBonus>();
 
         public Bonus(Config cfg, Random rnd, MainGame game)
         {
-            _config = cfg;
+            Config = cfg;
             _random = rnd;
             _game = game;
         }
@@ -49,21 +49,21 @@ namespace BrickBonus
         {
             var snakePoints = plugins["Snake"].GetListProperty<CircleF>("SnakeCircles");
 
-            if (fullTime % _config.ChanceTime == 0)
+            if (fullTime % Config.ChanceTime == 0)
             {
                 foreach (var brick in Bricks)
                 {
                     brick.Move(
-                        _random.NextDouble() > _config.MoveChance
+                        _random.NextDouble() > Config.MoveChance
                             ? new Vector2()
                             : new Vector2(
-                                (float) (_config.Step / 2.0 - _random.NextDouble() * _config.Step),
-                                (float) (_config.Step / 2.0 - _random.NextDouble() * _config.Step)
+                                (float) (Config.Step / 2.0 - _random.NextDouble() * Config.Step),
+                                (float) (Config.Step / 2.0 - _random.NextDouble() * Config.Step)
                             ),
                         new BagelWorld(size.Height, size.Width)
                     );
                 }
-                if (_random.NextDouble() <= _config.NewChance)
+                if (_random.NextDouble() <= Config.NewChance)
                 {
                     var bigHead = snakePoints.First();
                     bigHead.Radius *= 2;
@@ -72,7 +72,7 @@ namespace BrickBonus
                     {
                         newBrick = new BrickBonus(new Vector2(
                             _random.Next(size.Width), _random.Next(size.Height)
-                        ), _config);
+                        ), Config);
                     } while (bigHead.Intersects((BoundingRectangle) newBrick.GetRectangle()));
                     Bricks.Add(newBrick);
                 }
@@ -96,7 +96,7 @@ namespace BrickBonus
         {
             foreach (var brick in Bricks)
             {
-                sb.Draw(_texture, brick.GetRectangle(), _config.BrickColor);
+                sb.Draw(_texture, brick.GetRectangle(), Config.BrickColor);
             }
         }
 

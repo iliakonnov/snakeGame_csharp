@@ -6,7 +6,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Shapes;
 using System;
+using System.Runtime.InteropServices;
 using MonoGame.Extended;
+using QuakeConsole;
 using snake_game.Bonuses;
 using snake_game.Utils;
 
@@ -16,16 +18,21 @@ namespace snake_game.MainGame
     {
         readonly GraphicsDeviceManager _graphics;
         private SpriteFont _font;
-        private SpriteBatch _spriteBatch;
-        public BagelWorld World;
         private Fog _fog;
-        private BonusManager _bonusManager;
-        private int _score;
-        private int _damagedTime;
-        private int _gameTime;
-        private int _lives;
-        private readonly Config _config;
-        private readonly Dictionary<string, IPlugin> _plugins;
+        public BagelWorld World;
+
+        // ReSharper disable MemberCanBePrivate.Global
+        // For Quake Console
+        public BonusManager BonusManager;
+        public SpriteBatch SpriteBatch;
+        public int _score;
+        public int DamagedTime;
+        public int GameTime;
+        public int Lives;
+        public readonly Config Config;
+        public readonly Dictionary<string, IPlugin> Plugins;
+        // ReSharper restore MemberCanBePrivate.Global
+        private readonly QuakeConsole.ConsoleComponent _console;
         private readonly object _exitLock = new object();
         private bool _exited = false;
 
@@ -38,39 +45,32 @@ namespace snake_game.MainGame
             _graphics.PreferredBackBufferHeight = config.ScreenConfig.ScreenHeight;
             _graphics.PreferredBackBufferWidth = config.ScreenConfig.ScreenWidth;
 
-            _plugins = plugins;
-            _config = config;
-            _lives = _config.GameConfig.Lives;
-            _damagedTime = -_config.GameConfig.DamageTimeout;
+            Plugins = plugins;
+            Config = config;
+            Lives = Config.GameConfig.Lives;
+            DamagedTime = -Config.GameConfig.DamageTimeout;
+            
+            _console = new ConsoleComponent(this);
+            Components.Add(_console);
 
             Content.RootDirectory = "Content";
         }
 
-        private Star _starABorder;
-        private Star _starAFill;
-        private Star _starBBorder;
-        private Star _starBFill;
-
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _fog = new Fog(GraphicsDevice, _config.GameConfig.FogColor.Item1, _config.GameConfig.FogColor.Item2);
+            SpriteBatch = new SpriteBatch(GraphicsDevice);
+
+            var interpreter = new PythonInterpreter();
+            _console.Interpreter = interpreter;
+            interpreter.AddVariable("game", this, 100);
+            
+            _fog = new Fog(GraphicsDevice, Config.GameConfig.FogColor.Item1, Config.GameConfig.FogColor.Item2);
 
             _font = Content.Load<SpriteFont>("DejaVu Sans Mono");
 
             var seed = DateTime.Now.Millisecond;
-            _bonusManager = new BonusManager(_config.BonusConfig, _plugins, this, new Random(seed));
-            _bonusManager.LoadContent(GraphicsDevice);
-
-            var starFactory = new StarFactory(8, 3, 25, GraphicsDevice);
-            _starABorder = starFactory.GetStar(new Utils.Point(200, 100));
-            _starAFill = starFactory.GetStar(new Utils.Point(200, 300));
-            
-            starFactory = new StarFactory(5, 2, 300, GraphicsDevice);
-            _starBBorder = starFactory.GetStar(new Utils.Point(650, 315));
-            _starBFill = starFactory.GetStar(new Utils.Point(650, 315));
-
-            starFactory.Check();
+            BonusManager = new BonusManager(Config.BonusConfig, Plugins, this, new Random(seed));
+            BonusManager.LoadContent(GraphicsDevice);
 
             base.LoadContent();
         }
@@ -83,27 +83,34 @@ namespace snake_game.MainGame
                 return;
             }
 
-            _gameTime += gameTime.ElapsedGameTime.Milliseconds;
+            GameTime += gameTime.ElapsedGameTime.Milliseconds;
 
             var keyState = Keyboard.GetState();
 
-            if (_lives <= 0 || keyState.IsKeyDown(Keys.Escape))
+            if (keyState.IsKeyDown(Keys.OemTilde))
             {
-                lock (_exitLock)
-                    Exit();
-                _exited = true;
-                base.Update(gameTime);
-                return;
+                _console.ToggleOpenClose();
             }
-
-            World = new BagelWorld(Window.ClientBounds.Height, Window.ClientBounds.Width);
-
-            var gameEvents = new GameEvents
+            else if (!_console.IsVisible)
             {
-                Invulnerable = _gameTime - _damagedTime <= _config.GameConfig.DamageTimeout,
-                Damage = _damage
-            };
-            _bonusManager.Update(gameTime, _gameTime, keyState, new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height), gameEvents);
+                if (Lives <= 0 || keyState.IsKeyDown(Keys.Escape))
+                {
+                    lock (_exitLock)
+                        Exit();
+                    _exited = true;
+                    base.Update(gameTime);
+                    return;
+                }
+
+                World = new BagelWorld(Window.ClientBounds.Height, Window.ClientBounds.Width);
+
+                var gameEvents = new GameEvents
+                {
+                    Invulnerable = GameTime - DamagedTime <= Config.GameConfig.DamageTimeout,
+                    Damage = _damage
+                };
+                BonusManager.Update(gameTime, GameTime, keyState, new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height), gameEvents);
+            }
 
             base.Update(gameTime);
         }
@@ -122,35 +129,27 @@ namespace snake_game.MainGame
                     return;
                 }
                 
-                var fogDistance = _config.GameConfig.FogSize;
+                var fogDistance = Config.GameConfig.FogSize;
 
-                _graphics.GraphicsDevice.Clear(_config.GameConfig.BackgroundColor);
-                _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+                _graphics.GraphicsDevice.Clear(Config.GameConfig.BackgroundColor);
+                SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-                _spriteBatch.DrawString(
-                    _font, $"Score: {_score}\nLives: {_lives}",
+                SpriteBatch.DrawString(
+                    _font, $"Score: {_score}\nLives: {Lives}",
                     new Vector2(
                         (int) Math.Ceiling(fogDistance),
                         (int) Math.Ceiling(fogDistance)
-                    ), _config.GameConfig.TextColor
+                    ), Config.GameConfig.TextColor
                 );
 
-                _bonusManager.Draw(_spriteBatch);
+                BonusManager.Draw(SpriteBatch);
 
-                if (_config.GameConfig.FogEnabled)
-                    _fog.CreateFog(_spriteBatch,
+                if (Config.GameConfig.FogEnabled)
+                    _fog.CreateFog(SpriteBatch,
                         new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height),
                         (int) Math.Round(fogDistance));
-                
-                var mouse = Mouse.GetState();
-                var pos = new Utils.Point(mouse.X, mouse.Y);
-                _starAFill.FillDraw(_spriteBatch, _starAFill.Contains(pos)? Color.Yellow: Color.Red);
-                _starABorder.BorderDraw(_spriteBatch, _starABorder.Contains(pos)? Color.Yellow: Color.Green, 2);
-                
-                _starBFill.FillDraw(_spriteBatch, _starBFill.Contains(pos)? Color.Yellow: Color.Red);
-                _starBBorder.PrettyDraw(_spriteBatch, _starBBorder.Contains(pos)? Color.Yellow: Color.Green, 3);
 
-                _spriteBatch.End();
+                SpriteBatch.End();
                 base.Draw(gameTime);
             }
         }

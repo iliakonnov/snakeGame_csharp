@@ -14,15 +14,16 @@ namespace AppleBonus
 {
     public class Bonus : BonusBase
     {
-        readonly Config _config;
+        public readonly Config Config;
+        public readonly List<AppleBonus> Apples = new List<AppleBonus>();
+        
         readonly Random _random;
         bool _first = true;
-        public readonly List<AppleBonus> Apples = new List<AppleBonus>();
         snake_game.MainGame.MainGame _game;
 
         public Bonus(Config cfg, Random rnd, snake_game.MainGame.MainGame game)
         {
-            _config = cfg;
+            Config = cfg;
             _random = rnd;
             _game = game;
         }
@@ -46,7 +47,7 @@ namespace AppleBonus
 
             if (_first)
             {
-                for (var i = 0; i < _config.AppleCount; i++)
+                for (var i = 0; i < Config.AppleCount; i++)
                 {
                     Apples.Add(new AppleBonus(new Vector2(
                         _random.Next(size.X, size.X + size.Width),
@@ -54,7 +55,7 @@ namespace AppleBonus
                     ), new Vector2(
                         _random.NextDouble() > 0.5 ? 1 : -1,
                         _random.NextDouble() > 0.5 ? 1 : -1
-                    ), _config));
+                    ), Config));
                 }
                 _first = false;
             }
@@ -108,8 +109,8 @@ namespace AppleBonus
                 do
                 {
                     newApple = new AppleBonus(new Vector2(
-                        _random.Next(size.Width - _config.Radius), _random.Next(size.Height - _config.Radius)
-                    ), GetRandomDirection(), _config);
+                        _random.Next(size.Width - Config.Radius), _random.Next(size.Height - Config.Radius)
+                    ), GetRandomDirection(), Config);
                 } while (snakePoints.First().Intersects(newApple.GetCircle()));
                 Apples.Add(newApple);
             }
@@ -127,7 +128,7 @@ namespace AppleBonus
         {
             foreach (var apple in Apples)
             {
-                sb.DrawCircle(apple.GetCircle(), _config.Sides, _config.AppleColor, _config.Thickness);
+                sb.DrawCircle(apple.GetCircle(), Config.Sides, Config.AppleColor, Config.Thickness);
             }
         }
 
