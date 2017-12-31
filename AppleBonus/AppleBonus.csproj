@@ -54,7 +54,7 @@
     </Reference>
     <Reference Include="System.Drawing" />
   </ItemGroup>
-    <Import Project="..\crossplatform.targets" Condition="Exists('..\packages\Fody.1.29.2\build\dotnet\Fody.targets')" />
+    <Import Project="..\crossplatform.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

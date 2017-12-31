@@ -45,14 +45,12 @@ namespace AntiAppleBonus
                 : new string[] { };
         }
 
-        public override void LoadContent(GraphicsDevice graphicsDevice)
+        public override void LoadContent(GraphicsDevice gd)
         {
             Hex = new Polygon(6, Config.Size, new Vector2(100, 100));
         }
 
-        public override Accessable Update(GameTime gameTime, int fullTime, KeyboardState keyboardState,
-            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
-            IReadOnlyDictionary<string, Accessable> events)
+        public override Accessable Update(GameTime time, int fullTime, KeyboardState keyboard, IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size, IReadOnlyDictionary<string, Accessable> events)
         {
             var snakePoints = plugins["Snake"].GetListProperty<CircleF>("SnakeCircles").ToArray();
 

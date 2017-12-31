@@ -65,8 +65,7 @@ namespace snake_game.Bonuses
             }
         }
 
-        public void Update(GameTime gameTime, int fullTime, KeyboardState keyboardState, Rectangle size,
-            [NullGuard.AllowNull] Accessable gameEvents)
+        public void Update(GameTime gameTime, int fullTime, KeyboardState keyboardState, Rectangle size, Accessable gameEvents)
         {
             var nextEvents = new Dictionary<string, Accessable>
             {

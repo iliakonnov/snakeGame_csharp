@@ -37,15 +37,13 @@ namespace BrickBonus
                 : new string[] { };
         }
 
-        public override void LoadContent(GraphicsDevice graphicsDevice)
+        public override void LoadContent(GraphicsDevice gd)
         {
-            _texture = new Texture2D(graphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _texture = new Texture2D(gd, 1, 1, false, SurfaceFormat.Color);
             _texture.SetData(new[] {Color.White});
         }
 
-        public override Accessable Update(GameTime gameTime, int fullTime, KeyboardState keyboardState,
-            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
-            IReadOnlyDictionary<string, Accessable> events)
+        public override Accessable Update(GameTime time, int fullTime, KeyboardState keyboard, IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size, IReadOnlyDictionary<string, Accessable> events)
         {
             var snakePoints = plugins["Snake"].GetListProperty<CircleF>("SnakeCircles");
 

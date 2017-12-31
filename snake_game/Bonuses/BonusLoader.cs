@@ -14,16 +14,17 @@ namespace snake_game.Bonuses
 {
     public static class BonusLoader
     {
-        public static Dictionary<string, IPlugin> LoadPlugins(string path)
+        public static Dictionary<string, IPluginContainer> LoadPlugins(string path)
         {
-            var result = new Dictionary<string, IPlugin>();
+            var result = new Dictionary<string, IPluginContainer>();
             // .NET dlls
             foreach (var file in Directory.EnumerateFiles(path).Where(f => f.EndsWith(".dll")))
             {
                 Type[] types;
+                Assembly dll;
                 try
                 {
-                    var dll = Assembly.LoadFile(Path.GetFullPath(file));
+                    dll = Assembly.LoadFile(Path.GetFullPath(file));
                     types = dll.GetExportedTypes();
                 }
                 catch (IOException)
@@ -39,7 +40,7 @@ namespace snake_game.Bonuses
                             $"Error occured while loading '{file}': Plugin with name '{plugin.Name}' already loaded!"
                         );
                     }
-                    result[plugin.Name] = plugin;
+                    result[plugin.Name] = new NetPluginContainer(plugin, dll);
                 }
             }
             // return result;
@@ -53,14 +54,19 @@ namespace snake_game.Bonuses
             {
                 var scope = engine.CreateScope();
                 engine.ExecuteFile(Path.Combine(path, folder, "__init__.py"), scope);
-                var plugin = engine.Execute<IPlugin>("getPlugin()", scope);
+                var neededFiles = engine.Execute<List<string>>("REQUIRED_IMPORTS", scope);
+                foreach (var neededFile in neededFiles)
+                {
+                    engine.ExecuteFile(Path.Combine(path, folder, neededFile), scope);
+                }
+                var plugin = engine.Execute<IPlugin>("GET_PLUGIN()", scope);
                 if (result.ContainsKey(plugin.Name))
                 {
                     throw new Exception(
                         $"Error occured while loading python/'{folder}': Plugin with name '{plugin.Name}' already loaded!"
                     );
                 }
-                result[plugin.Name] = plugin;
+                result[plugin.Name] = new PythonPluginContainer(plugin, scope);
             }
             return result;
         }

@@ -35,13 +35,11 @@ namespace AppleBonus
                 : new string[] { };
         }
 
-        public override void LoadContent(GraphicsDevice graphicsDevice)
+        public override void LoadContent(GraphicsDevice gd)
         {
         }
 
-        public override Accessable Update(GameTime gameTime, int fullTime, KeyboardState keyboardState,
-            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
-            IReadOnlyDictionary<string, Accessable> events)
+        public override Accessable Update(GameTime time, int fullTime, KeyboardState keyboard, IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size, IReadOnlyDictionary<string, Accessable> events)
         {
             var snakePoints = plugins["Snake"].GetListProperty<CircleF>("SnakeCircles").ToArray();
 
@@ -92,7 +90,7 @@ namespace AppleBonus
             {
                 var apple = Apples[i];
                 var appleCircle = apple.GetCircle();
-                apple.Move(gameTime.ElapsedGameTime.TotalSeconds, fullTime, size, obstacles, snakePoints);
+                apple.Move(time.ElapsedGameTime.TotalSeconds, fullTime, size, obstacles, snakePoints);
                 if (appleCircle.Intersects(snakePoints.First()))
                 {
                     _game.Score(1);

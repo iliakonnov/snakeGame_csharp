@@ -44,7 +44,7 @@ namespace Snake
             return new string[] { };
         }
 
-        public override void LoadContent(GraphicsDevice graphicsDevice)
+        public override void LoadContent(GraphicsDevice gd)
         {
             Snake =
                 new SnakeModel(new Point(400, 150), 0).Increase(
@@ -67,7 +67,7 @@ namespace Snake
             }
 
             DamagedTime = -Config.DamageTimeout;
-            _circle = CreateCircleTexture(Config.CircleSize, graphicsDevice);
+            _circle = CreateCircleTexture(Config.CircleSize, gd);
 
             _snakePoints = Snake.GetSnakeAsPoints(Config.CircleOffset);
             var headCenter = _snakePoints.First();
@@ -103,11 +103,9 @@ namespace Snake
             }
         }
 
-        public override Accessable Update(GameTime gameTime, int fullTime, KeyboardState keyboardState,
-            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
-            IReadOnlyDictionary<string, Accessable> events)
+        public override Accessable Update(GameTime time, int fullTime, KeyboardState keyboard, IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size, IReadOnlyDictionary<string, Accessable> events)
         {
-            var control = _ctrl.Control(keyboardState);
+            var control = _ctrl.Control(keyboard);
             if (control.Turn.ToTurn)
             {
                 Snake = control.Turn.ReplaceTurn
@@ -118,7 +116,7 @@ namespace Snake
             _gameTime = fullTime;
             Invulnerable = _gameTime - DamagedTime < Config.DamageTimeout;
 
-            Snake = Snake.ContinueMove(Config.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
+            Snake = Snake.ContinueMove(Config.Speed * time.ElapsedGameTime.Milliseconds / 1000);
 
             var halfSize = Config.CircleSize / 2;
             var points = Snake.GetSnakeAsPoints(Config.CircleOffset);
