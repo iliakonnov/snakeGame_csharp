@@ -22,12 +22,12 @@ namespace Launcher
         private BonusConfig _bonusCfg;
 
         private snake_game.MainGame.Config _config;
-        readonly Dictionary<string, IPlugin> _plugins;
+        readonly Dictionary<string, IPluginContainer> _plugins;
 
         private void SaveHandler(object sender, EventArgs e)
         {
             _config = GetConfig();
-            File.WriteAllText("config.json", ConfigLoad.Save(_config));
+            File.WriteAllText("config.json", ConfigLoad.Save(_config, _plugins));
         }
 
         private void StartHandler(object sender, EventArgs e)
@@ -59,7 +59,7 @@ namespace Launcher
             ClientSize = new Eto.Drawing.Size(WindowWidth, WindowHeight);
             _plugins = BonusLoader.LoadPlugins(".");
             _config = File.Exists("config.json")
-                ? ConfigLoad.Parse(File.ReadAllText("config.json"), _plugins.Values.Select(p=>p.GetType().Assembly).ToArray())
+                ? ConfigLoad.Parse(File.ReadAllText("config.json"), _plugins)
                 : new snake_game.MainGame.Config();
             Draw();
         }
@@ -68,7 +68,7 @@ namespace Launcher
         {
             _gameCfg = new GameConfig(_config.GameConfig);
             _screenCfg = new ScreenConfig(_config.ScreenConfig);
-            _bonusCfg = new BonusConfig(_config.BonusConfig, _plugins);
+            _bonusCfg = new BonusConfig(_config.BonusConfig, _plugins.ToDictionary(x => x.Key, x => x.Value.Plugin));
 
             var saveButton = new Button
             {

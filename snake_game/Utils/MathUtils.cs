@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NullGuard;
 
 namespace snake_game.Utils
 {
@@ -21,22 +20,21 @@ namespace snake_game.Utils
         public static Point FromPolar(float alpha, float r)
         {
             alpha = (float) (alpha / 180 * Math.PI);
-            return new Point(r * (float) Math.Cos(alpha), r * (float) Math.Sin(alpha));
+            return FromRadians(alpha, r);
+        }
+
+        public static Point FromRadians(float degree, float r)
+        {
+            return new Point(r * (float) Math.Cos(degree), r * (float) Math.Sin(degree));
         }
 
         readonly float _x;
 
-        public float X
-        {
-            get { return _x; }
-        }
+        public float X => _x;
 
         readonly float _y;
 
-        public float Y
-        {
-            get { return _y; }
-        }
+        public float Y => _y;
 
         public Point Add(Point pt)
         {
@@ -83,26 +81,26 @@ namespace snake_game.Utils
             return a.Multiply(b);
         }
 
-        public static bool operator ==([AllowNull] Point a, [AllowNull] Point b)
+        public static bool operator ==(Point a, Point b)
         {
             return ReferenceEquals(a, null)
                 ? ReferenceEquals(b, null)
                 : a.Equals(b);
         }
 
-        public static bool operator !=([AllowNull] Point a, [AllowNull] Point b)
+        public static bool operator !=(Point a, Point b)
         {
             return !(a == b);
         }
 
-        public override bool Equals([AllowNull] object obj)
+        public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             return Equals(obj as Point);
         }
 
-        public bool Equals([AllowNull] Point obj)
+        public bool Equals(Point obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
@@ -173,14 +171,14 @@ namespace snake_game.Utils
             return A * a.X + B * a.Y + C;
         }
 
-        public override bool Equals([AllowNull] object obj)
+        public override bool Equals(object obj)
         {
             if (ReferenceEquals(obj, null)) return false;
             if (ReferenceEquals(obj, this)) return true;
             return Equals(obj as Line);
         }
 
-        public bool Equals([AllowNull] Line obj)
+        public bool Equals(Line obj)
         {
             if (ReferenceEquals(obj, null)) return false;
             if (ReferenceEquals(obj, this)) return true;
@@ -291,14 +289,14 @@ namespace snake_game.Utils
             return Tuple.Create(result.ToArray(), skip);
         }
 
-        public override bool Equals([AllowNull] object obj)
+        public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             return Equals(obj as Segment);
         }
 
-        public bool Equals([AllowNull] Segment obj)
+        public bool Equals(Segment obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
@@ -316,9 +314,58 @@ namespace snake_game.Utils
         }
     }
 
+    /// <summary>
+    /// Треугольник
+    /// </summary>
+    public class Triangle
+    {
+        public Triangle(Point a, Point b, Point c)
+        {
+            A = a;
+            B = b;
+            C = c;
+        }
+
+        public Point A { get; }
+        public Point B { get; }
+        public Point C { get; }
+
+        public bool Contains(Point point)
+        {
+            var t1 = Math.Sign((A.X - point.X) * (B.Y - A.Y) - (B.X - A.X) * (A.Y - point.Y));
+            var t2 = Math.Sign((B.X - point.X) * (C.Y - B.Y) - (C.X - B.X) * (B.Y - point.Y));
+            var t3 = Math.Sign((C.X - point.X) * (A.Y - C.Y) - (A.X - C.X) * (C.Y - point.Y));
+            return t1 == 0 ||
+                   t2 == 0 ||
+                   t3 == 0 ||
+                   t1 == t2 && t2 == t3;
+        }
+
+        public bool OnBound(Point point)
+        {
+            var t1 = Math.Sign((A.X - point.X) * (B.Y - A.Y) - (B.X - A.X) * (A.Y - point.Y));
+            var t2 = Math.Sign((B.X - point.X) * (C.Y - B.Y) - (C.X - B.X) * (B.Y - point.Y));
+            var t3 = Math.Sign((C.X - point.X) * (A.Y - C.Y) - (A.X - C.X) * (C.Y - point.Y));
+            return t1 == 0 ||
+                   t2 == 0 ||
+                   t3 == 0;
+        }
+
+        public Tuple<Segment, Segment, Segment> ToSegments()
+        {
+            return new Tuple<Segment, Segment, Segment>(
+                new Segment(A, B),
+                new Segment(B, C),
+                new Segment(C, A)
+            );
+        }
+
+        public Triangle Move(Point shift) => new Triangle(A.Add(shift), B.Add(shift), C.Add(shift));
+    }
+
     public static class MathUtils
     {
-        const float EPSILON = 1e-16f;
+        public const float EPSILON = 1e-16f;
 
         /// <summary>
         /// Получить стандартную форму прямой, проходящей через заданные точки
@@ -376,7 +423,6 @@ namespace snake_game.Utils
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        [return: AllowNull]
         public static Point Intersect(Segment a, Segment b)
         {
             if (a.A == b.A || a.A == b.B) return a.A;

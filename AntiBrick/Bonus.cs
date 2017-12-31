@@ -15,15 +15,16 @@ namespace AntiBrick
 {
     public class Bonus : BonusBase
     {
-        readonly Config _config;
+        public readonly Config Config;
+        public Polygon Triangle;
+        
         readonly Random _random;
         Texture2D _texture;
-        private Polygon _triangle;
         bool _created = false;
 
         public Bonus(Config cfg, Random rnd, snake_game.MainGame.MainGame game)
         {
-            _config = cfg;
+            Config = cfg;
             _random = rnd;
         }
 
@@ -41,15 +42,13 @@ namespace AntiBrick
             return result;
         }
 
-        public override void LoadContent(GraphicsDevice graphicsDevice)
+        public override void LoadContent(GraphicsDevice gd)
         {
-            _texture = new Texture2D(graphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _texture = new Texture2D(gd, 1, 1, false, SurfaceFormat.Color);
             _texture.SetData(new[] {Color.White});
         }
 
-        public override Accessable Update(GameTime gameTime, int fullTime, KeyboardState keyboardState,
-            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
-            IReadOnlyDictionary<string, Accessable> events)
+        public override Accessable Update(GameTime time, int fullTime, KeyboardState keyboard, IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size, IReadOnlyDictionary<string, Accessable> events)
         {
             var snakePoints = plugins["Snake"].GetListProperty<CircleF>("SnakeCircles");
 
@@ -58,9 +57,9 @@ namespace AntiBrick
                 var brickManager = plugins["Brick"];
                 var bricks = brickManager.GetListProperty<object>("Bricks");
                 if (
-                    bricks.Count >= _config.StartBrickCount &&
-                    fullTime % _config.ChanceTime == 0 &&
-                    _random.NextDouble() <= _config.NewChance &&
+                    bricks.Count >= Config.StartBrickCount &&
+                    fullTime % Config.ChanceTime == 0 &&
+                    _random.NextDouble() <= Config.NewChance &&
                     !_created
                 )
                 {
@@ -68,16 +67,16 @@ namespace AntiBrick
                     bigHead.Radius *= 2;
                     do
                     {
-                        _triangle = new Polygon(3, _config.Size, new Vector2(
-                            _random.Next(_config.Size, size.Width - _config.Size),
-                            _random.Next(_config.Size, size.Height - _config.Size)
+                        Triangle = new Polygon(3, Config.Size, new Vector2(
+                            _random.Next(Config.Size, size.Width - Config.Size),
+                            _random.Next(Config.Size, size.Height - Config.Size)
                         ));
-                    } while (_triangle.Intersects(bigHead));
+                    } while (Triangle.Intersects(bigHead));
                     _created = true;
                 }
                 if (_created)
                 {
-                    if (_triangle.Intersects(snakePoints.First()))
+                    if (Triangle.Intersects(snakePoints.First()))
                     {
                         for (var i = 0; i < bricks.Count - 1; i += 2)
                         {
@@ -96,7 +95,7 @@ namespace AntiBrick
         {
             if (_created)
             {
-                _triangle.PrettyDraw(sb, _config.Color, _config.Thickness);
+                Triangle.PrettyDraw(sb, Config.Color, Config.Thickness);
             }
         }
     }

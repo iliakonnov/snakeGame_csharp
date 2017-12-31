@@ -16,8 +16,9 @@ namespace AntiAppleBonus
 {
     public class Bonus : BonusBase
     {
-        readonly Config _config;
-        private Polygon _hex;
+        public readonly Config Config;
+        public Polygon Hex;
+        
         private bool _created;
         private readonly snake_game.MainGame.MainGame _game;
         private Random _random;
@@ -26,14 +27,14 @@ namespace AntiAppleBonus
         {
             if (_created)
             {
-                _hex.PrettyDraw(sb, _config.Color, _config.Thickness);
+                Hex.PrettyDraw(sb, Config.Color, Config.Thickness);
             }
         }
 
         public Bonus(Config config, Random rnd, snake_game.MainGame.MainGame game)
         {
             _game = game;
-            _config = config;
+            Config = config;
             _random = rnd;
         }
 
@@ -44,20 +45,18 @@ namespace AntiAppleBonus
                 : new string[] { };
         }
 
-        public override void LoadContent(GraphicsDevice graphicsDevice)
+        public override void LoadContent(GraphicsDevice gd)
         {
-            _hex = new Polygon(6, _config.Size, new Vector2(100, 100));
+            Hex = new Polygon(6, Config.Size, new Vector2(100, 100));
         }
 
-        public override Accessable Update(GameTime gameTime, int fullTime, KeyboardState keyboardState,
-            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
-            IReadOnlyDictionary<string, Accessable> events)
+        public override Accessable Update(GameTime time, int fullTime, KeyboardState keyboard, IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size, IReadOnlyDictionary<string, Accessable> events)
         {
             var snakePoints = plugins["Snake"].GetListProperty<CircleF>("SnakeCircles").ToArray();
 
             if (_created)
             {
-                if (_hex.Intersects(snakePoints.First()))
+                if (Hex.Intersects(snakePoints.First()))
                 {
                     plugins["Snake"].GetMethodResult<Void>("Decrease", new object[] {snakePoints.Length / 2});
                     _created = false;
@@ -65,18 +64,18 @@ namespace AntiAppleBonus
             }
             else
             {
-                if (snakePoints.Length > _config.StartSnakeLength &&
-                    fullTime % _config.ChanceTime == 0 &&
-                    _random.NextDouble() <= _config.NewChance
+                if (snakePoints.Length > Config.StartSnakeLength &&
+                    fullTime % Config.ChanceTime == 0 &&
+                    _random.NextDouble() <= Config.NewChance
                 )
                 {
                     do
                     {
-                        _hex = new Polygon(6, _config.Size, new Vector2(
+                        Hex = new Polygon(6, Config.Size, new Vector2(
                             _random.Next(size.X, size.X + size.Width),
                             _random.Next(size.Y, size.Y + size.Height)
                         ));
-                    } while (_hex.Intersects(snakePoints.First()));
+                    } while (Hex.Intersects(snakePoints.First()));
                     _created = true;
                 }
             }

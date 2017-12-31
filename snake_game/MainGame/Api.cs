@@ -2,7 +2,6 @@
 
 namespace snake_game.MainGame
 {
-    
     public partial class MainGame
     {
         private class GameEvents : Accessable
@@ -32,17 +31,17 @@ namespace snake_game.MainGame
         /// <param name="damage">На сколько уменьшить. Может быть &lt; 0</param>
         public void Damage(int damage)
         {
-            _lives -= damage;
-            _damagedTime = _gameTime;
+            Lives -= damage;
+            DamagedTime = GameTime;
             _damage = damage;
         }
 
         public void Score(int score)
         {
             _score += score;
-            if (_score % _config.GameConfig.ScoreToLive == 0)
+            if (_score % Config.GameConfig.ScoreToLive == 0)
             {
-                _lives += 1;
+                Lives += 1;
             }
         }
     }

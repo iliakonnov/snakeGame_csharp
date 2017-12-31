@@ -42,7 +42,7 @@ namespace snake_game.Snake
             _nodes = points.ToArray();
             _headDirection = direction;
             _length = 0;
-            for (int i = 0; i < points.Length - 1; i++)
+            for (var i = 0; i < points.Length - 1; i++)
             {
                 _length += new Segment(points[i], points[i + 1]).Length;
             }

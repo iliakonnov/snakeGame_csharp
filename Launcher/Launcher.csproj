@@ -42,7 +42,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <Import Project="..\crossplatform.targets" Condition="Exists('..\packages\Fody.1.29.2\build\dotnet\Fody.targets')" />
+  <Import Project="..\crossplatform.targets" />
   <ItemGroup>
     <Compile Include="Config\BonusConfig.cs" />
     <Compile Include="Config\GameConfig.cs" />

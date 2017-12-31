@@ -14,7 +14,7 @@ namespace snake_game.Bonuses
 {
     public class BonusManager
     {
-        private readonly Dictionary<string, BonusBase> _bonuses;
+        public readonly Dictionary<string, BonusBase> Bonuses;
 
         private Dictionary<string, Accessable> _currentEvents =
             new Dictionary<string, Accessable>
@@ -25,7 +25,7 @@ namespace snake_game.Bonuses
         public BonusManager(IReadOnlyDictionary<string, IPluginConfig> config, Dictionary<string, IPlugin> plugins,
             MainGame.MainGame game, Random rnd)
         {
-            _bonuses = plugins
+            Bonuses = plugins
                 .Where(x => config[x.Key].IsEnabled)
                 .ToDictionary(
                     x => x.Key,
@@ -39,8 +39,8 @@ namespace snake_game.Bonuses
             do
             {
                 notLoaded = new Dictionary<string, List<string>>();
-                foreach (var kv in _bonuses)
-                foreach (var dependency in kv.Value.CheckDependincies(_bonuses))
+                foreach (var kv in Bonuses)
+                foreach (var dependency in kv.Value.CheckDependincies(Bonuses))
                 {
                     if (notLoaded.ContainsKey(kv.Key))
                         notLoaded[kv.Key].Add(dependency);
@@ -55,34 +55,33 @@ namespace snake_game.Bonuses
                         message.Append($"'{name}' ");
                     }
                     // TODO: Show message
-                    _bonuses.Remove(kv.Key);
+                    Bonuses.Remove(kv.Key);
                 }
             } while (notLoaded.Count != 0);  // Если плагин не был загружен, то заново проверяет зависимости у всех
             
-            foreach (var bonus in _bonuses.Values)
+            foreach (var bonus in Bonuses.Values)
             {
                 bonus.LoadContent(graphicsDevice);
             }
         }
 
-        public void Update(GameTime gameTime, int fullTime, KeyboardState keyboardState, Rectangle size,
-            [NullGuard.AllowNull] Accessable gameEvents)
+        public void Update(GameTime gameTime, int fullTime, KeyboardState keyboardState, Rectangle size, Accessable gameEvents)
         {
             var nextEvents = new Dictionary<string, Accessable>
             {
                 {"_game", gameEvents}
             };
-            foreach (var kvPair in _bonuses)
+            foreach (var kvPair in Bonuses)
             {
                 nextEvents[kvPair.Key] =
-                    kvPair.Value.Update(gameTime, fullTime, keyboardState, _bonuses, size, _currentEvents);
+                    kvPair.Value.Update(gameTime, fullTime, keyboardState, Bonuses, size, _currentEvents);
             }
             _currentEvents = nextEvents;
         }
 
         public void Draw(SpriteBatch sb)
         {
-            foreach (var bonus in _bonuses.Values)
+            foreach (var bonus in Bonuses.Values)
             {
                 bonus.Draw(sb);
             }

@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
-using NullGuard;
 using snake_game.Bonuses;
 
 namespace snake_game.MainGame
@@ -21,18 +16,25 @@ namespace snake_game.MainGame
             public int CircleSize = 40; // Radius
             public int CircleOffset = 5;
             public int InitLen = 30;
-            [JsonConverter(typeof(HexColorConverter))] public Color DamageColor = Color.WhiteSmoke;
-            [JsonConverter(typeof(HexColorConverter))] public Color? HeadColor = null;
-            [JsonConverter(typeof(HexColorConverter))] public Color[] Colors = null;
+
+            [JsonConverter(typeof(HexColorConverter))]
+            public Color DamageColor = Color.WhiteSmoke;
+
+            [JsonConverter(typeof(HexColorConverter))]
+            public Color? HeadColor = null;
+
+            [JsonConverter(typeof(HexColorConverter))]
+            public Color[] Colors = null;
         }
 
         public class ScreenConfigClass
         {
             public bool IsMouseVisible = true;
             public bool IsFullScreen = false;
-            
+
             // Most popular screen resolution minus Win10 taskbar and window borders
             public int ScreenWidth = 1366 - 2;
+
             public int ScreenHeight = 768 - 70;
         }
 
@@ -41,14 +43,20 @@ namespace snake_game.MainGame
             public int Lives = 3;
             public int DamageTimeout = 1000;
             public int ScoreToLive = 7;
-            [JsonConverter(typeof(HexColorConverter))] public Color TextColor = Color.Black;
+
+            [JsonConverter(typeof(HexColorConverter))]
+            public Color TextColor = Color.Black;
+
             public bool FogEnabled = true;
 
             [JsonConverter(typeof(HexColorConverter))]
             public Tuple<Color, Color> FogColor = new Tuple<Color, Color>(Color.DarkSlateBlue, Color.Transparent);
 
             public double FogSize = 60;
-            [JsonConverter(typeof(HexColorConverter))] public Color BackgroundColor = Color.CornflowerBlue;
+
+            [JsonConverter(typeof(HexColorConverter))]
+            public Color BackgroundColor = Color.CornflowerBlue;
+
             public int TurnSize { get; set; }
         }
 
@@ -120,6 +128,7 @@ namespace snake_game.MainGame
                 default:
                     throw new ArgumentException("Unknown color format");
             }
+
             return new Color(r, g, b, a);
         }
 
@@ -142,14 +151,14 @@ namespace snake_game.MainGame
             }
         }
 
-        [return: AllowNull]
-        public override object ReadJson(JsonReader reader, Type objectType, [AllowNull] object existingValue,
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
             JsonSerializer serializer)
         {
             if (existingValue == null)
             {
                 return null;
             }
+
             if (objectType.IsAssignableFrom(typeof(Color)))
             {
                 var val = serializer.Deserialize<string>(reader);
@@ -157,8 +166,10 @@ namespace snake_game.MainGame
                 {
                     return null;
                 }
+
                 return FromString(val);
             }
+
             if (objectType.IsAssignableFrom(typeof(IEnumerable<Color>)) || objectType.IsAssignableFrom(typeof(Color[])))
             {
                 var list = new List<Color>();
@@ -169,8 +180,10 @@ namespace snake_game.MainGame
                         list.Add(FromString(colorString));
                     }
                 }
+
                 return list.ToArray();
             }
+
             if (objectType.IsAssignableFrom(typeof(Tuple<Color, Color>)))
             {
                 var items = serializer.Deserialize<string[]>(reader);
@@ -179,6 +192,7 @@ namespace snake_game.MainGame
                     FromString(items[1])
                 );
             }
+
             return null;
         }
 
@@ -192,6 +206,8 @@ namespace snake_game.MainGame
 
     public class PluginConfigConverter : JsonConverter
     {
+        private const string IronPythonType = "<IronPython>";
+
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var values = (Dictionary<string, IPluginConfig>) value;
@@ -200,47 +216,40 @@ namespace snake_game.MainGame
             {
                 result[pair.Key] = pair.Value;
             }
+
             foreach (var pair in values)
             {
-                var newValue = JObject.FromObject(pair.Value, serializer);
-                var type = pair.Value.GetType();
-                var name = type.FullName;
-                var assemblyName = type.Assembly.GetName().Name;
-                newValue["_type"] = $"{name}, {assemblyName}";
-                result[pair.Key] = newValue; 
+                if (ConfigLoad.PluginParsers.TryGetValue(pair.Key, out var parser))
+                {
+                    var newValue = parser.SaveConfig(pair.Value, serializer);
+                    result[pair.Key] = newValue;
+                }
             }
+
             serializer.Serialize(writer, result);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, [AllowNull] object existingValue,
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
             JsonSerializer serializer)
         {
             var result = new Dictionary<string, IPluginConfig>();
             var dict = serializer.Deserialize<Dictionary<string, JObject>>(reader);
             foreach (var pair in dict)
             {
-                var type = SearchType((string) pair.Value["_type"]);
-                if (type != null && typeof(IPluginConfig).IsAssignableFrom(type))
+                var pluginConfig = ConfigLoad.PluginParsers.TryGetValue(pair.Key, out var parser)
+                    ? parser.LoadConfig(pair.Value, serializer)
+                    : null;
+                if (pluginConfig != null)
                 {
-                    result[pair.Key] = (IPluginConfig) pair.Value.ToObject(type, serializer);
+                    result[pair.Key] = pluginConfig;
                 }
                 else
                 {
-                    // To save config without plugin
                     ConfigLoad.NotLoadedConfigs[pair.Key] = pair.Value;
                 }
             }
-            return result;
-        }
 
-        [return: AllowNull]
-        static Type SearchType(string typeName)
-        {
-            var type = ConfigLoad.LoadedPluginAssemblies
-                .SelectMany(a => a.GetExportedTypes())
-                .FirstOrDefault(t => { return t.AssemblyQualifiedName != null 
-                                              && t.AssemblyQualifiedName.StartsWith(typeName); });
-            return type;
+            return result;
         }
 
         public override bool CanConvert(Type objectType)
@@ -252,7 +261,7 @@ namespace snake_game.MainGame
     public static class ConfigLoad
     {
         public static Dictionary<string, JObject> NotLoadedConfigs = new Dictionary<string, JObject>();
-        public static Assembly[] LoadedPluginAssemblies { get; private set; }
+        public static IDictionary<string, IPluginContainer> PluginParsers { get; private set; }
 
         private static JsonSerializerSettings GetSettings()
         {
@@ -262,15 +271,20 @@ namespace snake_game.MainGame
             };
         }
 
-        public static Config Parse(string json, Assembly[] loadedPluginAssemblies)
+        public static Config Parse(string json, IDictionary<string, IPluginContainer> pluginParsers)
         {
-            LoadedPluginAssemblies = loadedPluginAssemblies;
-            return JsonConvert.DeserializeObject<Config>(json, GetSettings());
+            PluginParsers = pluginParsers;
+            var result = JsonConvert.DeserializeObject<Config>(json, GetSettings());
+            PluginParsers = null;
+            return result;
         }
 
-        public static string Save(Config config)
+        public static string Save(Config config, IDictionary<string, IPluginContainer> pluginParsers)
         {
-            return JsonConvert.SerializeObject(config, Formatting.Indented, GetSettings());
+            PluginParsers = pluginParsers;
+            var result = JsonConvert.SerializeObject(config, Formatting.Indented, GetSettings());
+            PluginParsers = null;
+            return result;
         }
     }
 }

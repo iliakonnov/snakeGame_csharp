@@ -14,15 +14,16 @@ namespace AppleBonus
 {
     public class Bonus : BonusBase
     {
-        readonly Config _config;
+        public readonly Config Config;
+        public readonly List<AppleBonus> Apples = new List<AppleBonus>();
+        
         readonly Random _random;
         bool _first = true;
-        public readonly List<AppleBonus> Apples = new List<AppleBonus>();
         snake_game.MainGame.MainGame _game;
 
         public Bonus(Config cfg, Random rnd, snake_game.MainGame.MainGame game)
         {
-            _config = cfg;
+            Config = cfg;
             _random = rnd;
             _game = game;
         }
@@ -34,19 +35,17 @@ namespace AppleBonus
                 : new string[] { };
         }
 
-        public override void LoadContent(GraphicsDevice graphicsDevice)
+        public override void LoadContent(GraphicsDevice gd)
         {
         }
 
-        public override Accessable Update(GameTime gameTime, int fullTime, KeyboardState keyboardState,
-            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
-            IReadOnlyDictionary<string, Accessable> events)
+        public override Accessable Update(GameTime time, int fullTime, KeyboardState keyboard, IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size, IReadOnlyDictionary<string, Accessable> events)
         {
             var snakePoints = plugins["Snake"].GetListProperty<CircleF>("SnakeCircles").ToArray();
 
             if (_first)
             {
-                for (var i = 0; i < _config.AppleCount; i++)
+                for (var i = 0; i < Config.AppleCount; i++)
                 {
                     Apples.Add(new AppleBonus(new Vector2(
                         _random.Next(size.X, size.X + size.Width),
@@ -54,7 +53,7 @@ namespace AppleBonus
                     ), new Vector2(
                         _random.NextDouble() > 0.5 ? 1 : -1,
                         _random.NextDouble() > 0.5 ? 1 : -1
-                    ), _config));
+                    ), Config));
                 }
                 _first = false;
             }
@@ -91,7 +90,7 @@ namespace AppleBonus
             {
                 var apple = Apples[i];
                 var appleCircle = apple.GetCircle();
-                apple.Move(gameTime.ElapsedGameTime.TotalSeconds, fullTime, size, obstacles, snakePoints);
+                apple.Move(time.ElapsedGameTime.TotalSeconds, fullTime, size, obstacles, snakePoints);
                 if (appleCircle.Intersects(snakePoints.First()))
                 {
                     _game.Score(1);
@@ -108,8 +107,8 @@ namespace AppleBonus
                 do
                 {
                     newApple = new AppleBonus(new Vector2(
-                        _random.Next(size.Width - _config.Radius), _random.Next(size.Height - _config.Radius)
-                    ), GetRandomDirection(), _config);
+                        _random.Next(size.Width - Config.Radius), _random.Next(size.Height - Config.Radius)
+                    ), GetRandomDirection(), Config);
                 } while (snakePoints.First().Intersects(newApple.GetCircle()));
                 Apples.Add(newApple);
             }
@@ -127,7 +126,7 @@ namespace AppleBonus
         {
             foreach (var apple in Apples)
             {
-                sb.DrawCircle(apple.GetCircle(), _config.Sides, _config.AppleColor, _config.Thickness);
+                sb.DrawCircle(apple.GetCircle(), Config.Sides, Config.AppleColor, Config.Thickness);
             }
         }
 

@@ -39,6 +39,12 @@
         <Reference Include="SharpDX.XInput">
           <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\SharpDX.XInput.dll</HintPath>
         </Reference>
+		<Reference Include="MonoGame.QuakeConsole, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+	      <HintPath>..\packages\MonoGame.QuakeConsole.WindowsDX.1.1.3\lib\net45\MonoGame.QuakeConsole.dll</HintPath>
+	    </Reference>
+	    <Reference Include="MonoGame.QuakeConsole.PythonInterpreter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  	      <HintPath>..\packages\MonoGame.QuakeConsole.PythonInterpreter.WindowsDX.1.1.3\lib\net45\MonoGame.QuakeConsole.PythonInterpreter.dll</HintPath>
+	    </Reference>
       </ItemGroup>
     </When>
     <When Condition=" '$(OS)'=='Unix' ">
@@ -55,6 +61,12 @@
         <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4">
           <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.6.0.1625\lib\net40\OpenTK.dll</HintPath>
         </Reference>
+		<Reference Include="MonoGame.QuakeConsole, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		  <HintPath>..\packages\MonoGame.QuakeConsole.DesktopGL.1.1.3\lib\net45\MonoGame.QuakeConsole.dll</HintPath>
+	    </Reference>
+	    <Reference Include="MonoGame.QuakeConsole.PythonInterpreter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+		  <HintPath>..\packages\MonoGame.QuakeConsole.PythonInterpreter.DesktopGL.1.1.3\lib\net45\MonoGame.QuakeConsole.PythonInterpreter.dll</HintPath>
+	    </Reference>
       </ItemGroup>
     </When>
   </Choose>

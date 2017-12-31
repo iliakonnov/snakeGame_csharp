@@ -39,11 +39,9 @@ namespace snake_game.Bonuses
     {
         public abstract IEnumerable<string> CheckDependincies(IReadOnlyDictionary<string, BonusBase> plugins);
 
-        public abstract void LoadContent(GraphicsDevice graphicsDevice);
+        public abstract void LoadContent(GraphicsDevice gd);
 
-        public abstract Accessable Update(GameTime gameTime, int fullTime, KeyboardState keyboardState,
-            IReadOnlyDictionary<string, BonusBase> plugins,
-            Rectangle size, IReadOnlyDictionary<string, Accessable> events);
+        public abstract Accessable Update(GameTime time, int fullTime, KeyboardState keyboard, IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size, IReadOnlyDictionary<string, Accessable> events);
 
         public abstract void Draw(SpriteBatch sb);
     }
@@ -51,6 +49,13 @@ namespace snake_game.Bonuses
     public interface IPluginConfig
     {
         bool IsEnabled { get; set; }
+    }
+
+    public interface IPythonPluginConfig : IPluginConfig
+    {
+        IPythonPluginConfig Create();
+        Dictionary<string, string> Serialize();
+        void Deserialize(Dictionary<string, string> data);
     }
 
     public interface IPlugin
