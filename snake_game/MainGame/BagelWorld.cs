@@ -5,8 +5,17 @@ using snake_game.Utils;
 
 namespace snake_game.MainGame
 {
+    /// <summary>
+    ///     Тороидальный мир (как поверхность бублика)
+    /// </summary>
     public class BagelWorld
     {
+        private const int MaxCycle = 10;
+        private int _cycle;
+
+        /// <inheritdoc />
+        /// <param name="height">Высота мира</param>
+        /// <param name="width">Ширина мира</param>
         public BagelWorld(int height, int width)
         {
             Width = width;
@@ -15,51 +24,69 @@ namespace snake_game.MainGame
             BagelPoint.Height = height;
         }
 
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+        /// <summary>
+        ///     Ширина мира
+        /// </summary>
+        public int Width { get; }
 
+        /// <summary>
+        ///     Высота мира
+        /// </summary>
+        public int Height { get; }
+
+        /// <summary>
+        ///     Сегмент с левым краем мира
+        /// </summary>
         public Segment LeftSide => new Segment(
             new Point(0, 0), new Point(0, Height)
         );
 
+        /// <summary>
+        ///     Сегмент с верхним краем мира
+        /// </summary>
         public Segment TopSide => new Segment(
             new Point(0, Height), new Point(Width, Height)
         );
 
+        /// <summary>
+        ///     Сегмент с правым краем мира
+        /// </summary>
         public Segment RightSide => new Segment(
             new Point(Width, Height), new Point(Width, 0)
         );
 
+        /// <summary>
+        ///     Сегмент с нижним краем мира
+        /// </summary>
         public Segment BottomSide => new Segment(
             new Point(0, 0), new Point(Width, 0)
         );
 
+        /// <summary>
+        ///     Нормализует точку. Т.е. расчитывает её
+        /// </summary>
         public Point Normalize(Point pt)
         {
-            var x = ((int) pt.X) % Width;
-            var y = ((int) pt.Y) % Height;
+            var x = (int) pt.X % Width;
+            var y = (int) pt.Y % Height;
             if (x < 0) x += Width;
             if (y < 0) y += Height;
 
             return new Point(x, y);
         }
 
-        const int MAX_CYCLE = 10;
-        int _cycle = 0;
-
+        /// <summary>
+        ///     Нормализует сегмент так, чтобы оба его конца находились в пределах мира
+        /// </summary>
+        /// <param name="s">Исходный сегмент</param>
+        /// <returns>Массив сегментов</returns>
+        /// <exception cref="Exception"></exception>
         public Segment[] Normalize(Segment s)
         {
-            if (_cycle++ > MAX_CYCLE)
-            {
-                throw new Exception();
-                return new Segment[0];
-            }
+            if (_cycle++ > MaxCycle) throw new Exception();
             var bpA = GetBagelPoint(s.A);
             var bpB = GetBagelPoint(s.B);
-            if (bpA.XP == bpB.XP && bpA.YP == bpB.YP)
-            {
-                return new[] {new Segment(bpA.RelativePoint, bpB.RelativePoint)};
-            }
+            if (bpA.XP == bpB.XP && bpA.YP == bpB.YP) return new[] {new Segment(bpA.RelativePoint, bpB.RelativePoint)};
 
             bpB.XP -= bpA.XP;
             bpA.XP = 0;
@@ -78,13 +105,16 @@ namespace snake_game.MainGame
             return NormalizeFromInternal(bpA, bpB);
         }
 
+        /// <summary>
+        ///     Соединяет точки в сегменты и нормализует.
+        ///     Соединяет так, что 1 с 2, 2 с 3, 3 с 4 и т.д.
+        /// </summary>
+        /// <param name="points">Исходные точки</param>
+        /// <returns>Нормализованные сегменты</returns>
         public Segment[] Normalize(Point[] points)
         {
             var segs = new Segment[points.Length - 1];
-            for (var i = 0; i < points.Length - 1; i++)
-            {
-                segs[i] = new Segment(points[i], points[i + 1]);
-            }
+            for (var i = 0; i < points.Length - 1; i++) segs[i] = new Segment(points[i], points[i + 1]);
 
             var result = new List<Segment>(segs.Length);
             foreach (var seg in segs)
@@ -97,12 +127,12 @@ namespace snake_game.MainGame
             return result.ToArray();
         }
 
-        Segment[] NormalizeFromInternal(BagelPoint bpA, BagelPoint bpB)
+        private Segment[] NormalizeFromInternal(BagelPoint bpA, BagelPoint bpB)
         {
             return Normalize(bpA, bpB, new[] {LeftSide, TopSide, RightSide, BottomSide});
         }
 
-        Segment[] NormalizeFromBottomSide(BagelPoint bpA, BagelPoint bpB)
+        private Segment[] NormalizeFromBottomSide(BagelPoint bpA, BagelPoint bpB)
         {
             if (bpB.YP < 0)
             {
@@ -146,7 +176,7 @@ namespace snake_game.MainGame
             return Normalize(bpA, bpB, new[] {LeftSide, TopSide, RightSide}); // - BottomSide 
         }
 
-        Segment[] NormalizeFromLeftSide(BagelPoint bpA, BagelPoint bpB)
+        private Segment[] NormalizeFromLeftSide(BagelPoint bpA, BagelPoint bpB)
         {
             if (bpB.XP < 0)
             {
@@ -190,7 +220,7 @@ namespace snake_game.MainGame
             return Normalize(bpA, bpB, new[] {BottomSide, TopSide, RightSide}); // - LeftSide 
         }
 
-        Segment[] NormalizeFromVertex(BagelPoint bpA, BagelPoint bpB)
+        private Segment[] NormalizeFromVertex(BagelPoint bpA, BagelPoint bpB)
         {
             var yside = RightSide;
             var xside = TopSide;
@@ -235,12 +265,14 @@ namespace snake_game.MainGame
             return Normalize(bpA, bpB, new[] {xside, yside});
         }
 
-        Segment[] Normalize(BagelPoint bpA, BagelPoint bpB, Segment[] sides)
+        private Segment[] Normalize(BagelPoint bpA, BagelPoint bpB, IEnumerable<Segment> sides)
         {
-            if (!(bpA.XP == 0 || (bpA.XP == 1 && bpA.X == 0)))
-                throw new Exception($"Первая точка за пределами начальной страницы");
-            if (!(bpA.YP == 0 || (bpA.YP == 1 && bpA.Y == 0)))
-                throw new Exception($"Первая точка за пределами начальной страницы");
+            // ReSharper disable CompareOfFloatsByEqualityOperator
+            if (!(bpA.XP == 0 || bpA.XP == 1 && bpA.X == 0))
+                throw new Exception("Первая точка за пределами начальной страницы");
+            if (!(bpA.YP == 0 || bpA.YP == 1 && bpA.Y == 0))
+                throw new Exception("Первая точка за пределами начальной страницы");
+            // ReSharper restore CompareOfFloatsByEqualityOperator
 
             var a = bpA.AbsolutePoint;
             var b = bpB.AbsolutePoint;
@@ -266,79 +298,22 @@ namespace snake_game.MainGame
             throw new Exception($"Отрезок {s} не пересекается со сторонами мира");
         }
 
-        bool IsInRectangle(Point pt)
+        private bool IsInRectangle(Point pt)
         {
             return pt.X >= 0 && pt.X <= Width &&
                    pt.Y >= 0 && pt.Y <= Height;
         }
 
-        bool IsInternal(Point pt)
+        private bool IsInternal(Point pt)
         {
             return pt.X >= 0 && pt.X < Width &&
                    pt.Y >= 0 && pt.Y < Height;
         }
 
-        class BagelPoint
+        private BagelPoint GetBagelPoint(Point pt)
         {
-            public static BagelPoint Vertex => new BagelPoint
-            {
-                X = 0,
-                Y = 0,
-                XP = 0,
-                YP = 0
-            };
-
-            public static int Width;
-            public static int Height;
-
-            float _x;
-
-            public float X
-            {
-                get { return _x; }
-                set
-                {
-                    if (value < 0) throw new ArgumentException();
-                    if (value >= Width) throw new ArgumentException();
-                    _x = value;
-                }
-            }
-
-            float _y;
-
-            public float Y
-            {
-                get { return _y; }
-                set
-                {
-                    if (value < 0) throw new ArgumentException();
-                    if (value >= Width) throw new ArgumentException();
-                    _y = value;
-                }
-            }
-
-            public int XP { get; set; }
-            public int YP { get; set; }
-
-            public bool IsLeftSide => X == 0;
-
-            public bool IsBottomSide => Y == 0;
-
-            public bool IsVertex => IsLeftSide && IsBottomSide;
-
-            public Point RelativePoint => new Point(X, Y);
-            public Point AbsolutePoint => new Point(X + Width * XP, Y + Height * YP);
-
-            public override string ToString()
-            {
-                return $"[{X}, {Y}] in Page [{XP}, {YP}]";
-            }
-        }
-
-        BagelPoint GetBagelPoint(Point pt)
-        {
-            int xp = 0;
-            int yp = 0;
+            var xp = 0;
+            var yp = 0;
             while (!IsInternal(pt))
             {
                 int xd = 0, yd = 0;
@@ -363,6 +338,7 @@ namespace snake_game.MainGame
                     yp += 1;
                     yd = -Height;
                 }
+
                 pt = pt.Add(new Point(xd, yd));
             }
 
@@ -373,6 +349,65 @@ namespace snake_game.MainGame
                 XP = xp,
                 YP = yp
             };
+        }
+
+        private class BagelPoint
+        {
+            public static int Width;
+            public static int Height;
+
+            private float _x;
+
+            private float _y;
+
+            public static BagelPoint Vertex => new BagelPoint
+            {
+                X = 0,
+                Y = 0,
+                XP = 0,
+                YP = 0
+            };
+
+            public float X
+            {
+                get => _x;
+                set
+                {
+                    if (value < 0) throw new ArgumentException();
+                    if (value >= Width) throw new ArgumentException();
+                    _x = value;
+                }
+            }
+
+            public float Y
+            {
+                get => _y;
+                set
+                {
+                    if (value < 0) throw new ArgumentException();
+                    if (value >= Width) throw new ArgumentException();
+                    _y = value;
+                }
+            }
+
+            public int XP { get; set; }
+            public int YP { get; set; }
+
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            public bool IsLeftSide => X == 0;
+
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            public bool IsBottomSide => Y == 0;
+
+            public bool IsVertex => IsLeftSide && IsBottomSide;
+
+            public Point RelativePoint => new Point(X, Y);
+            public Point AbsolutePoint => new Point(X + Width * XP, Y + Height * YP);
+
+            public override string ToString()
+            {
+                return $"[{X}, {Y}] in Page [{XP}, {YP}]";
+            }
         }
     }
 }

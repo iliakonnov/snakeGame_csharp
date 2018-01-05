@@ -4,23 +4,25 @@ using snake_game.Utils;
 
 namespace BrickBonus
 {
+    /// <inheritdoc />
     public class ConfigPage : IConfigPage
     {
-        CheckBox _enabled;
-        NumericUpDown _chanceTime;
-        NumericUpDown _moveChance;
-        NumericUpDown _newChance;
-        NumericUpDown _step;
-        NumericUpDown _size;
-        ColorPicker _brickColor;
+        private readonly Config _config;
+        private ColorPicker _brickColor;
+        private NumericUpDown _chanceTime;
+        private CheckBox _enabled;
+        private NumericUpDown _moveChance;
+        private NumericUpDown _newChance;
+        private NumericUpDown _size;
+        private NumericUpDown _step;
 
-        Config _config;
-
+        /// <inheritdoc />
         public ConfigPage(Config config)
         {
             _config = config;
         }
 
+        /// <inheritdoc />
         public IPluginConfig GetConfig()
         {
             return new Config
@@ -35,6 +37,7 @@ namespace BrickBonus
             };
         }
 
+        /// <inheritdoc />
         public TabPage GetPage()
         {
             _chanceTime = new NumericUpDown {Value = _config.ChanceTime / 1000.0};

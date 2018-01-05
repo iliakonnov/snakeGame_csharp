@@ -3,26 +3,42 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Eto.Drawing;
 using Eto.Forms;
 using Launcher.Config;
 using snake_game.Bonuses;
-using snake_game.Launcher.Config;
 using snake_game.MainGame;
 
 namespace Launcher
 {
+    /// <inheritdoc />
+    /// <summary>
+    ///     Основное окно настроек
+    /// </summary>
     public class LauncherForm : Form
     {
-        const int WindowWidth = 400;
-        const int WindowHeight = 400;
-        const int ButtonHeight = 30;
-
-        private GameConfig _gameCfg;
-        private ScreenConfig _screenCfg;
-        private BonusConfig _bonusCfg;
+        private const int WindowWidth = 400;
+        private const int WindowHeight = 400;
+        private const int ButtonHeight = 30;
+        private readonly Dictionary<string, IPluginContainer> _plugins;
+        private IGameConfigPage<Dictionary<string, IPluginConfig>> _bonusCfg;
 
         private snake_game.MainGame.Config _config;
-        readonly Dictionary<string, IPluginContainer> _plugins;
+
+        private IGameConfigPage<snake_game.MainGame.Config.GameConfigClass> _gameCfg;
+        private IGameConfigPage<snake_game.MainGame.Config.ScreenConfigClass> _screenCfg;
+
+        /// <inheritdoc />
+        public LauncherForm()
+        {
+            Title = "Snake Game Launcher";
+            ClientSize = new Size(WindowWidth, WindowHeight);
+            _plugins = BonusLoader.LoadPlugins(".");
+            _config = File.Exists("config.json")
+                ? ConfigLoad.Parse(File.ReadAllText("config.json"), _plugins)
+                : new snake_game.MainGame.Config();
+            Draw();
+        }
 
         private void SaveHandler(object sender, EventArgs e)
         {
@@ -53,17 +69,6 @@ namespace Launcher
             };
         }
 
-        public LauncherForm()
-        {
-            Title = "Snake Game Launcher";
-            ClientSize = new Eto.Drawing.Size(WindowWidth, WindowHeight);
-            _plugins = BonusLoader.LoadPlugins(".");
-            _config = File.Exists("config.json")
-                ? ConfigLoad.Parse(File.ReadAllText("config.json"), _plugins)
-                : new snake_game.MainGame.Config();
-            Draw();
-        }
-
         private void Draw()
         {
             _gameCfg = new GameConfig(_config.GameConfig);
@@ -73,23 +78,23 @@ namespace Launcher
             var saveButton = new Button
             {
                 Text = "Save config",
-                Size = new Eto.Drawing.Size(WindowWidth / 3, ButtonHeight)
+                Size = new Size(WindowWidth / 3, ButtonHeight)
             };
             saveButton.Click += SaveHandler;
             var startButton = new Button
             {
                 Text = "Start!",
-                Size = new Eto.Drawing.Size(WindowWidth / 3, ButtonHeight)
+                Size = new Size(WindowWidth / 3, ButtonHeight)
             };
             startButton.Click += StartHandler;
             var resetButton = new Button
             {
                 Text = "Reset to default",
-                Size = new Eto.Drawing.Size(WindowWidth / 3, ButtonHeight)
+                Size = new Size(WindowWidth / 3, ButtonHeight)
             };
             resetButton.Click += ResetHandler;
 
-            var tabControlSize = new Eto.Drawing.Size(WindowWidth, WindowHeight - ButtonHeight);
+            var tabControlSize = new Size(WindowWidth, WindowHeight - ButtonHeight);
 
             Content = new StackLayout
             {
@@ -107,7 +112,7 @@ namespace Launcher
                     },
                     new StackLayout // Buttons
                     {
-                        Size = new Eto.Drawing.Size(WindowWidth, ButtonHeight
+                        Size = new Size(WindowWidth, ButtonHeight
                         ),
                         Orientation = Orientation.Horizontal,
                         Items =

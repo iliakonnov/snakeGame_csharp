@@ -45,3 +45,5 @@ Thumbs.db
 *.binlog
 snake_game/config.json
 .vs
+
+Help/

@@ -1,82 +1,84 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using snake_game.MainGame;
 using snake_game.Utils;
 
-namespace snake_game.Snake
+namespace Snake
 {
     /// <summary>
-    /// Модель змеи, состоящей из отрезков. Голова может двигаться в любом направлении.
+    ///     Модель змеи, состоящей из отрезков. Голова может двигаться в любом направлении.
     /// </summary>
     public class SnakeModel
     {
-        const float EPS = 1e-6f;
+        private const float Epsilon = 1e-6f;
 
-        // Длина змеи
-        float _length;
+        private Point[] _nodes;
 
-        public float Length => _length;
-
-        // точки, задающие повороты змеи. Первый - голова
-        Point[] _nodes;
-
-        // направление движения головы в градусах
-        float _headDirection;
-
-        SnakeModel()
+        private SnakeModel()
         {
         }
 
+        /// <inheritdoc />
+        /// <param name="head">Позиция головы змеи</param>
+        /// <param name="direction">Направление движения змеи</param>
         public SnakeModel(Point head, int direction)
         {
-            _length = 0;
+            Length = 0;
             _nodes = new[] {head};
-            _headDirection = direction;
+            Direction = direction;
         }
 
-        internal SnakeModel(float direction, Point[] points)
-        {
-            _nodes = points.ToArray();
-            _headDirection = direction;
-            _length = 0;
-            for (var i = 0; i < points.Length - 1; i++)
-            {
-                _length += new Segment(points[i], points[i + 1]).Length;
-            }
-        }
+        /// <summary>
+        ///     Длина змеи
+        /// </summary>
+        public float Length { get; private set; }
 
-        public IReadOnlyCollection<Point> Points => new ReadOnlyCollection<Point>(_nodes);
+        /// <summary>
+        ///     Точки, задающие повороты змеи. Первый - голова
+        /// </summary>
+        public IEnumerable<Point> Points => new ReadOnlyCollection<Point>(_nodes);
 
-        public float Direction => _headDirection;
+        /// <summary>
+        ///     Направление движения головы в градусах
+        /// </summary>
+        public float Direction { get; private set; }
 
+        /// <summary>
+        ///     Сдвигает всю змею на указанное расстояние по направлению движения змеи
+        /// </summary>
+        /// <param name="s">Расстояние на скоторое змея продвинется</param>
+        /// <returns>Уже сдвинутая змея</returns>
+        /// <exception cref="Exception">В случае, если змея не из чего не состоит</exception>
         public SnakeModel ContinueMove(float s)
         {
             if (_nodes.Length == 0)
                 throw new Exception();
 
             var head = _nodes[0];
-            var pt = Point.FromPolar(_headDirection, s);
+            var pt = Point.FromPolar(Direction, s);
             if (_nodes.Length == 1)
-            {
                 return new SnakeModel
                 {
                     _nodes = new[] {head.Add(pt)},
-                    _length = 0,
-                    _headDirection = _headDirection
+                    Length = 0,
+                    Direction = Direction
                 };
-            }
 
             var nodes = _nodes.ToArray();
             nodes[0] = head.Add(pt);
-            return SetLength(_length, nodes, _headDirection);
+            return SetLength(Length, nodes, Direction);
         }
 
+        /// <summary>
+        ///     Поворачивает змею на указанныый угол
+        /// </summary>
+        /// <param name="alpha">Угол на который надо повернуть змею в градусах</param>
+        /// <returns>Уже повернутая змея</returns>
         public SnakeModel Turn(float alpha)
         {
-            if (Math.Abs(alpha) <= EPS) return this;
+            if (Math.Abs(alpha) <= Epsilon) return this;
             var nodes = _nodes;
             if (_nodes.Length > 1)
             {
@@ -86,64 +88,86 @@ namespace snake_game.Snake
                     : new[] {head}.Concat(_nodes).ToArray();
             }
 
-            var dir = ((int) (_headDirection + alpha)) % 360;
+            var dir = (int) (Direction + alpha) % 360;
             if (dir < 0) dir += 360;
             return new SnakeModel
             {
                 _nodes = nodes,
-                _length = _length,
-                _headDirection = dir
+                Length = Length,
+                Direction = dir
             };
         }
 
+        /// <summary>
+        ///     Устанавливает змее определенный угол движения
+        /// </summary>
+        /// <param name="degrees">Угол, на котороый должна быть повернута змея в градусах</param>
+        /// <returns>Уже повернутая змея</returns>
         public SnakeModel TurnAt(float degrees)
         {
             return Turn(degrees - Direction);
         }
 
+        /// <summary>
+        ///     Увеличивает змею на указанную длину
+        /// </summary>
+        /// <param name="s">На сколько нужно увеличить змею</param>
+        /// <returns>Уже удлинённая змея</returns>
         public SnakeModel Increase(float s)
         {
-            return SetLength(_length + s, _nodes, _headDirection);
+            return SetLength(Length + s, _nodes, Direction);
         }
 
+        /// <summary>
+        ///     Уменьшает змею на указанную длину
+        /// </summary>
+        /// <param name="s">На сколько нужно уменьшить змею</param>
+        /// <returns>Уже укороченная змея</returns>
         public SnakeModel Decrease(float s)
         {
-            if (_length < s) throw new ArgumentException();
-            if (Math.Abs(_length - s) < EPS)
+            if (Length < s) throw new ArgumentException();
+            if (Math.Abs(Length - s) < Epsilon)
                 return new SnakeModel
                 {
                     _nodes = new[] {_nodes[0]},
-                    _length = 0,
-                    _headDirection = _headDirection
+                    Length = 0,
+                    Direction = Direction
                 };
 
-            return SetLength(_length - s, _nodes, _headDirection);
+            return SetLength(Length - s, _nodes, Direction);
         }
 
+        /// <summary>
+        ///     Разбивает змею на точки, кадая на указанном расстоянии от другой
+        /// </summary>
+        /// <param name="pointDistance">Расстояние между точками</param>
+        /// <returns>Массив точек</returns>
         public Point[] GetSnakeAsPoints(float pointDistance)
         {
-            var result = new Point[(int) (_length / pointDistance)];
+            var result = new Point[(int) (Length / pointDistance)];
             var n = 0;
             result[n++] = _nodes[0];
             var skip = 0f;
             for (var i = 0; i < _nodes.Length - 1; i++)
             {
-                Tuple<Point[], float> tuple = new Segment(_nodes[i], _nodes[i + 1]).AsSetOfPoints(pointDistance, skip);
-                foreach (var item in tuple.Item1)
-                {
-                    if (n < result.Length) result[n++] = item;
-                }
-                skip = tuple.Item2;
+                Point[] points;
+                (points, skip) = new Segment(_nodes[i], _nodes[i + 1]).AsSetOfPoints(pointDistance, skip);
+                foreach (var item in points)
+                    if (n < result.Length)
+                        result[n++] = item;
             }
-            if (result[result.Length - 1] == null)
-            {
-                // TODO: Змея дёргается если расстояние между кружочками кратно 20
-                result[result.Length - 1] = result[result.Length - 2];
-            }
+
+            if (result[result.Length - 1] == null) result[result.Length - 1] = result[result.Length - 2];
 
             return result;
         }
-        
+
+        /// <summary>
+        ///     Нормализует змею, чтобы она переходила из одного края тороидального мира в другой
+        /// </summary>
+        /// <param name="world">Тороидальный мир</param>
+        /// <returns>Отрезки, из которых состоит уже нормализованная змея</returns>
+        // ReSharper disable once UnusedMember.Global
         public Segment[] Normalize(BagelWorld world)
         {
             return world.Normalize(Points.ToArray());
@@ -151,19 +175,25 @@ namespace snake_game.Snake
 
         internal static SnakeModel SetLength(float length, Point[] nodes, float headDirection)
         {
-            if (nodes.Length == 0) throw new Exception();
-
-            if (nodes.Length == 1)
+            switch (nodes.Length)
             {
-                var head = nodes[0];
-                var pt = Point.FromPolar(headDirection, -length);
-                return new SnakeModel
-                {
-                    _nodes = new[] {head, head.Add(pt)},
-                    _length = length,
-                    _headDirection = headDirection
-                };
+                case 0:
+                    throw new Exception();
+                case 1:
+                    var head = nodes[0];
+                    var pt = Point.FromPolar(headDirection, -length);
+                    return new SnakeModel
+                    {
+                        _nodes = new[] {head, head.Add(pt)},
+                        Length = length,
+                        Direction = headDirection
+                    };
+                default:
+                    if (length <= 0) throw new ArgumentException();
+
+                    break;
             }
+
 
             int i;
             float c;
@@ -173,27 +203,28 @@ namespace snake_game.Snake
                 tail = new Segment(nodes[i], nodes[i - 1]);
                 c += tail.Length;
             }
+
+            if (tail == null) throw new NullReferenceException();
+
             var newNodes = nodes.Take(i).ToArray();
 
-            if (Math.Abs(c - length) < EPS)
-            {
+            if (Math.Abs(c - length) < Epsilon)
                 return new SnakeModel
                 {
                     _nodes = newNodes,
-                    _length = c,
-                    _headDirection = headDirection
+                    Length = c,
+                    Direction = headDirection
                 };
-            }
-            else
+
             {
                 // надо укоротить или удлинить
-                var pt = tail.MoveFromAToB(c - length);
+                var pt = tail.MoveFromAtoB(c - length);
                 newNodes[newNodes.Length - 1] = pt;
                 return new SnakeModel
                 {
                     _nodes = newNodes,
-                    _length = length,
-                    _headDirection = headDirection
+                    Length = length,
+                    Direction = headDirection
                 };
             }
         }

@@ -10,8 +10,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AntiBrick</RootNamespace>
     <AssemblyName>AntiBrick</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -22,6 +24,7 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\snake_game\bin\Debug\$(OS)\AntiBrick.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -29,18 +32,13 @@
     <OutputPath>..\snake_game\bin\Release\$(OS)</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\snake_game\bin\Release\$(OS)\AntiBrick.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Bonus.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ConfigPage.cs" />
     <Compile Include="Plugin.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\snake_game\snake_game.csproj">
-      <Project>{476da80f-dc9e-431d-81c5-5b6ee9c5201a}</Project>
-      <Name>snake_game</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Eto, Version=2.3.0.0, Culture=neutral, PublicKeyToken=null">
@@ -54,7 +52,13 @@
     </Reference>
     <Reference Include="System.Drawing" />
   </ItemGroup>
-    <Import Project="..\crossplatform.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\snake_game\snake_game.csproj">
+      <Project>{476da80f-dc9e-431d-81c5-5b6ee9c5201a}</Project>
+      <Name>snake_game</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="..\crossplatform.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

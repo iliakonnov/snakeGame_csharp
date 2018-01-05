@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -7,10 +7,12 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>snake_game</RootNamespace>
     <AssemblyName>snake_game</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <ApplicationIcon>Content\snake.ico</ApplicationIcon>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <DocumentationFile>..\snake_game\bin\Debug\$(OS)\snake_game.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -28,6 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <DocumentationFile>..\snake_game\bin\Release\$(OS)\snake_game.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>snake_game.Program</StartupObject>
@@ -85,16 +89,15 @@
     <Compile Include="Bonuses\BonusManager.cs" />
     <Compile Include="Bonuses\PluginParser.cs" />
     <Compile Include="Bonuses\PluginUtils.cs" />
-    <Compile Include="MainGame\Api.cs" />
     <Compile Include="MainGame\BagelWorld.cs" />
     <Compile Include="MainGame\Config.cs" />
     <Compile Include="MainGame\Fog.cs" />
     <Compile Include="MainGame\Game.cs" />
+    <Compile Include="MainGame\GameEvents.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ColorConverter.cs" />
     <Compile Include="Utils\MathUtils.cs" />
-    <Compile Include="Utils\Polygon.cs" />
     <Compile Include="Utils\Star.cs" />
     <Compile Include="Utils\Void.cs" />
   </ItemGroup>

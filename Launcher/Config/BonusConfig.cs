@@ -6,21 +6,30 @@ using snake_game.Bonuses;
 
 namespace Launcher.Config
 {
-    public class BonusConfig
+    /// <inheritdoc />
+    /// <summary>
+    ///     Вкладка настроек бонусов
+    /// </summary>
+    public class BonusConfig : IGameConfigPage<Dictionary<string, IPluginConfig>>
     {
-        Dictionary<string, IPluginConfig> _config;
-        Dictionary<string, IPlugin> _plugins;
-        Dictionary<string, IConfigPage> _pluginPages = new Dictionary<string, IConfigPage>();
+        private readonly Dictionary<string, IPluginConfig> _config;
+        private readonly Dictionary<string, IConfigPage> _pluginPages = new Dictionary<string, IConfigPage>();
+        private readonly Dictionary<string, IPlugin> _plugins;
 
+        /// <inheritdoc />
         public BonusConfig(Dictionary<string, IPluginConfig> config, Dictionary<string, IPlugin> plugins)
         {
             _config = config;
             _plugins = plugins;
         }
 
-        public Dictionary<string, IPluginConfig> GetConfig() =>
-            _pluginPages.ToDictionary(x => x.Key, x => x.Value.GetConfig());
+        /// <inheritdoc />
+        public Dictionary<string, IPluginConfig> GetConfig()
+        {
+            return _pluginPages.ToDictionary(x => x.Key, x => x.Value.GetConfig());
+        }
 
+        /// <inheritdoc />
         public TabPage GetPage()
         {
             var tabControl = new TabControl();
@@ -29,7 +38,7 @@ namespace Launcher.Config
                 var type = pluginPair.Value.GetType();
                 var name = type.FullName;
                 var assemblyName = type.Assembly.GetName().Name;
-                
+
                 var config = _config.ContainsKey(pluginPair.Key) ? _config[pluginPair.Key] : pluginPair.Value.Config;
                 var page = pluginPair.Value.GetPage(config);
                 _pluginPages[pluginPair.Key] = page;
@@ -54,7 +63,7 @@ namespace Launcher.Config
                     }
                 };
                 tabControl.Pages.Add(tabPage);
-            }   
+            }
 
             return new TabPage(tabControl)
             {

@@ -5,39 +5,46 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
-using MonoGame.Extended.Shapes;
-using snake_game;
 using snake_game.Bonuses;
 using snake_game.Utils;
-using Polygon = snake_game.Utils.Polygon;
+using Point = snake_game.Utils.Point;
 using Void = snake_game.Utils.Void;
 
 namespace AntiAppleBonus
 {
+    /// <inheritdoc />
     public class Bonus : BonusBase
     {
+        private readonly Random _random;
+
+        /// <summary>
+        ///     Настройки плагина
+        /// </summary>
         public readonly Config Config;
-        public Polygon Hex;
-        
+
         private bool _created;
-        private readonly snake_game.MainGame.MainGame _game;
-        private Random _random;
 
-        public override void Draw(SpriteBatch sb)
-        {
-            if (_created)
-            {
-                Hex.PrettyDraw(sb, Config.Color, Config.Thickness);
-            }
-        }
+        private StarFactory _hexFactory;
 
-        public Bonus(Config config, Random rnd, snake_game.MainGame.MainGame game)
+        /// <summary>
+        ///     Шестигранник бонуса
+        /// </summary>
+        public Star Hex;
+
+        /// <inheritdoc />
+        public Bonus(Config config, Random rnd)
         {
-            _game = game;
             Config = config;
             _random = rnd;
         }
 
+        /// <inheritdoc />
+        public override void Draw(SpriteBatch sb)
+        {
+            if (_created) Hex.PrettyDraw(sb, Config.Color, Config.Thickness);
+        }
+
+        /// <inheritdoc />
         public override IEnumerable<string> CheckDependincies(IReadOnlyDictionary<string, BonusBase> plugins)
         {
             return !plugins.ContainsKey("Snake")
@@ -45,12 +52,17 @@ namespace AntiAppleBonus
                 : new string[] { };
         }
 
+        /// <inheritdoc />
         public override void LoadContent(GraphicsDevice gd)
         {
-            Hex = new Polygon(6, Config.Size, new Vector2(100, 100));
+            _hexFactory = new StarFactory(6, 1, Config.Size, gd);
+            Hex = _hexFactory.GetStar(new Point(100, 100));
         }
 
-        public override Accessable Update(GameTime time, int fullTime, KeyboardState keyboard, IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size, IReadOnlyDictionary<string, Accessable> events)
+        /// <inheritdoc />
+        public override Accessable Update(GameTime time, int fullTime, KeyboardState keyboard,
+            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
+            IReadOnlyDictionary<string, Accessable> events)
         {
             var snakePoints = plugins["Snake"].GetListProperty<CircleF>("SnakeCircles").ToArray();
 
@@ -71,11 +83,12 @@ namespace AntiAppleBonus
                 {
                     do
                     {
-                        Hex = new Polygon(6, Config.Size, new Vector2(
+                        Hex = _hexFactory.GetStar(new Point(
                             _random.Next(size.X, size.X + size.Width),
                             _random.Next(size.Y, size.Y + size.Height)
                         ));
                     } while (Hex.Intersects(snakePoints.First()));
+
                     _created = true;
                 }
             }

@@ -8,41 +8,63 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using snake_game.Bonuses;
 using snake_game.MainGame;
-using snake_game.Snake;
 using Point = snake_game.Utils.Point;
 using Void = snake_game.Utils.Void;
 
 namespace Snake
 {
+    /// <inheritdoc />
     public class Bonus : BonusBase
     {
-        public SnakeModel Snake;
-        public int DamagedTime;
-        public Config Config;
-        
-        private Color[] _colors;
-        private int _intersectStart;
-        private MainGame _game;
+        private readonly MainGame _game;
         private Texture2D _circle;
-        private int _gameTime;
+
+        private Color[] _colors;
         private IController _ctrl;
-        private Point[] _snakePoints;
         private int _damage;
+        private int _gameTime;
+        private int _intersectStart;
+        private Point[] _snakePoints;
 
-        public bool Invulnerable => _gameTime - DamagedTime < Config.DamageTimeout;
-        public CircleF[] SnakeCircles = { };
+        /// <summary>
+        ///     Параметры бонуса
+        /// </summary>
+        public Config Config;
 
+        /// <summary>
+        ///     Время, когда последний раз был нанесен урон
+        /// </summary>
+        public int DamagedTime;
+
+        /// <summary>
+        ///     Сама змейка
+        /// </summary>
+        public SnakeModel Snake;
+
+        /// <inheritdoc />
         public Bonus(Config cfg, MainGame game)
         {
             Config = cfg;
             _game = game;
         }
 
+        /// <summary>
+        ///     Неуязвима ли в данный момент змейка
+        /// </summary>
+        public bool Invulnerable { [Accessable] get; set; }
+
+        /// <summary>
+        ///     Все кружочки змейки
+        /// </summary>
+        public CircleF[] SnakeCircles { [Accessable] get; private set; } = { };
+
+        /// <inheritdoc />
         public override IEnumerable<string> CheckDependincies(IReadOnlyDictionary<string, BonusBase> plugins)
         {
             return new string[] { };
         }
 
+        /// <inheritdoc />
         public override void LoadContent(GraphicsDevice gd)
         {
             Snake =
@@ -87,14 +109,15 @@ namespace Snake
                 i++;
                 intersects = head.Intersects(current);
             } while (intersects);
+
             _intersectStart = i;
 
             switch (Config.ControlType)
             {
-                case "traditional":
+                case AvailableControllers.Traditional:
                     _ctrl = new ControllerTraditional();
                     break;
-                case "small":
+                case AvailableControllers.Small:
                     _ctrl = new ControllerSmall(Config.TurnSize ?? 30);
                     break;
                 default:
@@ -102,19 +125,20 @@ namespace Snake
             }
         }
 
-        public override Accessable Update(GameTime time, int fullTime, KeyboardState keyboard, IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size, IReadOnlyDictionary<string, Accessable> events)
+        /// <inheritdoc />
+        public override Accessable Update(GameTime time, int fullTime, KeyboardState keyboard,
+            IReadOnlyDictionary<string, BonusBase> plugins, Rectangle size,
+            IReadOnlyDictionary<string, Accessable> events)
         {
             var control = _ctrl.Control(keyboard);
-            if (control.Turn.ToTurn)
-            {
-                Snake = control.Turn.ReplaceTurn
-                    ? Snake.TurnAt(control.Turn.TurnDegrees)
-                    : Snake.Turn(control.Turn.TurnDegrees);
-            }
+            if (control.ToTurn)
+                Snake = control.ReplaceTurn
+                    ? Snake.TurnAt(control.TurnDegrees)
+                    : Snake.Turn(control.TurnDegrees);
 
             _gameTime = fullTime;
 
-            Snake = Snake.ContinueMove(Config.Speed * time.ElapsedGameTime.Milliseconds / 1000);
+            Snake = Snake.ContinueMove(Config.Speed * time.ElapsedGameTime.Milliseconds / 1000f);
 
             var halfSize = Config.CircleSize / 2;
             var points = Snake.GetSnakeAsPoints(Config.CircleOffset);
@@ -126,15 +150,13 @@ namespace Snake
                 SnakeCircles[i] = new CircleF(new Vector2(normPoint.X, normPoint.Y), halfSize);
                 _snakePoints[i] = normPoint;
             }
+
             var head = SnakeCircles.First();
 
             for (var i = _intersectStart; i < SnakeCircles.Length; i++)
-            {
                 if (head.Intersects(SnakeCircles[i]))
-                {
                     Damage();
-                }
-            }
+            Invulnerable = _gameTime - DamagedTime < Config.DamageTimeout;
 
             var snakeEvents = new SnakeEvents();
             if (events.ContainsKey("Snake"))
@@ -158,18 +180,21 @@ namespace Snake
                     snakeEvents.DamageInfo.Damage = 0;
                     snakeEvents.DamageInfo.FirstTime = false;
                 }
+
+                if (oldEvents.Invulnerable != null) Invulnerable = (bool) oldEvents.Invulnerable;
             }
+
             _damage = 0;
 
             return snakeEvents;
         }
 
+        /// <inheritdoc />
         public override void Draw(SpriteBatch sb)
         {
             var halfSize = Config.CircleSize / 2;
 
             for (var i = _snakePoints.Length - 1; i >= 0; i--)
-            {
                 sb.Draw(
                     _circle,
                     new Vector2(
@@ -182,10 +207,9 @@ namespace Snake
                             ? Config.HeadColor ?? _colors[i % _colors.Length]
                             : _colors[i % _colors.Length]
                 );
-            }
         }
 
-        private Texture2D CreateCircleTexture(int radius, GraphicsDevice gd)
+        private static Texture2D CreateCircleTexture(int radius, GraphicsDevice gd)
         {
             var texture = new Texture2D(gd, radius, radius);
             var colorData = new Color[radius * radius];
@@ -194,72 +218,21 @@ namespace Snake
             var diamsq = diam * diam;
 
             for (var x = 0; x < radius; x++)
+            for (var y = 0; y < radius; y++)
             {
-                for (var y = 0; y < radius; y++)
-                {
-                    var index = x * radius + y;
-                    var pos = new Vector2(x - diam, y - diam);
-                    if (pos.LengthSquared() <= diamsq)
-                    {
-                        colorData[index] = Color.White;
-                    }
-                    else
-                    {
-                        colorData[index] = Color.Transparent;
-                    }
-                }
+                var index = x * radius + y;
+                var pos = new Vector2(x - diam, y - diam);
+                if (pos.LengthSquared() <= diamsq)
+                    colorData[index] = Color.White;
+                else
+                    colorData[index] = Color.Transparent;
             }
 
             texture.SetData(colorData);
             return texture;
         }
 
-        private class SnakeEvents : Accessable
-        {
-            public class Damaged : Accessable
-            {
-                public bool FirstTime = true;
-                public int Damage;
-                public bool Prevented;
-
-                public override TResult GetProperty<TResult>(string propertyName)
-                {
-                    switch (propertyName)
-                    {
-                        case "Damage":
-                            return (TResult) (object) Damage;
-                        default:
-                            return base.GetProperty<TResult>(propertyName);
-                    }
-                }
-
-                public override TResult GetMethodResult<TResult>(string methodName, object[] arguments = null)
-                {
-                    switch (methodName)
-                    {
-                        case "Prevent":
-                            Prevented = true;
-                            return (TResult) (object) new Void();
-                        default:
-                            return base.GetMethodResult<TResult>(methodName, arguments);
-                    }
-                }
-            }
-
-            public Damaged DamageInfo = new Damaged();
-            
-            public override TResult GetProperty<TResult>(string propertyName)
-            {
-                switch (propertyName)
-                {
-                    case "DamageInfo":
-                        return (TResult) (object) DamageInfo;
-                    default:
-                        return base.GetProperty<TResult>(propertyName);
-                }
-            }
-        }
-
+        /// <inheritdoc />
         public override List<TResult> GetListProperty<TResult>(string propertyName)
         {
             switch (propertyName)
@@ -271,6 +244,7 @@ namespace Snake
             }
         }
 
+        /// <inheritdoc />
         public override TResult GetProperty<TResult>(string propertyName)
         {
             switch (propertyName)
@@ -282,8 +256,10 @@ namespace Snake
             }
         }
 
+        /// <inheritdoc />
         public override TResult GetMethodResult<TResult>(string methodName, object[] arguments = null)
         {
+            // ReSharper disable PossibleNullReferenceException (arguments can be null)
             switch (methodName)
             {
                 case nameof(Decrease):
@@ -298,31 +274,49 @@ namespace Snake
                 default:
                     return base.GetMethodResult<TResult>(methodName, arguments);
             }
+            // ReSharper restore PossibleNullReferenceException
         }
 
+        /// <summary>
+        ///     Уменьшает размер змейки на указанное число кружочков
+        ///     <paramref name="size" /> может быть меньше нуля, но в таком случае использется <see cref="Increase" />
+        /// </summary>
+        /// <param name="size">На сколько кружочков надо уменьшить змею</param>
+        [Accessable]
         public void Decrease(int size)
         {
-            Snake = Snake.Decrease(size * Config.CircleOffset);
+            if (size < 0)
+                Increase(-size);
+            else
+                Snake = Snake.Decrease(size * Config.CircleOffset);
         }
 
+        /// <summary>
+        ///     Увеличивает размер змейки на указанное число кружочков
+        ///     <paramref name="size" /> может быть меньше нуля, но в таком случае использется <see cref="Decrease" />
+        /// </summary>
+        /// <param name="size">На сколько кружочков надо уменьшить змею</param>
+        [Accessable]
         public void Increase(int size)
         {
             if (size < 0)
-            {
                 Decrease(-size);
-            }
             else
-            {
                 Snake = Snake.Increase(size * Config.CircleOffset);
-            }
         }
 
+        /// <summary>
+        ///     Наносит змее указанный урон, если только она сейчас не неуязвима (<see cref="Invulnerable" />)
+        /// </summary>
+        /// <param name="damage"></param>
+        [Accessable]
         public void Damage(int damage = 1)
         {
             if (!Invulnerable)
             {
                 DamagedTime = _gameTime;
-                _game.Damage(1);
+                Invulnerable = _gameTime - DamagedTime < Config.DamageTimeout;
+                _game.Damage(damage);
             }
         }
     }

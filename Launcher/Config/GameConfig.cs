@@ -1,50 +1,56 @@
 ﻿using System;
-using Eto.Drawing;
 using Eto.Forms;
-using Color = Microsoft.Xna.Framework.Color;
+using Microsoft.Xna.Framework;
+using snake_game.Utils;
 
-namespace snake_game.Launcher.Config
+namespace Launcher.Config
 {
-    public class GameConfig
+    /// <inheritdoc />
+    /// <summary>
+    ///     Все настройки, которые касаются ядра игры
+    /// </summary>
+    public class GameConfig : IGameConfigPage<snake_game.MainGame.Config.GameConfigClass>
     {
-        MainGame.Config.GameConfigClass _config;
-        NumericUpDown _lives;
-        NumericUpDown _foodToLive;
-        ColorPicker _textColor;
-        ColorPicker _bgColor;
-        ColorPicker _fogColor;
-        CheckBox _fogEnabled;
-        NumericUpDown _fogSize;
+        private readonly snake_game.MainGame.Config.GameConfigClass _config;
+        private ColorPicker _bgColor;
+        private ColorPicker _fogColor;
+        private CheckBox _fogEnabled;
+        private NumericUpDown _fogSize;
+        private NumericUpDown _foodToLive;
+        private NumericUpDown _lives;
+        private ColorPicker _textColor;
 
-
-        public GameConfig(MainGame.Config.GameConfigClass config)
+        /// <inheritdoc />
+        public GameConfig(snake_game.MainGame.Config.GameConfigClass config)
         {
             _config = config;
         }
 
-        public MainGame.Config.GameConfigClass GetConfig()
+        /// <inheritdoc />
+        public snake_game.MainGame.Config.GameConfigClass GetConfig()
         {
-            return new MainGame.Config.GameConfigClass
+            return new snake_game.MainGame.Config.GameConfigClass
             {
-                Lives = (int)_lives.Value,
-                ScoreToLive = (int)_foodToLive.Value,
-                TextColor = Utils.ColorConverter.ToXna(_textColor.Value),
+                Lives = (int) _lives.Value,
+                ScoreToLive = (int) _foodToLive.Value,
+                TextColor = ColorConverter.ToXna(_textColor.Value),
                 FogEnabled = _fogEnabled.Checked ?? false,
-                FogColor = new Tuple<Color, Color>(Utils.ColorConverter.ToXna(_fogColor.Value), Color.Transparent),
+                FogColor = new Tuple<Color, Color>(ColorConverter.ToXna(_fogColor.Value), Color.Transparent),
                 FogSize = _fogSize.Value,
-                BackgroundColor = Utils.ColorConverter.ToXna(_bgColor.Value),
+                BackgroundColor = ColorConverter.ToXna(_bgColor.Value)
             };
         }
 
+        /// <inheritdoc />
         public TabPage GetPage()
         {
-            _lives = new NumericUpDown { Value = _config.Lives };
-            _foodToLive = new NumericUpDown { Value = _config.ScoreToLive };
-            _textColor = new ColorPicker { Value = Utils.ColorConverter.ToEto(_config.TextColor) };
-            _bgColor = new ColorPicker { Value = Utils.ColorConverter.ToEto(_config.BackgroundColor) };
-            _fogColor = new ColorPicker { Value = Utils.ColorConverter.ToEto(_config.FogColor.Item1) };
-            _fogEnabled = new CheckBox { Checked = _config.FogEnabled };
-            _fogSize = new NumericUpDown { Value = _config.FogSize };
+            _lives = new NumericUpDown {Value = _config.Lives};
+            _foodToLive = new NumericUpDown {Value = _config.ScoreToLive};
+            _textColor = new ColorPicker {Value = ColorConverter.ToEto(_config.TextColor)};
+            _bgColor = new ColorPicker {Value = ColorConverter.ToEto(_config.BackgroundColor)};
+            _fogColor = new ColorPicker {Value = ColorConverter.ToEto(_config.FogColor.Item1)};
+            _fogEnabled = new CheckBox {Checked = _config.FogEnabled};
+            _fogSize = new NumericUpDown {Value = _config.FogSize};
 
 
             return new TabPage(new StackLayout

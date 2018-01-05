@@ -4,17 +4,24 @@ using snake_game.MainGame;
 
 namespace AntiAppleBonus
 {
+    /// <inheritdoc />
+    // ReSharper disable once UnusedMember.Global
     public class Plugin : IPlugin
     {
+        /// <inheritdoc />
         public string Name => "AntiApple";
+
+        /// <inheritdoc />
         public IPluginConfig Config { get; set; } = new Config();
 
-        public BonusBase GetBonus(object config, Random random, MainGame game)
+        /// <inheritdoc />
+        public BonusBase GetBonus(IPluginConfig config, Random random, MainGame game)
         {
-            return new Bonus((Config)config, random, game);
+            return new Bonus((Config) config, random);
         }
 
-        public IConfigPage GetPage(object config)
+        /// <inheritdoc />
+        public IConfigPage GetPage(IPluginConfig config)
         {
             return new ConfigPage((Config) config);
         }

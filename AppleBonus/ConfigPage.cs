@@ -4,23 +4,26 @@ using snake_game.Utils;
 
 namespace AppleBonus
 {
+    /// <inheritdoc />
     public class ConfigPage : IConfigPage
     {
-        CheckBox _enabled;
-        NumericUpDown _appleCount;
-        NumericUpDown _thickness;
-        NumericUpDown _radius;
-        NumericUpDown _sides;
-        NumericUpDown _speed;
-        NumericUpDown _bounceTimeout;
-        ColorPicker _appleColor;
-        Config _config;
+        private readonly Config _config;
+        private ColorPicker _appleColor;
+        private NumericUpDown _appleCount;
+        private NumericUpDown _bounceTimeout;
+        private CheckBox _enabled;
+        private NumericUpDown _radius;
+        private NumericUpDown _sides;
+        private NumericUpDown _speed;
+        private NumericUpDown _thickness;
 
+        /// <inheritdoc />
         public ConfigPage(Config config)
         {
             _config = config;
         }
 
+        /// <inheritdoc />
         public IPluginConfig GetConfig()
         {
             return new Config
@@ -36,6 +39,7 @@ namespace AppleBonus
             };
         }
 
+        /// <inheritdoc />
         public TabPage GetPage()
         {
             _appleCount = new NumericUpDown {Value = _config.AppleCount};
@@ -46,7 +50,7 @@ namespace AppleBonus
             _bounceTimeout = new NumericUpDown {Value = _config.BounceTimeout / 1000};
             _appleColor = new ColorPicker {Value = ColorConverter.ToEto(_config.AppleColor)};
             _enabled = new CheckBox {Checked = _config.IsEnabled};
-            
+
             return new TabPage(new StackLayout
             {
                 Items =

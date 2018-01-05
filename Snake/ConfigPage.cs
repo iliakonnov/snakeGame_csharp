@@ -1,34 +1,35 @@
-﻿using System;
-using Eto.Forms;
+﻿using Eto.Forms;
 using Microsoft.Xna.Framework;
 using snake_game.Bonuses;
 using snake_game.Utils;
 
 namespace Snake
 {
+    /// <inheritdoc />
     public class ConfigPage : IConfigPage
     {
-        CheckBox _enabled;
-        NumericUpDown _speed;
-        NumericUpDown _circleSize;
-        NumericUpDown _damageTimeout;
-        NumericUpDown _circleOffset;
-        NumericUpDown _initLen;
-        ColorPicker _damageColor;
-        CheckBox _headColorEnabled;
-        ColorPicker _headColor;
-        CheckBox _rainbowSnake;
-        ColorPicker _snakeColor;
-        ComboBox _controlType;
-        NumericUpDown _turnSize;
+        private readonly Config _config;
+        private NumericUpDown _circleOffset;
+        private NumericUpDown _circleSize;
+        private EnumDropDown<AvailableControllers> _controlType;
+        private ColorPicker _damageColor;
+        private NumericUpDown _damageTimeout;
+        private CheckBox _enabled;
+        private ColorPicker _headColor;
+        private CheckBox _headColorEnabled;
+        private NumericUpDown _initLen;
+        private CheckBox _rainbowSnake;
+        private ColorPicker _snakeColor;
+        private NumericUpDown _speed;
+        private NumericUpDown _turnSize;
 
-        Config _config;
-
+        /// <inheritdoc />
         public ConfigPage(Config config)
         {
             _config = config;
         }
 
+        /// <inheritdoc />
         public IPluginConfig GetConfig()
         {
             var result = new Config
@@ -46,20 +47,17 @@ namespace Snake
                     ? null
                     : new Color?(ColorConverter.ToXna(_headColor.Value)),
                 IsEnabled = _enabled.Checked ?? false,
-                ControlType = _controlType.SelectedKey,
+                ControlType = _controlType.SelectedValue,
                 TurnSize = (int) _turnSize.Value
             };
             if (_headColorEnabled.Checked ?? false)
-            {
                 result.HeadColor = ColorConverter.ToXna(_headColor.Value);
-            }
             else
-            {
                 result.HeadColor = null;
-            }
             return result;
         }
 
+        /// <inheritdoc />
         public TabPage GetPage()
         {
             _turnSize = _config.TurnSize != null
@@ -67,7 +65,7 @@ namespace Snake
                 : new NumericUpDown {Value = 0};
             _speed = new NumericUpDown {Value = _config.Speed};
             _circleSize = new NumericUpDown {Value = _config.CircleSize};
-            _damageTimeout = new NumericUpDown {Value = _config.DamageTimeout / 1000};
+            _damageTimeout = new NumericUpDown {Value = _config.DamageTimeout / 1000f};
             _circleOffset = new NumericUpDown {Value = _config.CircleOffset};
             _initLen = new NumericUpDown {Value = _config.InitLen};
             _damageColor = new ColorPicker {Value = ColorConverter.ToEto(_config.DamageColor)};
@@ -88,10 +86,7 @@ namespace Snake
                         : ColorConverter.ToEto(_config.Colors[0])
             };
             _enabled = new CheckBox {Checked = _config.IsEnabled};
-            _controlType = new ComboBox();
-            _controlType.Items.Add("traditional");
-            _controlType.Items.Add("small");
-            _controlType.SelectedKey = _config.ControlType;
+            _controlType = new EnumDropDown<AvailableControllers> {SelectedValue = _config.ControlType};
 
             return new TabPage(new StackLayout
             {

@@ -4,22 +4,25 @@ using snake_game.Utils;
 
 namespace AntiBrick
 {
+    /// <inheritdoc />
     public class ConfigPage : IConfigPage
     {
-        CheckBox _enabled;
-        NumericUpDown _startBrickCount;
-        NumericUpDown _chanceTime;
-        NumericUpDown _size;
-        NumericUpDown _newChance;
-        NumericUpDown _thickness;
-        ColorPicker _color;
-        Config _config;
+        private readonly Config _config;
+        private NumericUpDown _chanceTime;
+        private ColorPicker _color;
+        private CheckBox _enabled;
+        private NumericUpDown _newChance;
+        private NumericUpDown _size;
+        private NumericUpDown _startBrickCount;
+        private NumericUpDown _thickness;
 
+        /// <inheritdoc />
         public ConfigPage(Config config)
         {
             _config = config;
         }
 
+        /// <inheritdoc />
         public IPluginConfig GetConfig()
         {
             return new Config
@@ -34,10 +37,11 @@ namespace AntiBrick
             };
         }
 
+        /// <inheritdoc />
         public TabPage GetPage()
         {
             _startBrickCount = new NumericUpDown {Value = _config.StartBrickCount};
-            _chanceTime = new NumericUpDown {Value = _config.ChanceTime / 1000};
+            _chanceTime = new NumericUpDown {Value = _config.ChanceTime / 1000f};
             _size = new NumericUpDown {Value = _config.Size};
             _newChance = new NumericUpDown {Value = _config.NewChance * 100};
             _thickness = new NumericUpDown {Value = _config.Thickness};

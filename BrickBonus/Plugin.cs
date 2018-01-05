@@ -1,21 +1,27 @@
 ﻿using System;
-using Eto.Forms;
 using snake_game.Bonuses;
 using snake_game.MainGame;
 
 namespace BrickBonus
 {
+    /// <inheritdoc />
+    // ReSharper disable once UnusedMember.Global
     public class Plugin : IPlugin
     {
+        /// <inheritdoc />
         public string Name => "Brick";
+
+        /// <inheritdoc />
         public IPluginConfig Config { get; set; } = new Config();
 
-        public BonusBase GetBonus(object config, Random random, MainGame game)
+        /// <inheritdoc />
+        public BonusBase GetBonus(IPluginConfig config, Random random, MainGame game)
         {
-            return new Bonus((Config)config, random, game);
+            return new Bonus((Config) config, random);
         }
 
-        public IConfigPage GetPage(object config)
+        /// <inheritdoc />
+        public IConfigPage GetPage(IPluginConfig config)
         {
             return new ConfigPage((Config) config);
         }

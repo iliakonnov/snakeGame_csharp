@@ -2,44 +2,70 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Scripting.Hosting;
-using Microsoft.Scripting.Runtime;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using snake_game.MainGame;
 
 namespace snake_game.Bonuses
 {
+    /// <summary>
+    ///     Содержит всё необходимое для работы с настройками плагина
+    /// </summary>
     public interface IPluginContainer
-    {    
+    {
+        /// <summary>
+        ///     Сам плагин
+        /// </summary>
         IPlugin Plugin { get; }
+
+        /// <summary>
+        ///     Загружает параметры плагина из JSON
+        /// </summary>
+        /// <param name="config">Объект в JSON, соответсвующий параметрам этого плагина</param>
+        /// <param name="serializer"></param>
+        /// <returns>Десериализованные параметры плагина</returns>
         IPluginConfig LoadConfig(JObject config, JsonSerializer serializer);
+
+        /// <summary>
+        ///     Сериализует параметры плагина в объект JSON
+        /// </summary>
+        /// <param name="config">Текущие параметры плагина</param>
+        /// <param name="serializer"></param>
+        /// <returns>Сериализованные параметры плагина</returns>
         JObject SaveConfig(IPluginConfig config, JsonSerializer serializer);
     }
 
+    /// <inheritdoc />
+    /// <summary>
+    ///     Предназначен для плагинов на .NET
+    /// </summary>
     public class NetPluginContainer : IPluginContainer
     {
+        private readonly Assembly _assembly;
+
+        /// <inheritdoc />
+        /// <param name="plugin">Экземпляр плагина</param>
+        /// <param name="assembly">Откуда этот плагин был загружен</param>
         public NetPluginContainer(IPlugin plugin, Assembly assembly)
         {
             Plugin = plugin;
             _assembly = assembly;
         }
 
-        private readonly Assembly _assembly;
+        /// <inheritdoc />
         public IPlugin Plugin { get; }
 
+        /// <inheritdoc />
         public IPluginConfig LoadConfig(JObject config, JsonSerializer serializer)
         {
             var typeName = (string) config["_type"];
             IPluginConfig pluginConfig = null;
             var type = SearchType(typeName);
             if (type != null && typeof(IPluginConfig).IsAssignableFrom(type))
-            {
                 pluginConfig = (IPluginConfig) config.ToObject(type, serializer);
-            }
             return pluginConfig;
         }
 
+        /// <inheritdoc />
         public JObject SaveConfig(IPluginConfig config, JsonSerializer serializer)
         {
             var type = config.GetType();
@@ -60,18 +86,23 @@ namespace snake_game.Bonuses
         }
     }
 
+    /// <inheritdoc />
+    /// <summary>
+    ///     Предназначен для плагинов на IronPython
+    /// </summary>
     public class PythonPluginContainer : IPluginContainer
     {
-        private ScriptScope _scope;
-
-        public PythonPluginContainer(IPlugin plugin, ScriptScope scope)
+        /// <inheritdoc />
+        /// <param name="plugin">Экземпляр плагина</param>
+        public PythonPluginContainer(IPlugin plugin)
         {
             Plugin = plugin;
-            _scope = scope;
         }
-        
+
+        /// <inheritdoc />
         public IPlugin Plugin { get; }
-        
+
+        /// <inheritdoc />
         public IPluginConfig LoadConfig(JObject config, JsonSerializer serializer)
         {
             var conf = (IPythonPluginConfig) Plugin.Config;
@@ -79,6 +110,7 @@ namespace snake_game.Bonuses
             return conf;
         }
 
+        /// <inheritdoc />
         public JObject SaveConfig(IPluginConfig config, JsonSerializer serializer)
         {
             var val = ((IPythonPluginConfig) config).Serialize();

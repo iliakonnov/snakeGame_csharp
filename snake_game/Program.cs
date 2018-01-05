@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using snake_game.Bonuses;
@@ -7,23 +6,30 @@ using snake_game.MainGame;
 
 namespace snake_game
 {
+    /// <summary>
+    ///     Класс, содержащий точку входа игры
+    /// </summary>
     public static class Program
     {
+        /// <summary>
+        ///     Точка входа
+        /// </summary>
         public static void Main()
         {
-            #if RELEASE
+#if RELEASE
             try
             {
             #endif
-                var plugins = BonusLoader.LoadPlugins(".");
-                var config = File.Exists("config.json")
-                    ? ConfigLoad.Parse(File.ReadAllText("config.json"), plugins)
-                    : new Config
-                    {
-                        BonusConfig = plugins.ToDictionary(kv => kv.Key, kv => kv.Value.Plugin.Config)
-                    };
-                new MainGame.MainGame(config, plugins.ToDictionary(kv => kv.Key, kv => kv.Value.Plugin)).Run(GameRunBehavior.Synchronous);
-            #if RELEASE
+            var plugins = BonusLoader.LoadPlugins(".");
+            var config = File.Exists("config.json")
+                ? ConfigLoad.Parse(File.ReadAllText("config.json"), plugins)
+                : new Config
+                {
+                    BonusConfig = plugins.ToDictionary(kv => kv.Key, kv => kv.Value.Plugin.Config)
+                };
+            new MainGame.MainGame(config, plugins.ToDictionary(kv => kv.Key, kv => kv.Value.Plugin)).Run(GameRunBehavior
+                .Synchronous);
+#if RELEASE
             }
             catch (Exception e)
             {

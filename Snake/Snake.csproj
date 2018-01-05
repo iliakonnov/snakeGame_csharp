@@ -10,8 +10,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Snake</RootNamespace>
     <AssemblyName>Snake</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <LangVersion>7.2</LangVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -22,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\snake_game\bin\Debug\$(OS)\Snake.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\snake_game\bin\Release\$(OS)\Snake.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Eto, Version=2.3.0.0, Culture=neutral, PublicKeyToken=null">
@@ -110,11 +114,12 @@
     <Compile Include="Controller.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SnakeEvents.cs" />
     <Compile Include="SnakeModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\snake_game\snake_game.csproj">
-      <Project>{476DA80F-DC9E-431D-81C5-5B6EE9C5201A}</Project>
+      <Project>{476da80f-dc9e-431d-81c5-5b6ee9c5201a}</Project>
       <Name>snake_game</Name>
     </ProjectReference>
   </ItemGroup>

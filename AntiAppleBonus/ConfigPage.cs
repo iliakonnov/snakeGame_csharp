@@ -4,22 +4,25 @@ using snake_game.Utils;
 
 namespace AntiAppleBonus
 {
-    public class ConfigPage: IConfigPage
+    /// <inheritdoc />
+    public class ConfigPage : IConfigPage
     {
-        CheckBox _enabled;
-        NumericUpDown _startSnakeLength;
-        NumericUpDown _chanceTime;
-        NumericUpDown _size;
-        NumericUpDown _newChance;
-        NumericUpDown _thickness;
-        ColorPicker _color;
-        Config _config;
+        private readonly Config _config;
+        private NumericUpDown _chanceTime;
+        private ColorPicker _color;
+        private CheckBox _enabled;
+        private NumericUpDown _newChance;
+        private NumericUpDown _size;
+        private NumericUpDown _startSnakeLength;
+        private NumericUpDown _thickness;
 
+        /// <inheritdoc />
         public ConfigPage(Config config)
         {
             _config = config;
         }
 
+        /// <inheritdoc />
         public IPluginConfig GetConfig()
         {
             return new Config
@@ -34,6 +37,7 @@ namespace AntiAppleBonus
             };
         }
 
+        /// <inheritdoc />
         public TabPage GetPage()
         {
             _startSnakeLength = new NumericUpDown {Value = _config.StartSnakeLength};

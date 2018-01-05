@@ -1,22 +1,27 @@
 ﻿using System;
-using System.IO;
-using snake_game.Launcher;
+using Eto.Forms;
 
 namespace Launcher
 {
+    /// <summary>
+    ///     Класс с точкой входа настроек игры
+    /// </summary>
     public static class Program
     {
+        /// <summary>
+        ///     Точка входа настроек игры
+        /// </summary>
         [STAThread]
         public static void Main()
         {
-            #if RELEASE
+#if RELEASE
             try
             {
             #endif
-                var application = new Eto.Forms.Application();
-                var form = new LauncherForm();
-                application.Run(form);
-            #if RELEASE
+            var application = new Application();
+            var form = new LauncherForm();
+            application.Run(form);
+#if RELEASE
             }
             catch (Exception e)
             {

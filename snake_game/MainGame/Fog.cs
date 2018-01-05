@@ -1,13 +1,20 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace snake_game.MainGame
 {
+    /// <summary>
+    ///     Туман по краям карты
+    /// </summary>
     public class Fog
     {
-        readonly Texture2D _gradientUp;
-        readonly Texture2D _gradientLeft;
+        private readonly Texture2D _gradientLeft;
+        private readonly Texture2D _gradientUp;
 
+        /// <inheritdoc />
+        /// <param name="gd">Графическое устройство</param>
+        /// <param name="a">Цвет начала градиента (ближе к краям)</param>
+        /// <param name="b">Цвет конца градиента (ближе к центру)</param>
         public Fog(GraphicsDevice gd, Color a, Color b)
         {
             _gradientUp = new Texture2D(gd, 2, 2);
@@ -24,6 +31,12 @@ namespace snake_game.MainGame
             });
         }
 
+        /// <summary>
+        ///     Отрисовывает туман
+        /// </summary>
+        /// <param name="sb">Графическое устройство</param>
+        /// <param name="size">Размер экрана</param>
+        /// <param name="distance">Размер тумана (в px)</param>
         public void CreateFog(SpriteBatch sb, Rectangle size, int distance)
         {
             sb.Draw( // Top

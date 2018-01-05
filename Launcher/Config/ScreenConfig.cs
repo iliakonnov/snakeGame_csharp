@@ -1,24 +1,29 @@
 ﻿using Eto.Forms;
 
-namespace snake_game.Launcher.Config
+namespace Launcher.Config
 {
-    public class ScreenConfig
+    /// <inheritdoc />
+    /// <summary>
+    ///     Все настройки, которые касаются отображения игры на экран
+    /// </summary>
+    public class ScreenConfig : IGameConfigPage<snake_game.MainGame.Config.ScreenConfigClass>
     {
-        CheckBox _mouseVisible;
-        CheckBox _fullScreen;
-        NumericUpDown _width;
-        NumericUpDown _height;
+        private readonly snake_game.MainGame.Config.ScreenConfigClass _config;
+        private CheckBox _fullScreen;
+        private NumericUpDown _height;
+        private CheckBox _mouseVisible;
+        private NumericUpDown _width;
 
-        MainGame.Config.ScreenConfigClass _config;
-
-        public ScreenConfig(MainGame.Config.ScreenConfigClass config)
+        /// <inheritdoc />
+        public ScreenConfig(snake_game.MainGame.Config.ScreenConfigClass config)
         {
             _config = config;
         }
 
-        public MainGame.Config.ScreenConfigClass GetConfig()
+        /// <inheritdoc />
+        public snake_game.MainGame.Config.ScreenConfigClass GetConfig()
         {
-            return new MainGame.Config.ScreenConfigClass
+            return new snake_game.MainGame.Config.ScreenConfigClass
             {
                 IsMouseVisible = _mouseVisible.Checked ?? false,
                 IsFullScreen = _fullScreen.Checked ?? false,
@@ -27,6 +32,7 @@ namespace snake_game.Launcher.Config
             };
         }
 
+        /// <inheritdoc />
         public TabPage GetPage()
         {
             _mouseVisible = new CheckBox {Checked = _config.IsMouseVisible};

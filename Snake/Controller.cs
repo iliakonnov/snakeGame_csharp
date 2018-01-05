@@ -2,38 +2,72 @@
 
 namespace Snake
 {
-    public static class ControlResult
+    /// <summary>
+    ///     Все доступные типы управления
+    /// </summary>
+    public enum AvailableControllers
     {
-        public class Result
-        {
-            public Turn Turn = new Turn();
-        }
+        /// <summary>
+        ///     Соответствует <see cref="ControllerTraditional" />
+        /// </summary>
+        Traditional,
 
-        public class Turn
-        {
-            public bool ToTurn;
-            public bool ReplaceTurn;
-            public int TurnDegrees;
-        }
+        /// <summary>
+        ///     Соответствует <see cref="ControllerSmall" />
+        /// </summary>
+        Small
     }
 
+    /// <summary>
+    ///     Результат работы <see cref="IController" />
+    /// </summary>
+    public class TurnResult
+    {
+        /// <summary>
+        ///     Нужно ли <see cref="TurnDegrees" /> не прибавить к текущему значению поворота, а заменить
+        /// </summary>
+        public bool ReplaceTurn;
+
+        /// <summary>
+        ///     Нужно ли поворачивать
+        /// </summary>
+        public bool ToTurn;
+
+        /// <summary>
+        ///     На сколько именно надо повернуть
+        /// </summary>
+        public int TurnDegrees;
+    }
+
+    /// <summary>
+    ///     Должен реализовывать любой тип управления
+    /// </summary>
     public interface IController
     {
-        ControlResult.Result Control(KeyboardState state);
+        /// <summary>
+        ///     Получает результат управления, на основе текущего состояния клавиатуры
+        /// </summary>
+        /// <param name="state">Состояние клавиатуры</param>
+        /// <returns></returns>
+        TurnResult Control(KeyboardState state);
     }
 
+    /// <inheritdoc />
+    /// <summary>
+    ///     Управление как в обычной змейке. Влево, вправо, вверх и вниз
+    /// </summary>
     public class ControllerTraditional : IController
     {
-        enum Direction { Up, Down, Left, Right }
-        Direction _direction = Direction.Right;
+        private Direction _direction = Direction.Right;
 
-        public ControlResult.Result Control(KeyboardState state)
+        /// <inheritdoc />
+        public TurnResult Control(KeyboardState state)
         {
-            var result = new ControlResult.Result();
+            var result = new TurnResult();
 
             if (state.IsKeyDown(Keys.Down) && _direction != Direction.Up)
             {
-                result.Turn = new ControlResult.Turn
+                result = new TurnResult
                 {
                     ToTurn = true,
                     ReplaceTurn = true,
@@ -43,7 +77,7 @@ namespace Snake
             }
             else if (state.IsKeyDown(Keys.Left) && _direction != Direction.Right)
             {
-                result.Turn = new ControlResult.Turn
+                result = new TurnResult
                 {
                     ToTurn = true,
                     ReplaceTurn = true,
@@ -53,7 +87,7 @@ namespace Snake
             }
             else if (state.IsKeyDown(Keys.Up) && _direction != Direction.Down)
             {
-                result.Turn = new ControlResult.Turn
+                result = new TurnResult
                 {
                     ToTurn = true,
                     ReplaceTurn = true,
@@ -63,7 +97,7 @@ namespace Snake
             }
             else if (state.IsKeyDown(Keys.Right) && _direction != Direction.Left)
             {
-                result.Turn = new ControlResult.Turn
+                result = new TurnResult
                 {
                     ToTurn = true,
                     ReplaceTurn = true,
@@ -74,28 +108,42 @@ namespace Snake
 
             return result;
         }
+
+        private enum Direction
+        {
+            Up,
+            Down,
+            Left,
+            Right
+        }
     }
 
+    /// <inheritdoc />
+    /// <summary>
+    ///     Управление маленькими изменениями направления влево или вправо.
+    /// </summary>
     public class ControllerSmall : IController
     {
-        bool _IsTurned;
-        readonly int _step;
+        private readonly int _step;
+        private bool _isTurned;
 
+        /// <inheritdoc />
         public ControllerSmall(int step)
         {
             _step = step;
         }
 
-        public ControlResult.Result Control(KeyboardState state)
+        /// <inheritdoc />
+        public TurnResult Control(KeyboardState state)
         {
-            var result = new ControlResult.Result();
+            var result = new TurnResult();
 
             if (state.IsKeyDown(Keys.Right))
             {
-                if (!_IsTurned)
+                if (!_isTurned)
                 {
-                    _IsTurned = true;
-                    result.Turn = new ControlResult.Turn
+                    _isTurned = true;
+                    result = new TurnResult
                     {
                         ToTurn = true,
                         ReplaceTurn = false,
@@ -105,10 +153,10 @@ namespace Snake
             }
             else if (state.IsKeyDown(Keys.Left))
             {
-                if (!_IsTurned)
+                if (!_isTurned)
                 {
-                    _IsTurned = true;
-                    result.Turn = new ControlResult.Turn
+                    _isTurned = true;
+                    result = new TurnResult
                     {
                         ToTurn = true,
                         ReplaceTurn = false,
@@ -118,7 +166,7 @@ namespace Snake
             }
             else
             {
-                _IsTurned = false;
+                _isTurned = false;
             }
 
             return result;
